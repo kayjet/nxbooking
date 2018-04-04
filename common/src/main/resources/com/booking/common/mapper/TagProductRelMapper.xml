@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.TagProductRelMapper">
+
+    <resultMap id="tagProductRelResult" type="com.booking.common.entity.TagProductRelEntity">
+        <result column="update_time" property="updateTime"/>
+        <result column="pid" property="pid"/>
+        <result column="id" property="id"/>
+        <result column="create_time" property="createTime"/>
+        <result column="tid" property="tid"/>
+        <result column="p_name" property="pName"/>
+        <result column="t_name" property="tName"/>
+    </resultMap>
+
+
+    <select id="selectJoinTagList" parameterType="com.booking.common.entity.TagProductRelEntity"
+            resultMap="tagProductRelResult">
+        SELECT rel.* , tag.title as t_name FROM `booking`.`t_tag_product_rel` rel
+        LEFT JOIN `booking`.`t_tag` tag ON tag.id = rel.tid
+       /* LEFT JOIN `booking`.`t_product` prd ON prd.id = rel.pid*/
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="updateTime != null">AND rel.`update_time` = #{updateTime}</if>
+            <if test="pid != null">AND rel.`pid` = #{pid}</if>
+            <if test="id != null">AND rel.`id` = #{id}</if>
+            <if test="createTime != null">AND rel.`create_time` = #{createTime}</if>
+            <if test="tid != null">AND rel.`tid` = #{tid}</if>
+            <if test="createTimeStart != null">and rel.create_time &gt;= #{createTimeStart}</if>
+            <if test="createTimeEnd != null">and rel.create_time &lt;= #{createTimeEnd}</if>
+            <if test="updateTimeStart != null">and rel.update_time &gt;= #{updateTimeStart}</if>
+            <if test="updateTimeEnd != null">and rel.update_time &lt;= #{updateTimeEnd}</if>
+        </trim>
+    </select><!---->
+
+    <resultMap id="productResult" type="com.booking.common.entity.ProductEntity">
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="price" property="price"/>
+        <result column="id" property="id"/>
+        <result column="pic" property="pic"/>
+        <result column="detail" property="detail"/>
+        <result column="title" property="title"/>
+    </resultMap>
+
+    <select id="selectProductByTag"
+            resultMap="productResult">
+        SELECT prd.*  FROM  `booking`.`t_product` prd
+        LEFT JOIN `booking`.`t_tag_product_rel` rel ON prd.id = rel.pid
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="tid != null">AND rel.`tid` = #{tid}</if>
+        </trim>
+    </select>
+
+</mapper>

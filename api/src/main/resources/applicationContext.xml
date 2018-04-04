@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.3.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <context:property-placeholder location="classpath*:/config.properties" system-properties-mode="FALLBACK" />
+    <context:component-scan base-package="com.booking"/>
+
+    <bean id="propertyConfigure"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <bean id="cacheManager"
+          class="com.booking.common.base.DefaultCacheManager"/>
+
+    <!--Session管理-->
+    <bean class="com.opdar.platform.core.session.MemorySessionManager" />
+    <!--Session管理-->
+
+    <!--视图渲染-->
+    <bean class="com.opdar.platform.core.view.FreemarkerViewTemplate">
+        <property name="prefix" value="classpath:/templates/"/>
+    </bean>
+    <!--视图渲染-->
+
+    <!--文件上传-->
+    <bean name="fileItemFactory" class="org.apache.commons.fileupload.disk.DiskFileItemFactory">
+        <property name="sizeThreshold" value="1024000"/>
+    </bean>
+    <bean class="org.apache.commons.fileupload.servlet.ServletFileUpload">
+        <property name="fileItemFactory" ref="fileItemFactory"/>
+    </bean>
+    <!--文件上传-->
+
+    <!--Druid数据源配置-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${database.url}"/>
+        <property name="username" value="${database.user}"/>
+        <property name="password" value="${database.password}"/>
+
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="1"/>
+        <property name="minIdle" value="1"/>
+        <property name="maxActive" value="20"/>
+
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000"/>
+
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
+
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000"/>
+
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="true"/>
+        <property name="testOnBorrow" value="false"/>
+        <property name="testOnReturn" value="false"/>
+
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat"/>
+
+        <property name="connectionInitSqls" value="set names utf8mb4;"/>
+    </bean>
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <bean id="sqlSessionFactory" class="com.opdar.plugins.mybatis.core.SqlSessionFactoryBean">
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="basePackage" value="com.booking"/>
+        <property name="databaseName" value="${database.name}"/>
+        <property name="tablePrefix" value="${database.prefix}"/>
+        <property name="mapperLocations" value="classpath*:com/booking/common/mapper/*.xml"/>
+        <property name="plugins">
+            <array>
+                <bean class="com.booking.common.resp.PageInterceptor"/>
+            </array>
+        </property>
+    </bean>
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.booking.common.mapper"/>
+    </bean>
+
+    <bean class="com.booking.common.base.FastJSONConvert"/>
+
+</beans>

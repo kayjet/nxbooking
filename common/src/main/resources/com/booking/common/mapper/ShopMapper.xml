@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.ShopMapper">
+    <select id="selectLikeList" parameterType="com.booking.common.entity.ShopEntity" resultMap="shopResult">
+        SELECT * FROM (
+            SELECT *
+            <if test="lat != null and lng != null">
+                ,
+                CAST(
+                    (
+                    6371 * ACOS(
+                    COS(RADIANS(#{lat})) * COS(RADIANS(`booking`.`t_shop`.lat))
+                    * COS(RADIANS(`booking`.`t_shop`.lng) - RADIANS(#{lng})) + SIN(RADIANS(#{lat}))
+                    * SIN(RADIANS(`booking`.`t_shop`.lat)))
+                    ) AS DECIMAL(9,3)
+                ) AS DISTANCE
+            </if>
+                FROM `booking`.`t_shop`
+                <trim prefix="WHERE" prefixOverrides="AND |OR">
+                    <if test="id != null">AND `id` like '%${id}%'</if>
+                    <if test="name != null">AND `name` like '%${name}%'</if>
+                    <if test="address != null">AND `address` like '%${address}%'</if>
+                    <if test="updateTime != null">AND `update_time` = #{updateTime}</if>
+                    <if test="createTime != null">AND `create_time` = #{createTime}</if>
+                    <if test="createTimeStart != null">  and create_time &gt;=  #{createTimeStart}</if>
+                    <if test="createTimeEnd != null">  and create_time &lt;=  #{createTimeEnd}</if>
+                    <if test="updateTimeStart != null">  and update_time &gt;=  #{updateTimeStart}</if>
+                    <if test="updateTimeEnd != null">  and update_time &lt;=  #{updateTimeEnd}</if>
+                </trim>
+        ) T
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="distance != null">
+                AND T.DISTANCE &lt;= #{distance}
+            </if>
+        </trim>
+
+        <trim prefix="ORDER BY" prefixOverrides=",">
+            <if test="lat != null and lng != null">
+                ,T.DISTANCE
+            </if>
+            ,T.name
+        </trim>
+    </select>
+
+</mapper>

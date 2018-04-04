@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.ShopTagRelMapper">
+
+    <resultMap id="shopTagRelResult" type="com.booking.common.entity.ShopTagRelEntity">
+        <result column="id" property="id"/>
+        <result column="shop_id" property="shopId"/>
+        <result column="tag_id" property="tagId"/>
+        <result column="shop_name" property="shopName"/>
+        <result column="tag_name" property="tagName"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectJoinShopList" parameterType="com.booking.common.entity.ShopTagRelEntity" resultMap="shopTagRelResult">
+        SELECT shopTagRel.* , shop.name as shop_name FROM `booking`.`t_Shop_tag_rel` shopTagRel
+        LEFT JOIN  `booking`.`t_shop` shop ON shopTagRel.shop_id = shop.id
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="shopId != null">AND shopTagRel.`shop_id` = #{shopId}</if>
+            <if test="tagId != null">AND shopTagRel.`tag_id` = #{tagId}</if>
+            <if test="id != null">AND shopTagRel.`id` = #{id}</if>
+        </trim>
+    </select>
+
+    <select id="selectJoinTagList" parameterType="com.booking.common.entity.ShopTagRelEntity" resultMap="shopTagRelResult">
+        SELECT shopTagRel.* , tag.title as tag_name FROM `booking`.`t_Shop_tag_rel` shopTagRel
+        LEFT JOIN  `booking`.`t_tag` tag ON shopTagRel.tag_id = tag.id
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="shopId != null">AND shopTagRel.`shop_id` = #{shopId}</if>
+            <if test="tagId != null">AND shopTagRel.`tag_id` = #{tagId}</if>
+            <if test="id != null">AND shopTagRel.`id` = #{id}</if>
+        </trim>
+    </select>
+
+</mapper>
