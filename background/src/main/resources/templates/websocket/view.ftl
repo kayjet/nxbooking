@@ -7,7 +7,18 @@
 <div id="app"></div>
 
 <script>
-    var websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws");
+    var websocket = null;
+
+    window.onload = function(){
+        //判断当前浏览器是否支持WebSocket
+        if ('WebSocket' in window) {
+
+        }
+        else {
+            alert('当前浏览器 Not support websocket')
+        }
+    };
+
     //连接发生错误的回调方法
     websocket.onerror = function () {
         setMessageInnerHTML("WebSocket连接发生错误");

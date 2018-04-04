@@ -1,9 +1,12 @@
 package com.booking.common.entity;
 
+import com.booking.common.mapper.OrderMapper;
 import com.booking.common.mapper.OrderProductRelMapper;
+import com.booking.common.mapper.ProductMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
 * AuthorityEntity
@@ -18,6 +21,35 @@ public class OrderProductRelEntity {
     private Timestamp createTime;
     private String orderId;
     private String productId;
+
+    @Collection(mapper = OrderMapper.class,select = "selectList",values = {
+            @Value(key = "id",value = "orderId")
+    })
+    private List<OrderEntity> orderList;
+
+    @Collection(mapper = ProductMapper.class,select = "selectList",values = {
+            @Value(key = "id",value = "productId")
+    })
+    private List<ProductEntity> productList;
+
+    public OrderProductRelEntity() {
+    }
+
+    public List<OrderEntity> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<OrderEntity> orderList) {
+        this.orderList = orderList;
+    }
+
+    public List<ProductEntity> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<ProductEntity> productList) {
+        this.productList = productList;
+    }
 
     public Timestamp getUpdateTime() {
         return updateTime;

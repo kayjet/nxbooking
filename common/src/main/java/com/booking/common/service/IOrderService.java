@@ -1,5 +1,7 @@
 package com.booking.common.service;
 
+import com.booking.common.dto.ProductDto;
+import com.booking.common.dto.ProductListDto;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.resp.Page;
@@ -38,5 +40,8 @@ public interface IOrderService {
 
     int update(OrderEntity orderEntity, OrderEntity where);
 
-    OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice,String orderType, List<List<ProductEntity>> products);
+    OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice,String orderType,
+                          String orderTime,List<List<ProductEntity>> products);
+
+    ProductListDto getOrderProductList(String orderId);
 }

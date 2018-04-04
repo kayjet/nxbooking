@@ -1,6 +1,8 @@
 package com.booking.api.controllers;
 
 import com.booking.common.base.ICacheManager;
+import com.booking.common.dto.ProductDto;
+import com.booking.common.dto.ProductListDto;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.OrderUserRelEntity;
 import com.booking.common.entity.ProductEntity;
@@ -42,8 +44,9 @@ public class Sprint3Controller {
 
     @Request(value = "/sp3/order/makeOrder")
     @Editor(ResultEditor.class)
-    public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType, @JSON List<List<ProductEntity>> products) {
-        return orderService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType, products);
+    public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
+                                 String orderTime, @JSON List<List<ProductEntity>> products) {
+        return orderService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType, orderTime,products);
     }
 
     @Request(value = "/sp3/order/getOrder")
@@ -54,4 +57,9 @@ public class Sprint3Controller {
         return orderUserRelService.listOrderUserRel(orderUserRelEntity);
     }
 
+    @Request(value = "/sp3/order/getOrderProductList")
+    @Editor(ResultEditor.class)
+    public ProductListDto getOrderProductList(String orderId) {
+        return orderService.getOrderProductList(orderId);
+    }
 }

@@ -1,8 +1,6 @@
-package com.booking.background.dto;
+package com.booking.common.dto;
 
 import com.booking.common.entity.OrderEntity;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 

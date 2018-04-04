@@ -22,7 +22,7 @@ public class FastJSONConvert extends JSONConvert {
     @Override
     public byte[] serialization(Object o) throws Exception {
 //        int features = SerializerFeature.config(JSON.DEFAULT_GENERATE_FEATURE, SerializerFeature.WriteEnumUsingToString, true);
-        return JSON.toJSONBytes(o,SerializerFeature.WriteMapNullValue,
+        return JSON.toJSONBytes(o,SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect,
                 SerializerFeature.WriteNullListAsEmpty,
                 SerializerFeature.WriteNullStringAsEmpty,
                 SerializerFeature.WriteNullNumberAsZero,

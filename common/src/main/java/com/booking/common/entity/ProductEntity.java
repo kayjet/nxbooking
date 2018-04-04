@@ -18,6 +18,7 @@ public class ProductEntity {
     private Timestamp updateTime;
     private Timestamp createTime;
     private Double price;
+    @Sort
     private String id;
     private String pic;
     private String detail;

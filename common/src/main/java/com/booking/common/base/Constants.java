@@ -16,6 +16,10 @@ public class Constants {
         public static final String PAID = "2";
         public static final String CANCELED = "3";
     }
+    public static class OrderType {
+        public static final String NOW = "1";
+        public static final String APPOINT = "2";
+    }
 
     public static class ProductSaleStatus {
         public static final Integer ON_SALE = 1;

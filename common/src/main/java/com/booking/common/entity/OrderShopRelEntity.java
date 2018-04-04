@@ -18,12 +18,26 @@ public class OrderShopRelEntity {
     private String shopId;
     private Timestamp updateTime;
     private String id;
+    @Sort(type = Sort.SortType.DESC)
     private Timestamp createTime;
     private String orderId;
     @Collection(mapper = OrderMapper.class,select = "selectList",values = {
             @Value(key = "id",value = "orderId")
     })
     private List<OrderEntity> orderList;
+
+    @Collection(mapper = ShopEntity.class,select = "selectList",values = {
+            @Value(key = "id",value = "shopId")
+    })
+    private List<ShopEntity> shopList;
+
+    public List<ShopEntity> getShopList() {
+        return shopList;
+    }
+
+    public void setShopList(List<ShopEntity> shopList) {
+        this.shopList = shopList;
+    }
 
     public String getShopId() {
         return shopId;
