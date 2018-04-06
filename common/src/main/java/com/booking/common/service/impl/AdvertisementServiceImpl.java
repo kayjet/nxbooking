@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,12 +59,18 @@ public class AdvertisementServiceImpl implements IAdvertisementService {
     public AdvertisementEntity getAdvertisement(String id) {
         AdvertisementEntity advertisementEntity = new AdvertisementEntity();
         advertisementEntity.setId(id);
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        advertisementEntity.setCreateTime(ts);
+        advertisementEntity.setUpdateTime(ts);
         return advertisementMapper.selectOne(advertisementEntity);
     }
 
     @Override
     public int addAdvertisement(AdvertisementEntity advertisementEntity) {
         advertisementEntity.setId(UUID.randomUUID().toString());
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        advertisementEntity.setCreateTime(ts);
+        advertisementEntity.setUpdateTime(ts);
         return advertisementMapper.insert(advertisementEntity);
     }
 
@@ -109,6 +116,7 @@ public class AdvertisementServiceImpl implements IAdvertisementService {
 
     @Override
     public int update(AdvertisementEntity advertisementEntity, AdvertisementEntity where) {
+        advertisementEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return advertisementMapper.update(advertisementEntity, where);
     }
 }

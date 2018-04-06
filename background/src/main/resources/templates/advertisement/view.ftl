@@ -1,17 +1,12 @@
 <#include "../header.ftl"/>
 </head>
-
 <body>
-
 <div id="app"></div>
-
 <template id="myComponent">
     <el-container style="height: 100%; border: 1px solid #eee">
     <#include "../leftbar.ftl"/>
-
         <el-container>
         <#include "../nav.ftl"/>
-
             <el-main>
                 <el-row>
                     <el-col :span="24">
@@ -22,9 +17,9 @@
                                         <el-input v-model="search.id"
                                                   placeholder="id"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="标签名称">
-                                        <el-input v-model="search.title"
-                                                  placeholder="title"></el-input>
+                                    <el-form-item label="详情">
+                                        <el-input v-model="search.detail"
+                                                  placeholder="detail"></el-input>
                                     </el-form-item>
                                     <br/>
                                     <el-form-item label="创建时间">
@@ -62,8 +57,6 @@
                             <el-button type="primary" icon="el-icon-plus" @click="onInsert">新增</el-button>
                             <el-button type="primary" icon="el-icon-edit" @click="onUpdate">编辑</el-button>
                             <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
-                            <#--<el-button type="primary">上传<i class="el-icon-upload el-icon--right"></i></el-button>-->
-                            <#--<el-button type="primary">下载excel<i class="el-icon-download el-icon--right"></i></el-button>-->
                         </div>
                     </el-col>
                 </el-row>
@@ -74,19 +67,19 @@
                                     type="selection"
                                     width="55">
                             </el-table-column>
+
                             <el-table-column label="id" index="1">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="封面图" index="2">
-                               <#-- <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.pic }}</span>
-                                </template>-->
-                                <template slot-scope="scope" >
+
+                            <el-table-column label="图片" index="2">
+                                <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
-                                            <img :src="scope.row.pic | avatar" width="240" height="240" alt="" style="border-radius: 14px;">
+                                            <img :src="scope.row.pic | avatar" width="240" height="240" alt=""
+                                                 style="border-radius: 14px;">
                                         </div>
                                         <div slot="reference" class="name-wrapper">
                                             <el-tag size="medium" v-if="scope.row.pic">查看</el-tag>
@@ -94,44 +87,19 @@
                                     </el-popover>
                                 </template>
                             </el-table-column>
-
-                            <el-table-column label="标签名称" index="4">
+                            <el-table-column label="详情" index="3">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.title }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.detail }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="备注" index="6">
+                            <el-table-column label="创建日期" index="4">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.remark }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.createTime }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="所属门店" index="5">
-                                <template slot-scope="scope" >
-                                    <el-popover trigger="hover" placement="top">
-                                        <div>
-                                            <ul>
-                                                <li v-for="item in scope.row.shopTagRelList " style="margin:4px;">
-                                                    门店：{{item.shopName}}；
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        <div slot="reference" class="name-wrapper"  v-if="scope.row.shopTagRelList.length > 0">
-                                            <el-tag size="medium" >查看</el-tag>
-                                        </div>
-                                    </el-popover>
-                                </template>
-                               <#-- <template slot-scope="scope">
-                                    <span style="margin-left: 10px" v-if="scope.row.shopTagRelList.length > 0">{{  scope.row.shopTagRelList[0].shopName}}</span>
-                                </template>-->
-                            </el-table-column>
-                            <el-table-column label="创建时间" index="3">
+                            <el-table-column label="修改日期" index="0">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.createTime | formatDate}}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="修改时间" index="0">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.updateTime }}</span>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -159,24 +127,12 @@
                 width="60%"
                 center>
             <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="封面图">
-                    <#--<el-input v-model="form.pic">{{form.pic}}</el-input>-->
+                <el-form-item label="图片">
+                  <#--  <el-input v-model="form.pic">{{form.pic}}</el-input>-->
                     <#include "../upload.ftl"/>
                 </el-form-item>
-                <el-form-item label="标签名称">
-                    <el-input v-model="form.title">{{form.title}}</el-input>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remark">{{form.remark}}</el-input>
-                </el-form-item>
-                <el-form-item label="所属门店">
-                    <template>
-                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-                        <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedTag">
-                            <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.name}}</el-checkbox>
-                        </el-checkbox-group>
-                    </template>
+                <el-form-item label="详情">
+                    <el-input v-model="form.detail">{{form.detail}}</el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('insert')">立即创建</el-button>
@@ -194,29 +150,12 @@
                 <el-form-item label="id">
                     <el-input v-model="form.id" disabled="true">{{form.id}}</el-input>
                 </el-form-item>
-                <el-form-item label="封面图">
-                <#--<el-input v-model="form.pic">{{form.pic}}</el-input>-->
-                    <div>原图</div>
-                    <div>
-                        <img :src="form.pic | avatar" width="100%" alt="">
-                    </div>
+                <el-form-item label="图片">
+                <#--  <el-input v-model="form.pic">{{form.pic}}</el-input>-->
                     <#include "../upload.ftl"/>
                 </el-form-item>
-
-                <el-form-item label="标签名称">
-                    <el-input v-model="form.title">{{form.title}}</el-input>
-                </el-form-item>
-                <el-form-item label="备注">
-                    <el-input v-model="form.remark">{{form.remark}}</el-input>
-                </el-form-item>
-                <el-form-item label="所属门店">
-                    <template>
-                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
-                        <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedTag">
-                            <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.name}}</el-checkbox>
-                        </el-checkbox-group>
-                    </template>
+                <el-form-item label="详情">
+                    <el-input v-model="form.detail">{{form.detail}}</el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
@@ -233,7 +172,7 @@
     window.vm;
     window.service = {
         add: function (form) {
-            return axios.post(window.ctxPath + '/tag/add', form);
+            return axios.post(window.ctxPath + '/advertisement/add', form);
         },
         listPage: function (pageNo, pageSize, like) {
             var paramString = "";
@@ -244,22 +183,19 @@
                     }
                 }
             }
-            return axios.get(window.ctxPath + '/tag/listPage?pageNo=' + pageNo + "&pageSize=" + pageSize + paramString);
+            return axios.get(window.ctxPath + '/advertisement/listPage?pageNo=' + pageNo + "&pageSize=" + pageSize + paramString);
         },
         update: function (form) {
-            return axios.post(window.ctxPath + '/tag/update', form);
+            return axios.post(window.ctxPath + '/advertisement/update', form);
         },
         delete: function (id) {
-            return axios.post(window.ctxPath + '/tag/remove?id=' + id);
+            return axios.post(window.ctxPath + '/advertisement/remove?id=' + id);
         },
         deleteList: function (ids) {
-            return axios.post(window.ctxPath + '/tag/removeList', ids);
+            return axios.post(window.ctxPath + '/advertisement/removeList', ids);
         },
         goTo: function (model) {
             window.location.href = window.ctxPath + "/" + model + "/view?";
-        },
-        listAllShop: function () {
-            return axios.post(window.ctxPath + '/shop/list');
         }
     };
     window.onload = function () {
@@ -278,16 +214,11 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     },
-                    fileList2:[],
-                    disabledUpload:false,
                     search: {},
                     totalPage: 0,
                     currentPage: 1,
-                    checkedTag: [],
-                    tags:  [],
-                    requestAddShopList:[],
-                    isIndeterminate: true,
-                    checkAll:false
+                    fileList2:[],
+                    disabledUpload: false,
                 }
             },
             created() {
@@ -297,9 +228,6 @@
                     that.currentPage = response.data.pageNo;
                     that.totalPage = response.data.countSize;
                 });
-                window.service.listAllShop().then(function (response) {
-                    that.tags = response.data.data;
-                })
             },
             mounted() {
                 const that = this;
@@ -380,30 +308,6 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
-                handleCheckAllChange(val) {
-                    this.checkedTag = val ? this.tags : [];
-                    this.isIndeterminate = false;
-                },
-                handleCheckedTag(value) {
-                    console.log(value);
-                    this.form.requestAddShopList = value;
-                    let checkedCount = value.length;
-                    this.checkAll = checkedCount === this.tags.length;
-                    this.isIndeterminate = checkedCount > 0 && checkedCount < this.tags.length;
-                },
-                uploadSuccess(response, file, fileList){
-                    console.log(response,file,fileList);
-                    console.log(111);
-                    console.log(this.fileList2.length);
-                    this.form.pic = response.data;
-                    this.disabledUpload = true;
-                },
-                handleRemove(file, fileList) {
-                    console.log(file, fileList);
-                },
-                handlePreview(file) {
-                    console.log(file);
-                },
                 handleSizeChange(val) {
                     console.log('每页 ' + val + ' 条');
                 },
@@ -415,6 +319,18 @@
                         that.currentPage = response.data.pageNo;
                         that.totalPage = response.data.countSize;
                     });
+                },
+                uploadSuccess(response, file, fileList) {
+                    console.log(response, file, fileList);
+                    console.log(this.fileList2.length);
+                    this.form.pic = response.data;
+                    this.disabledUpload = true;
+                },
+                handleRemove(file, fileList) {
+                    console.log(file, fileList);
+                },
+                handlePreview(file) {
+                    console.log(file);
                 },
             }
         })

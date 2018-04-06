@@ -29,7 +29,7 @@ public class NetTool {
         return null;
     }
 
-    public static byte[] POST(String url, String params) {
+    public static byte[] POST_JSON(String url, String params) {
         //写
         OutputStream out = null;
         //		InputStream in = null;   //读
@@ -43,6 +43,40 @@ public class NetTool {
             urlConnection.setDoOutput(true);
             out = urlConnection.getOutputStream();
             out.write(params.getBytes());
+            out.flush();
+            if (urlConnection.getResponseCode() == 200) {
+                byte[] bytes = NetTool.read(urlConnection.getInputStream());
+                urlConnection.disconnect();
+                return bytes;
+            }
+        } catch (Exception e) {
+
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public static byte[] POST_XML(String url, String params) {
+        //写
+        OutputStream out = null;
+        //		InputStream in = null;   //读
+        try {
+            URL requestUrl = new URL(url);
+            HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setConnectTimeout(45 * 1000);
+            //一定要设置 Content-Type 要不然服务端接收不到参数
+            urlConnection.setRequestProperty("Content-Type", "text/xml");
+            urlConnection.setDoOutput(true);
+            out = urlConnection.getOutputStream();
+            out.write(params.getBytes("UTF-8"));
             out.flush();
             if (urlConnection.getResponseCode() == 200) {
                 byte[] bytes = NetTool.read(urlConnection.getInputStream());

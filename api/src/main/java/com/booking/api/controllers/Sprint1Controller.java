@@ -14,6 +14,7 @@ import com.booking.common.service.impl.WeChatService;
 import com.opdar.platform.annotations.Editor;
 import com.opdar.platform.annotations.ErrorHandler;
 import com.opdar.platform.annotations.Request;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,10 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -51,6 +55,9 @@ public class Sprint1Controller {
     @Autowired
     ICacheManager cacheManager;
 
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat yyyyMMddHHmm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     @Request(value = "/sp1/shop/listPage")
     @Editor(ResultEditor.class)
     public Page<List<ShopEntity>> listPage(String lat, String lng, String name, Integer pageNo, Integer pageSize) {
@@ -63,7 +70,35 @@ public class Sprint1Controller {
             searchEntity.setName(name);
         }
         pageSize = 1000;
-        return shopService.listShopPage(searchEntity, pageNo, pageSize);
+        Page<List<ShopEntity>> ret = shopService.listShopPage(searchEntity, pageNo, pageSize);
+        if (!CollectionUtils.isEmpty(ret.getResult())) {
+            checkShopOpen(ret.getResult());
+        }
+        return ret;
+    }
+
+    private void checkShopOpen(List<ShopEntity> shopEntities) {
+        for (ShopEntity shopEntity : shopEntities) {
+            if (!StringUtils.isEmpty(shopEntity.getOpenTime()) && !StringUtils.isEmpty(shopEntity.getCloseTime())) {
+                Date now = new DateTime().toDate();
+                String today = simpleDateFormat.format(now);
+                String openTime = today + " " + shopEntity.getOpenTime().trim() + ":00";
+                String closeTime = today + " " + shopEntity.getCloseTime().trim() + ":00";
+                try {
+                    Date openDate = yyyyMMddHHmm.parse(openTime);
+                    Date closeDate = yyyyMMddHHmm.parse(closeTime);
+                    if (now.before(openDate)) {
+                        shopEntity.setOpen(false);
+                    } else if (now.after(openDate) && now.before(closeDate)) {
+                        shopEntity.setOpen(true);
+                    } else if (now.after(closeDate)) {
+                        shopEntity.setOpen(false);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Request(value = "/sp1/user/addFavShop")
@@ -97,6 +132,9 @@ public class Sprint1Controller {
         for (UserFavShopRelEntity ret : result) {
             shopList.addAll(ret.getShopList());
         }
+        if (!CollectionUtils.isEmpty(shopList)) {
+            checkShopOpen(shopList);
+        }
         return shopList;
     }
 
@@ -110,7 +148,11 @@ public class Sprint1Controller {
         } else {
             result = weChatService.getUserOpenId(jsCode);
             if (result != null) {
-                cacheManager.set(jsCode, result, result.getExpires_in());
+                if (result.getExpires_in() == null) {
+                    cacheManager.set(jsCode, result, 5 * 60 * 1000);
+                } else {
+                    cacheManager.set(jsCode, result, result.getExpires_in());
+                }
             }
         }
         UserEntity query = new UserEntity();
@@ -128,5 +170,17 @@ public class Sprint1Controller {
         userEntity.setOpenid(query.getOpenid());
         userService.addUser(userEntity);
         return userEntity;
+    }
+
+    public static void main(String[] args) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat yyyyMMddHHmm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String today = simpleDateFormat.format(new DateTime().toDate());
+        System.out.println(today);
+        Date openDate = yyyyMMddHHmm.parse(today + " 10:00:00");
+        Date closeDate = yyyyMMddHHmm.parse(today + " 22:00:00");
+        System.out.println(openDate);
+        System.out.println(closeDate);
+
     }
 }

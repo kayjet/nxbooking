@@ -44,6 +44,9 @@ public class WebsocketController implements WebSocketHandler, Runnable, Applicat
 
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
 
+    private static final ConcurrentMap<String, ConcurrentLinkedQueue>
+            LINKED_QUEUE_CONCURRENT_MAP = new ConcurrentHashMap<String, ConcurrentLinkedQueue>();
+
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {

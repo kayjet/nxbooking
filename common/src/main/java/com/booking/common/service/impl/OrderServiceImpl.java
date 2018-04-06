@@ -6,6 +6,7 @@ import com.booking.common.dto.ProductListDto;
 import com.booking.common.entity.*;
 import com.booking.common.mapper.*;
 import com.booking.common.service.IOrderService;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,11 +142,11 @@ public class OrderServiceImpl implements IOrderService {
         orderEntity.setOrderNo(orderNo);
         orderEntity.setOrderStatus(Constants.OrderStatus.WAITING_PAY);
         orderEntity.setOrderType(orderType);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        if (orderType.equals(Constants.OrderType.NOW)) {
-//            Date date = new Date(System.currentTimeMillis() + 60 * 1000 * 5);
-//            orderTime = dateFormat.format(date);
-//        }
+       /* SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (orderType.equals(Constants.OrderType.NOW)) {
+            DateTime date = new DateTime();
+            orderTime = dateFormat.format(date.plusMinutes(5).toDate());
+        }*/
         orderEntity.setOrderTime(orderTime);
         orderEntity.setConcatPhone(concatPhone);
         orderEntity.setTotalPriceFromWeb(Double.valueOf(totalPrice));

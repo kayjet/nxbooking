@@ -24,6 +24,8 @@ public class OrderEntity {
     private Timestamp createTime;
     private Timestamp updateTime;
 
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private Integer hasBeenHandle;
 
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
@@ -53,6 +55,14 @@ public class OrderEntity {
             select = true)
     private String shopId;
 
+
+    public Integer getHasBeenHandle() {
+        return hasBeenHandle;
+    }
+
+    public void setHasBeenHandle(Integer hasBeenHandle) {
+        this.hasBeenHandle = hasBeenHandle;
+    }
 
     public Timestamp getCreateTimeStart() {
         return createTimeStart;

@@ -44,6 +44,13 @@ public class UserEntity  {
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private String updateTimeSearch;
 
+    public UserEntity() {
+    }
+
+    public UserEntity(String id) {
+        this.id = id;
+    }
+
     public Integer getGender() {
         return gender;
     }

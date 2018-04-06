@@ -28,6 +28,8 @@ public class ShopEntity {
 
     @Field(insert = false, update = false, delete = false)
     private Double distance;
+    @Field(insert = false, update = false, delete = false,select = false)
+    private Boolean open = true;
 
     @Field(resultmap = false, insert = false, update = false, delete = false)
     @Where(value = " and create_time >= {}", plain = false)
@@ -49,6 +51,14 @@ public class ShopEntity {
 
     @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String updateTimeSearch;
+
+    public Boolean getOpen() {
+        return open;
+    }
+
+    public void setOpen(Boolean open) {
+        this.open = open;
+    }
 
     public String getOpenTime() {
         return openTime;
