@@ -1,8 +1,10 @@
 package com.booking.background.websocket;
 
+import com.booking.background.service.ConsumerService;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.ShopEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.mq.QueueMessageListener;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IOrderService;
@@ -19,8 +21,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.socket.*;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.*;
@@ -31,7 +38,7 @@ import java.util.concurrent.*;
  * @author kai.liu
  * @date 2017/12/29
  */
-public class WebsocketController implements WebSocketHandler, Runnable, ApplicationListener {
+public class WebsocketController implements WebSocketHandler, MessageListener {
     private static final Logger logger = LoggerFactory.getLogger(WebsocketController.class);
 
     @Autowired
@@ -40,7 +47,9 @@ public class WebsocketController implements WebSocketHandler, Runnable, Applicat
     @Autowired
     IOrderShopRelService orderShopRelService;
 
-    private static final Executor executor = Executors.newCachedThreadPool();
+    @Autowired
+    ConsumerService consumerService;
+
 
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
 
@@ -82,22 +91,22 @@ public class WebsocketController implements WebSocketHandler, Runnable, Applicat
         return false;
     }
 
-    @Override
-    public void run() {
-        while (true){
-            try {
-                for(WebSocketSession webSocketSession : WEB_SOCKET_SESSION_CONCURRENT_MAP.values()){
-                    webSocketSession.sendMessage(new TextMessage("定时任务"));
-                }
-                Thread.sleep(2000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {
-        executor.execute(this);
+    public void onMessage(Message message) {
+
+        try {
+            javax.jms.TextMessage tm = (javax.jms.TextMessage) message;
+            for (WebSocketSession webSocketSession : WEB_SOCKET_SESSION_CONCURRENT_MAP.values()) {
+                try {
+                    System.out.println("QueueMessageListener监听到了文本消息：\t" + tm.getText());
+                    webSocketSession.sendMessage(new TextMessage("QueueMessageListener监听到了文本消息：\t" + tm.getText()));
+                } catch (JMSException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

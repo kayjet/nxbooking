@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.booking.common.dto.WechatPayResultDto;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.OrderWechatEntity;
+import com.booking.common.entity.WechatPayCallbackEntity;
 import com.booking.common.mapper.OrderWechatMapper;
+import com.booking.common.mapper.WechatPayCallbackMapper;
 import com.booking.common.utils.NetTool;
 import com.booking.common.utils.WxPayUtil;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -15,8 +17,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.UUID;
 
 /**
  * WeChateService
@@ -38,6 +42,9 @@ public class WeChatService {
 
     @Autowired
     private OrderWechatMapper orderWechatMapper;
+
+    @Autowired
+    private WechatPayCallbackMapper wechatPayCallbackMapper;
 
     public static class OpenidResult {
         private String session_key;
@@ -83,7 +90,7 @@ public class WeChatService {
         return result;
     }
 
-    public String createSmallAppPaySign(String prepay_id,long currentTimeMillis,String nonceStr) {
+    public String createSmallAppPaySign(String prepay_id, long currentTimeMillis, String nonceStr) {
         SortedMap<String, String> map = new TreeMap<String, String>();
         map.put("appId", APP_ID);
         map.put("timeStamp", currentTimeMillis + "");
@@ -100,11 +107,10 @@ public class WeChatService {
         map.put("mch_id", MCH_ID);
         map.put("nonce_str", WxPayUtil.createNoncestr());
         try {
-            map.put("body", new String("暖系-咖啡".getBytes("UTF-8"),"UTF-8"));
+            map.put("body", new String("暖系-咖啡".getBytes("UTF-8"), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-//        map.put("out_trade_no", "WX1522920724457");
         map.put("out_trade_no", result.getOrderNo());
         map.put("fee_type", "CNY");
         //分
@@ -113,9 +119,8 @@ public class WeChatService {
         map.put("spbill_create_ip", ip);
 //        map.put("time_start", "20091225091010");
 //        map.put("time_expire", "20091227091010");
-        map.put("notify_url", "20091227091010");
+        map.put("notify_url", "https://www.opdar.com/booking/api/sp3/order/payCallback");
         map.put("trade_type", "JSAPI");
-//        map.put("openid", "oCY6t4sqINgYL2JZ_VrRw-AwJzgU");
         map.put("openid", openId);
         String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
         map.put("sign", sign);
@@ -124,32 +129,23 @@ public class WeChatService {
         XmlMapper mapper = new XmlMapper();
         WechatPayResultDto wechatPayResultDto = null;
         try {
-            wechatPayResultDto = mapper.readValue(new String(ret, "UTF-8"), WechatPayResultDto.class);
+            String prepareSmallAppOrder = new String(ret, "UTF-8");
+            System.out.println("--------- prepareSmallAppOrder ------------------------");
+            System.out.println(prepareSmallAppOrder);
+            System.out.println("--------- prepareSmallAppOrder ------------------------");
+            wechatPayResultDto = mapper.readValue(prepareSmallAppOrder, WechatPayResultDto.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return wechatPayResultDto;
     }
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        SortedMap<String, String> map = new TreeMap<String, String>();
-        map.put("appid", APP_ID);
-        map.put("mch_id", MCH_ID);
-        map.put("nonce_str", WxPayUtil.createNoncestr());
-        map.put("body", "暖系-咖啡");
-//        map.put("out_trade_no", "WX1522920724457");
-        map.put("out_trade_no","1");
-        map.put("fee_type", "CNY");
-        //分
-        map.put("total_fee", String.valueOf(1));
-        map.put("spbill_create_ip", "1");
-//        map.put("time_start", "20091225091010");
-//        map.put("time_expire", "20091227091010");
-        map.put("notify_url", "20091227091010");
-        map.put("trade_type", "JSAPI");
-//        map.put("openid", "oCY6t4sqINgYL2JZ_VrRw-AwJzgU");
-        map.put("openid", "1");
-        OrderWechatEntity ret =  JSON.parseObject(JSON.toJSONString(map), OrderWechatEntity.class);
+    public void savePayCallbackResult(WechatPayCallbackEntity wechatPayCallbackEntity) {
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        wechatPayCallbackEntity.setCreateTime(ts);
+        wechatPayCallbackEntity.setUpdateTime(ts);
+        wechatPayCallbackEntity.setId(UUID.randomUUID().toString());
+        wechatPayCallbackMapper.insert(wechatPayCallbackEntity);
     }
 
 }

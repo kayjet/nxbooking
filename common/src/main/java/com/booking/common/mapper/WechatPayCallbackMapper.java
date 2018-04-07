@@ -1,6 +1,7 @@
 package com.booking.common.mapper;
 
 import com.booking.common.entity.OrderEntity;
+import com.booking.common.entity.WechatPayCallbackEntity;
 import com.opdar.plugins.mybatis.core.IBaseMapper;
 
 /**
@@ -9,6 +10,5 @@ import com.opdar.plugins.mybatis.core.IBaseMapper;
 * @author kai.liu
 * @date 2017/12/28
 */
-public interface OrderMapper extends IBaseMapper<OrderEntity> {
-    int updatePayStatusWithLock(OrderEntity order);
+public interface WechatPayCallbackMapper extends IBaseMapper<WechatPayCallbackEntity> {
 }

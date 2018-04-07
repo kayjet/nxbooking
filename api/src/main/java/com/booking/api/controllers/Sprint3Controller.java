@@ -1,28 +1,31 @@
 package com.booking.api.controllers;
 
+import com.alibaba.fastjson.JSONObject;
+import com.booking.api.service.MakeOrderCacadeService;
+import com.booking.api.service.ProducerService;
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;
-import com.booking.common.dto.MakeOrderDto;
-import com.booking.common.dto.ProductDto;
-import com.booking.common.dto.ProductListDto;
-import com.booking.common.dto.WechatPayResultDto;
+import com.booking.common.dto.*;
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeException;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.*;
 import com.booking.common.service.impl.WeChatService;
+import com.booking.common.utils.NetTool;
 import com.booking.common.utils.WxPayUtil;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.opdar.platform.annotations.Editor;
 import com.opdar.platform.annotations.ErrorHandler;
 import com.opdar.platform.annotations.JSON;
 import com.opdar.platform.annotations.Request;
+import com.opdar.platform.core.base.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -54,31 +57,18 @@ public class Sprint3Controller {
     @Autowired
     IUserService userService;
 
+    @Autowired
+    MakeOrderCacadeService makeOrderCacadeService;
+
+    @Autowired
+    ProducerService producerService;
+
     @Request(value = "/sp3/order/makeOrder")
     @Editor(ResultEditor.class)
-//    @Transactional(rollbackFor = Throwable.class)
     public MakeOrderDto makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                   String orderTime, @JSON List<List<ProductEntity>> products) {
-        MakeOrderDto makeOrderDto = new MakeOrderDto();
-        OrderEntity result = orderService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType, orderTime, products);
-        UserEntity user = userService.listUser(new UserEntity(userId)).get(0);
-        String ip = "123.206.217.60";
-        String openId = user.getOpenid();
-        WechatPayResultDto wechatPayResultDto = weChatService.prepareSmallAppOrder(result, ip, openId);
-        if (wechatPayResultDto.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)
-                && wechatPayResultDto.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {
-            String nonceStr = WxPayUtil.createNoncestr();
-            long currentTimeMillis = System.currentTimeMillis();
-            String paySign = weChatService.createSmallAppPaySign(wechatPayResultDto.getPrepay_id(), currentTimeMillis, nonceStr);
-            makeOrderDto.setOrderEntity(result);
-            makeOrderDto.setPaySign(paySign);
-            makeOrderDto.setTimeStamp(currentTimeMillis + "");
-            makeOrderDto.setNonceStr(nonceStr);
-            makeOrderDto.setPrepay_id("prepay_id=" + wechatPayResultDto.getPrepay_id());
-            return makeOrderDto;
-        } else {
-            throw new ErrCodeException(1, "创建订单失败");
-        }
+        return makeOrderCacadeService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType,
+                orderTime, products);
     }
 
     @Request(value = "/sp3/order/getOrder")
@@ -100,5 +90,28 @@ public class Sprint3Controller {
     @Editor(ResultEditor.class)
     public List<AdvertisementEntity> getAdvertisementList() {
         return advertisementService.listAll();
+    }
+
+
+    @Request(value = "/sp3/order/payCallback", format = Request.Format.XML)
+    public String payCallback() {
+        try {
+            String xml = new String(NetTool.read(Context.getRequest().getInputStream()), "UTF-8");
+            System.out.println("--------------------- wx callback -----------------");
+            System.out.println(xml);
+            System.out.println("-------------------- wx callback -----------------");
+            XmlMapper mapper = new XmlMapper();
+            WechatPayCallbackEntity wechatPayCallbackEntity = mapper.readValue(xml, WechatPayCallbackEntity.class);
+            if (wechatPayCallbackEntity.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {
+                String orderNo = wechatPayCallbackEntity.getOut_trade_no();
+                String transaction_id = wechatPayCallbackEntity.getTransaction_id();
+                orderService.updatePayStatus(orderNo, transaction_id);
+                weChatService.savePayCallbackResult(wechatPayCallbackEntity);
+                producerService.sendMessage(JSONObject.toJSONString(wechatPayCallbackEntity));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return WxPayUtil.setXML("SUCCESS", "OK");
     }
 }

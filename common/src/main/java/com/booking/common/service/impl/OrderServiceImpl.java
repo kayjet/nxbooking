@@ -194,11 +194,23 @@ public class OrderServiceImpl implements IOrderService {
         ret.addAll(map.values());
         productListDto.setProductDtos(ret);
         int size = 0;
-        for (ProductDto dto : ret){
+        for (ProductDto dto : ret) {
             size += dto.getSum();
         }
         productListDto.setSum(size);
         return productListDto;
+    }
+
+    @Override
+    public void updatePayStatus(String orderNo, String transactionId) {
+        OrderEntity orderEntity = new OrderEntity();
+        orderEntity.setOrderNo(orderNo);
+        OrderEntity ret = orderMapper.selectOne(orderEntity);
+        if (ret != null && ret.getOrderStatus().equals(Constants.OrderStatus.WAITING_PAY)) {
+            ret.setOrderStatus(Constants.OrderStatus.PAID);
+            ret.setTransactionId(transactionId);
+            orderMapper.updatePayStatusWithLock(ret);
+        }
     }
 
     private void insertOrderUserRel(String userId, String orderId) {

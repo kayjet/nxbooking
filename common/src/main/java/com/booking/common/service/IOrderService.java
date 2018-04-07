@@ -40,8 +40,10 @@ public interface IOrderService {
 
     int update(OrderEntity orderEntity, OrderEntity where);
 
-    OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice,String orderType,
-                          String orderTime,List<List<ProductEntity>> products);
+    OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
+                          String orderTime, List<List<ProductEntity>> products);
 
     ProductListDto getOrderProductList(String orderId);
+
+    void updatePayStatus(String orderNo, String transactionId);
 }

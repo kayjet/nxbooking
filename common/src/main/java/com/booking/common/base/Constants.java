@@ -16,6 +16,17 @@ public class Constants {
         public static final String PAID = "2";
         public static final String CANCELED = "3";
     }
+
+    public static class OrderPushStatus {
+        public static final Integer NOT_PUSH = 1;
+        public static final Integer PUSHED = 2;
+    }
+
+    public static class OrderPushHandlerStatus {
+        public static final Integer NOT_HANDLERED = 1;
+        public static final Integer HANDLERED = 2;
+    }
+
     public static class OrderType {
         public static final String NOW = "1";
         public static final String APPOINT = "2";

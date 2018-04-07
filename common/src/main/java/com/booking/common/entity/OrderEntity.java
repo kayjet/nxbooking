@@ -21,31 +21,35 @@ public class OrderEntity {
     private String orderTime;
     private String orderType;
     private String concatPhone;
+    private String transactionId;
+    private Integer lockVersion;
     private Timestamp createTime;
     private Timestamp updateTime;
+    private Integer isPushed;
+    private Integer isHandler;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private Integer hasBeenHandle;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time >= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time >= {}", plain = false)
     private Timestamp createTimeStart;
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time <= {}", plain = false)
     private Timestamp createTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time >= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time >= {}", plain = false)
     private Timestamp updateTimeStart;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time <= {}", plain = false)
     private Timestamp updateTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String createTimeSearch;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String updateTimeSearch;
 
     @Field(resultmap = false,
@@ -55,9 +59,40 @@ public class OrderEntity {
             select = true)
     private String shopId;
 
+    public Integer getIsPushed() {
+        return isPushed;
+    }
+
+    public void setIsPushed(Integer isPushed) {
+        this.isPushed = isPushed;
+    }
+
+    public Integer getIsHandler() {
+        return isHandler;
+    }
+
+    public void setIsHandler(Integer isHandler) {
+        this.isHandler = isHandler;
+    }
+
+    public Integer getLockVersion() {
+        return lockVersion;
+    }
+
+    public void setLockVersion(Integer lockVersion) {
+        this.lockVersion = lockVersion;
+    }
 
     public Integer getHasBeenHandle() {
         return hasBeenHandle;
+    }
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
     }
 
     public void setHasBeenHandle(Integer hasBeenHandle) {

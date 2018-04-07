@@ -90,5 +90,6 @@
     </bean>
 
     <bean class="com.booking.common.base.FastJSONConvert"/>
+    <import resource="active-mq.xml"/>
 
 </beans>
