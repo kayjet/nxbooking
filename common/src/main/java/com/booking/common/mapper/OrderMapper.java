@@ -11,4 +11,6 @@ import com.opdar.plugins.mybatis.core.IBaseMapper;
 */
 public interface OrderMapper extends IBaseMapper<OrderEntity> {
     int updatePayStatusWithLock(OrderEntity order);
+
+    int updatePushStatusWithLock(OrderEntity order);
 }

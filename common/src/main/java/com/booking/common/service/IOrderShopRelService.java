@@ -16,9 +16,9 @@ public interface IOrderShopRelService {
 
     List<OrderShopRelEntity> listAll();
 
-    List<OrderShopRelEntity> listOrderShopId(OrderShopRelEntity orderShopId);
+    List<OrderShopRelEntity> listOrderShopRel(OrderShopRelEntity orderShopId);
 
-    Page<List<OrderShopRelEntity>> listOrderShopIdPage(OrderShopRelEntity orderShopId, Integer pageNo, Integer pageSize);
+    Page<List<OrderShopRelEntity>> listOrderShopRelPage(OrderShopRelEntity orderShopId, Integer pageNo, Integer pageSize);
 
     OrderShopRelEntity getOrderShopId(String id);
 

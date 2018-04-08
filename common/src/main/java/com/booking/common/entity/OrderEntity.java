@@ -235,5 +235,21 @@ public class OrderEntity {
         this.concatPhone = concatPhone;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        OrderEntity that = (OrderEntity) o;
+
+        if (!getId().equals(that.getId())) return false;
+        return getOrderNo().equals(that.getOrderNo());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getOrderNo().hashCode();
+        return result;
+    }
 }

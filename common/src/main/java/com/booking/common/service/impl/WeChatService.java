@@ -141,11 +141,15 @@ public class WeChatService {
     }
 
     public void savePayCallbackResult(WechatPayCallbackEntity wechatPayCallbackEntity) {
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        wechatPayCallbackEntity.setCreateTime(ts);
-        wechatPayCallbackEntity.setUpdateTime(ts);
-        wechatPayCallbackEntity.setId(UUID.randomUUID().toString());
-        wechatPayCallbackMapper.insert(wechatPayCallbackEntity);
+      try {
+          Timestamp ts = new Timestamp(System.currentTimeMillis());
+          wechatPayCallbackEntity.setCreateTime(ts);
+          wechatPayCallbackEntity.setUpdateTime(ts);
+          wechatPayCallbackEntity.setId(UUID.randomUUID().toString());
+          wechatPayCallbackMapper.insert(wechatPayCallbackEntity);
+      } catch (Exception e){
+          e.printStackTrace();
+      }
     }
 
 }

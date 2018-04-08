@@ -36,12 +36,12 @@ public class OrderShopRelServiceImpl implements IOrderShopRelService {
     }
 
     @Override
-    public List<OrderShopRelEntity> listOrderShopId(OrderShopRelEntity orderShopRelEntity) {
+    public List<OrderShopRelEntity> listOrderShopRel(OrderShopRelEntity orderShopRelEntity) {
         return orderShopRelMapper.selectList(orderShopRelEntity);
     }
 
     @Override
-    public Page<List<OrderShopRelEntity>> listOrderShopIdPage(OrderShopRelEntity orderShopRelEntity, Integer pageNo, Integer pageSize) {
+    public Page<List<OrderShopRelEntity>> listOrderShopRelPage(OrderShopRelEntity orderShopRelEntity, Integer pageNo, Integer pageSize) {
         if (pageNo == null) {
             pageNo = 1;
         }

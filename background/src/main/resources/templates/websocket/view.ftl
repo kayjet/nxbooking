@@ -19,15 +19,16 @@
                     <el-col :span="24">
                         <div>WebSocket Page</div>
                         <div id="message"></div>
-                        <div>
-                            <input id="text" />
-                            <button id="send" onclick="send()">发送</button>
-                        </div>
+                    <#--<div>-->
+                    <#--<input id="text" />-->
+                    <#--<button id="send" onclick="send()">发送</button>-->
+                    <#--</div>-->
 
 
                     </el-col>
                 </el-row>
                 <el-row style="margin-top: 14px;">
+                    <div>等待制作的订单</div>
                     <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
                             <el-table-column
@@ -144,61 +145,103 @@
                     totalPage: 0,
                     currentPage: 1,
                     selectedShop: null,
-                    websocket:null
+                    websocket: null,
+                    heartbeatTimeout: 3000,
+                    timer: null,
+                    reconnectTimer: null
                 }
             },
+
             created() {
                 const that = this;
-                that.websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws");
-//                that.websocket = new WebSocket("ws://www.opdar.com/booking/background/springws/websocket.ws");
-                var websocket = that.websocket;
+                that.createWs();
 
-                //连接发生错误的回调方法
-                websocket.onerror = function () {
-                    setMessageInnerHTML("WebSocket连接发生错误");
-                };
-
-                //连接成功建立的回调方法
-                websocket.onopen = function () {
-                    setMessageInnerHTML("WebSocket连接成功");
-                }
-
-                //接收到消息的回调方法
-                websocket.onmessage = function (event) {
-                    setMessageInnerHTML(event.data);
-                }
-
-                //连接关闭的回调方法
-                websocket.onclose = function () {
-                    setMessageInnerHTML("WebSocket连接关闭");
-                }
-
-                //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-                window.onbeforeunload = function () {
-                    closeWebSocket();
-                }
-
-                //将消息显示在网页上
-                function setMessageInnerHTML(innerHTML) {
-                    document.getElementById('message').innerHTML += innerHTML + '<br/>';
-                }
-
-                //关闭WebSocket连接
-                function closeWebSocket() {
-                    websocket.close();
-                }
-
-                //发送消息
-                function send() {
-                    var message = document.getElementById('text').value;
-                    console.log("msg",message);
-                    websocket.send(message);
-                }
             },
             mounted() {
                 const that = this;
             },
             methods: {
+                heartbeat() {
+                    const that = this;
+                    console.log("heatbeating...");
+                    that.timer = setTimeout(function () {
+                        try {
+                            that.websocket.send(JSON.stringify({
+                                code: 1
+                            }));
+                            that.timer = setTimeout(that.heartbeat(), that.heartbeatTimeout);
+                        } catch (e) {
+
+                        }
+                    }, that.heartbeatTimeout);
+
+                },
+                closeWebSocket() {
+                    const that = this;
+                    that.websocket.close();
+                },
+                initWs() {
+                    const that = this;
+                    var websocket = that.websocket;
+                    //连接发生错误的回调方法
+                    websocket.onerror = function (event) {
+//                        console.log("ws onerror",event);
+                        if(event.readyState == 0){
+                            return;
+                        }
+                        if (that.timer != null) {
+                            clearTimeout(that.timer);
+                            that.timer = null;
+                        }
+                    };
+                    //连接关闭的回调方法
+                    websocket.onclose = function (event) {
+//                        console.log("ws onclose",event);
+                        that.websocket = null;
+                        setTimeout(function () {
+                            that.createWs();
+                        },3000);
+                    };
+
+                    //连接成功建立的回调方法
+                    websocket.onopen = function (event) {
+//                        console.log("ws onopen",event);
+                        that.heartbeat();
+                    };
+
+                    //接收到消息的回调方法
+                    websocket.onmessage = function (event) {
+//                        console.log("ws onmessage", event);
+
+                        if (that.timer == null){
+                            that.heartbeat();
+                        }
+
+                        var hearbeatDto = JSON.parse(event.data);
+                        if (hearbeatDto.code == 1 && hearbeatDto.data != null) {
+                            that.tableData.push(hearbeatDto.data);
+                        }
+                    };
+
+
+                    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+                    window.onbeforeunload = function () {
+                        that.closeWebSocket();
+                    };
+                },
+                setMessageInnerHTML() {
+                    document.getElementById('message').innerHTML += innerHTML + '<br/>';
+
+                },
+                createWs() {
+                    const that = this;
+                    try {
+                        that.websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws");
+                    } catch (e){
+                    }
+//                that.websocket = new WebSocket("ws://www.opdar.com/booking/background/springws/websocket.ws");
+                    that.initWs();
+                },
                 onInsert() {
                     var that = this;
                     that.form = {};

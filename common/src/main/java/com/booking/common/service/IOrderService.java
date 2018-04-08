@@ -23,7 +23,6 @@ public interface IOrderService {
 
     Page<List<OrderEntity>> listOrderPage(OrderEntity order, Integer pageNo, Integer pageSize);
 
-
     OrderEntity getOrder(String id);
 
     int addOrder(OrderEntity orderEntity);

@@ -1,30 +1,27 @@
 package com.booking.background.websocket;
 
+import com.alibaba.fastjson.JSONObject;
 import com.booking.background.service.ConsumerService;
+import com.booking.common.base.Constants;
+import com.booking.common.dto.WsHeartBeatDto;
 import com.booking.common.entity.OrderEntity;
+import com.booking.common.entity.OrderShopRelEntity;
 import com.booking.common.entity.ShopEntity;
-import com.booking.common.exceptions.ErrCodeHandler;
-import com.booking.common.mq.QueueMessageListener;
-import com.booking.common.resp.Page;
-import com.booking.common.resp.ResultEditor;
+import com.booking.common.entity.WechatPayCallbackEntity;
+import com.booking.common.mapper.OrderMapper;
+import com.booking.common.mapper.OrderShopRelMapper;
 import com.booking.common.service.IOrderService;
 import com.booking.common.service.IOrderShopRelService;
 import com.booking.common.service.IShopService;
-import com.opdar.platform.annotations.Editor;
-import com.opdar.platform.annotations.ErrorHandler;
-import com.opdar.platform.annotations.JSON;
-import com.opdar.platform.annotations.Request;
-import com.opdar.platform.core.base.Context;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Controller;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.*;
 
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -38,7 +35,7 @@ import java.util.concurrent.*;
  * @author kai.liu
  * @date 2017/12/29
  */
-public class WebsocketController implements WebSocketHandler, MessageListener {
+public class WebsocketController implements WebSocketHandler, MessageListener, ApplicationListener<ContextRefreshedEvent> {
     private static final Logger logger = LoggerFactory.getLogger(WebsocketController.class);
 
     @Autowired
@@ -50,33 +47,55 @@ public class WebsocketController implements WebSocketHandler, MessageListener {
     @Autowired
     ConsumerService consumerService;
 
+    @Autowired
+    OrderMapper orderMapper;
+
+    @Autowired
+    IShopService shopService;
+
+    @Autowired
+    OrderShopRelMapper orderShopRelMapper;
+
+    private static final Integer WS_SUCCESS_CODE = 1;
+
 
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
 
-    private static final ConcurrentMap<String, ConcurrentLinkedQueue>
-            LINKED_QUEUE_CONCURRENT_MAP = new ConcurrentHashMap<String, ConcurrentLinkedQueue>();
+    private static final ConcurrentMap<String, ConcurrentLinkedQueue<OrderEntity>>
+            LINKED_QUEUE_CONCURRENT_MAP = new ConcurrentHashMap<String, ConcurrentLinkedQueue<OrderEntity>>();
 
 
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
         logger.info("connect to the websocket success......");
         WEB_SOCKET_SESSION_CONCURRENT_MAP.put(webSocketSession.getId(), webSocketSession);
-        webSocketSession.sendMessage(new TextMessage("ws session id = " + webSocketSession.getId()));
+        sendHeartBeat(webSocketSession);
+        webSocketSession.getHandshakeHeaders();
     }
 
     @Override
     public void handleMessage(WebSocketSession webSocketSession, WebSocketMessage<?> webSocketMessage) throws Exception {
-        TextMessage returnMessage = new TextMessage(webSocketMessage.getPayload()
-                + " received at server");
-        webSocketSession.sendMessage(new TextMessage("收到消息"));
-        webSocketSession.sendMessage(returnMessage);
+        logger.info("handleMessage......");
+        String data = String.valueOf(webSocketMessage.getPayload());
+        WsHeartBeatDto fromWeb = JSONObject.parseObject(data, WsHeartBeatDto.class);
+        if (fromWeb.getCode().equals(WS_SUCCESS_CODE)) {
+            sendHeartBeat(webSocketSession);
+        }
+    }
+
+    private void sendHeartBeat(WebSocketSession webSocketSession) throws IOException {
+        WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
+        fromEndPoint.setCode(WS_SUCCESS_CODE);
+        webSocketSession.sendMessage(new TextMessage(JSONObject.toJSONString(fromEndPoint)));
     }
 
     @Override
     public void handleTransportError(WebSocketSession webSocketSession, Throwable throwable) throws Exception {
         if (webSocketSession.isOpen()) {
             webSocketSession.close();
+            WEB_SOCKET_SESSION_CONCURRENT_MAP.remove(webSocketSession.getId());
         }
+        throwable.printStackTrace();
         logger.info("websocket connection closed......");
     }
 
@@ -92,21 +111,81 @@ public class WebsocketController implements WebSocketHandler, MessageListener {
     }
 
 
+    private void getAllShopNotHandledOrderList() {
+        if (isInited) {
+            return;
+        } else {
+            isInited = true;
+        }
+        List<ShopEntity> shops = shopService.listAll();
+        for (ShopEntity shop : shops) {
+            String shopId = shop.getId();
+            List<OrderEntity> orderList = orderShopRelMapper.selectOrderListPushedButNotHandled(shopId);
+            if (!CollectionUtils.isEmpty(orderList)) {
+                ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
+                concurrentLinkedQueue.addAll(orderList);
+                LINKED_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
+            }
+
+        }
+    }
+
     @Override
     public void onMessage(Message message) {
+        javax.jms.TextMessage tm = (javax.jms.TextMessage) message;
+        for (WebSocketSession webSocketSession : WEB_SOCKET_SESSION_CONCURRENT_MAP.values()) {
+            String txtMsg = null;
+            try {
+                txtMsg = tm.getText();
+            } catch (JMSException e) {
+                e.printStackTrace();
+            }
+            if (!StringUtils.isEmpty(txtMsg)) {
+                System.out.println("QueueMessageListener监听到了文本消息：\t" + txtMsg);
+                WechatPayCallbackEntity callbackEntity = JSONObject.parseObject(txtMsg, WechatPayCallbackEntity.class);
 
-        try {
-            javax.jms.TextMessage tm = (javax.jms.TextMessage) message;
-            for (WebSocketSession webSocketSession : WEB_SOCKET_SESSION_CONCURRENT_MAP.values()) {
-                try {
-                    System.out.println("QueueMessageListener监听到了文本消息：\t" + tm.getText());
-                    webSocketSession.sendMessage(new TextMessage("QueueMessageListener监听到了文本消息：\t" + tm.getText()));
-                } catch (JMSException e) {
-                    e.printStackTrace();
+                OrderEntity query = new OrderEntity();
+                query.setTransactionId(callbackEntity.getTransaction_id());
+                query.setOrderNo(callbackEntity.getOut_trade_no());
+                OrderEntity ret = orderMapper.selectOne(query);
+
+                if (ret.getIsPushed().equals(Constants.OrderPushStatus.NOT_PUSH)) {
+                    try {
+                        WsHeartBeatDto<OrderEntity> fromEndPoint = new WsHeartBeatDto<OrderEntity>();
+                        fromEndPoint.setCode(WS_SUCCESS_CODE);
+                        fromEndPoint.setData(ret);
+                        TextMessage wsMsg = new TextMessage(JSONObject.toJSONString(fromEndPoint));
+                        webSocketSession.sendMessage(wsMsg);
+                        ret.setIsPushed(Constants.OrderPushStatus.PUSHED);
+                        orderMapper.updatePushStatusWithLock(ret);
+
+                        OrderShopRelEntity queryShop = new OrderShopRelEntity();
+                        queryShop.setOrderId(ret.getId());
+                        String shopId = orderShopRelMapper.selectOne(queryShop).getShopId();
+
+                        if (LINKED_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
+                            if (!LINKED_QUEUE_CONCURRENT_MAP.get(shopId).contains(ret)) {
+                                LINKED_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
+                            }
+                        } else {
+                            ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
+                            concurrentLinkedQueue.add(ret);
+                            LINKED_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+    }
+
+    private static boolean isInited = false;
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (event.getApplicationContext().getParent() == null) {
+            getAllShopNotHandledOrderList();
         }
     }
 }
