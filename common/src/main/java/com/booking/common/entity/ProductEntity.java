@@ -1,5 +1,6 @@
 package com.booking.common.entity;
 
+import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.mapper.ProductMapper;
 import com.booking.common.mapper.TagProductRelMapper;
 import com.opdar.plugins.mybatis.annotations.*;
@@ -15,15 +16,15 @@ import java.util.List;
 */
 @Namespace(value= ProductMapper.class)
 public class ProductEntity {
-    private Timestamp updateTime;
-    private Timestamp createTime;
-    private Double price;
     @Sort
     private String id;
+    private Double price;
     private String pic;
     private String detail;
     private String title;
     private Integer isOnSale;
+    private Timestamp updateTime;
+    private Timestamp createTime;
     @Field(insert = false,update = false,delete = false,select = true)
     @Collection(mapper = TagProductRelMapper.class,select = "selectJoinTagList",values = {
             @Value(key = "pid",value = "id")
@@ -33,6 +34,12 @@ public class ProductEntity {
 
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ShopTagRelEntity> requestAddTagList;
+
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private List<ProductSpecEntity> productSpecList;
+
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private List<ProductSpecDto> relSpecList;
 
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
@@ -54,6 +61,14 @@ public class ProductEntity {
 
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private String updateTimeSearch;
+
+    public List<ProductSpecEntity> getProductSpecList() {
+        return productSpecList;
+    }
+
+    public void setProductSpecList(List<ProductSpecEntity> productSpecList) {
+        this.productSpecList = productSpecList;
+    }
 
     public Integer getIsOnSale() {
         return isOnSale;
@@ -191,6 +206,11 @@ public class ProductEntity {
         this.title = title;
     }
 
+    public List<ProductSpecDto> getRelSpecList() {
+        return relSpecList;
+    }
 
-
+    public void setRelSpecList(List<ProductSpecDto> relSpecList) {
+        this.relSpecList = relSpecList;
+    }
 }

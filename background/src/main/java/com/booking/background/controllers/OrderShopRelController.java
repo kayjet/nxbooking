@@ -61,13 +61,13 @@ public class OrderShopRelController {
     @Request(value = "/orderShopId/list", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public List<OrderShopRelEntity> listOrderShopId(OrderShopRelEntity orderShopRelEntity) {
-        return orderShopIdService.listOrderShopId(orderShopRelEntity);
+        return orderShopIdService.listOrderShopRel(orderShopRelEntity);
     }
 
     @Request(value = "/orderShopId/listPage", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public Page<List<OrderShopRelEntity>> listOrderShopIdPage(OrderShopRelEntity orderShopRelEntity, Integer pageNo, Integer pageSize) {
-        return orderShopIdService.listOrderShopIdPage(orderShopRelEntity, pageNo , pageSize);
+        return orderShopIdService.listOrderShopRelPage(orderShopRelEntity, pageNo , pageSize);
     }
 
     @Request(value = "/orderShopId/view", format = Request.Format.VIEW)

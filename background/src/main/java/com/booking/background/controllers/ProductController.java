@@ -1,13 +1,11 @@
 package com.booking.background.controllers;
 
-import com.booking.common.entity.ProductEntity;
-import com.booking.common.entity.ShopTagRelEntity;
-import com.booking.common.entity.TagEntity;
-import com.booking.common.entity.TagProductRelEntity;
+import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IProductService;
+import com.booking.common.service.IProductSpecRelService;
 import com.booking.common.service.ITagProductRelService;
 import com.booking.common.service.ITagService;
 import com.opdar.platform.core.base.Context;
@@ -41,21 +39,34 @@ public class ProductController {
     @Autowired
     ITagProductRelService tagProductRelService;
 
+    @Autowired
+    IProductSpecRelService productSpecRelService;
+
     @Request(value = "/product/add")
     @Editor(ResultEditor.class)
     public String addProduct(@JSON ProductEntity product) {
-        ProductEntity ret = productService.addProduct(product);
+        ProductEntity productRet = productService.addProduct(product);
         if (!CollectionUtils.isEmpty(product.getRequestAddTagList())) {
             List<TagProductRelEntity> tagProductRelEntities = new ArrayList<TagProductRelEntity>();
             for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
                 TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
-                tagProductRelEntity.setPid(ret.getId());
+                tagProductRelEntity.setPid(productRet.getId());
                 tagProductRelEntity.setTid(tagEntity.getTagId());
                 tagProductRelEntities.add(tagProductRelEntity);
             }
             tagProductRelService.addTagProductRel(tagProductRelEntities);
         }
-        return ret.getId();
+        if (!CollectionUtils.isEmpty(product.getProductSpecList())) {
+            List<ProductSpecRelEntity> productSpecRelEntities = new ArrayList<ProductSpecRelEntity>();
+            for (ProductSpecEntity specEntity : product.getProductSpecList()) {
+                ProductSpecRelEntity tagProductRelEntity = new ProductSpecRelEntity();
+                tagProductRelEntity.setPid(productRet.getId());
+                tagProductRelEntity.setSpecId(specEntity.getId());
+                productSpecRelEntities.add(tagProductRelEntity);
+            }
+            productSpecRelService.addProductSpecRel(productSpecRelEntities);
+        }
+        return productRet.getId();
     }
 
     @Request(value = "/product/remove")

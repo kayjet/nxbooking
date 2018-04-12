@@ -65,6 +65,13 @@ public class ProductSpecController {
         return productSpecService.listProductSpec(productSpecEntity);
     }
 
+    @Request(value = "/productSpec/listAllParent", format = Request.Format.JSON)
+    @Editor(ResultEditor.class)
+    public List<ProductSpecEntity> listAllParent(ProductSpecEntity productSpecEntity) {
+        return productSpecService.listAllParent();
+    }
+
+
     @Request(value = "/productSpec/listPage", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public Page<List<ProductSpecEntity>> listProductSpecPage(ProductSpecEntity productSpecEntity, Integer pageNo, Integer pageSize) {

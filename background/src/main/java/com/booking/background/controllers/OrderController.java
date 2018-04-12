@@ -91,6 +91,7 @@ public class OrderController {
     public String websocket() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("shopList", shopService.listAll());
         return "websocket/view";
     }
 }

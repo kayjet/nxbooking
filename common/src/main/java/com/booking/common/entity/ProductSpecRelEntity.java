@@ -1,45 +1,72 @@
 package com.booking.common.entity;
 
+import com.booking.common.mapper.ProductMapper;
+import com.booking.common.mapper.ProductSpecMapper;
 import com.booking.common.mapper.ProductSpecRelMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
-* AuthorityEntity
-*
-* @author kai.liu
-* @date 2017/12/28
-*/
-@Namespace(value= ProductSpecRelMapper.class)
+ * AuthorityEntity
+ *
+ * @author kai.liu
+ * @date 2017/12/28
+ */
+@Namespace(value = ProductSpecRelMapper.class)
 public class ProductSpecRelEntity {
-    private Timestamp updateTime;
-    private String pid;
     private String id;
-    private Timestamp createTime;
+    private String pid;
     private String specId;
+    @Collection(mapper = ProductMapper.class, select = "selectList", values = {
+            @Value(key = "id", value = "pid")
+    })
+    private List<ProductEntity> productList;
+    @Collection(mapper = ProductSpecMapper.class, select = "selectList", values = {
+            @Value(key = "id", value = "specId")
+    })
+    private List<ProductSpecEntity> specList;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time >= {}",plain = false)
+    private Timestamp createTime;
+    private Timestamp updateTime;
+
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time >= {}", plain = false)
     private Timestamp createTimeStart;
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time <= {}", plain = false)
     private Timestamp createTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time >= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time >= {}", plain = false)
     private Timestamp updateTimeStart;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time <= {}", plain = false)
     private Timestamp updateTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String createTimeSearch;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String updateTimeSearch;
 
+    public List<ProductEntity> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<ProductEntity> productList) {
+        this.productList = productList;
+    }
+
+    public List<ProductSpecEntity> getSpecList() {
+        return specList;
+    }
+
+    public void setSpecList(List<ProductSpecEntity> specList) {
+        this.specList = specList;
+    }
 
     public Timestamp getCreateTimeStart() {
         return createTimeStart;
@@ -128,7 +155,6 @@ public class ProductSpecRelEntity {
     public void setSpecId(String specId) {
         this.specId = specId;
     }
-
 
 
 }

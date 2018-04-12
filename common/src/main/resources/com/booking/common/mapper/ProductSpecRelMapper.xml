@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.ProductSpecRelMapper">
+
+    <resultMap id="productSpecResult" type="com.booking.common.entity.ProductSpecEntity">
+        <result column="update_time" property="updateTime"/>
+        <result column="code" property="code"/>
+        <result column="create_time" property="createTime"/>
+        <result column="name" property="name"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="parent_name" property="parentName"/>
+    </resultMap>
+
+
+    <select id="selectSpecList" resultMap="productSpecResult">
+        SELECT
+             spc.id as parent_id,
+             spc.name as parent_name, spc2.*
+        FROM
+            `t_product_spec_rel` rel
+        LEFT JOIN t_product ord ON ord.id = rel.pid
+        LEFT JOIN t_product_spec spc ON spc.id = rel.spec_id
+        LEFT JOIN t_product_spec spc2  ON (spc2.PARENT_CODE = spc.CODE)
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="pid!=null and pid != ''">
+                AND rel.pid = #{pid}
+            </if>
+        </trim>
+    </select>
+
+
+</mapper>

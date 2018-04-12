@@ -69,8 +69,16 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
         logger.info("connect to the websocket success......");
         WEB_SOCKET_SESSION_CONCURRENT_MAP.put(webSocketSession.getId(), webSocketSession);
-        sendHeartBeat(webSocketSession);
-        webSocketSession.getHandshakeHeaders();
+        Object resultData = null;
+        String query = webSocketSession.getUri().getQuery();
+        if (!StringUtils.isEmpty(query)) {
+            String[] params = query.split("=");
+            String shopId = params[1];
+            if (LINKED_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
+                resultData = LINKED_QUEUE_CONCURRENT_MAP.get(shopId);
+            }
+        }
+        sendHeartBeat(webSocketSession, resultData);
     }
 
     @Override
@@ -79,13 +87,16 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
         String data = String.valueOf(webSocketMessage.getPayload());
         WsHeartBeatDto fromWeb = JSONObject.parseObject(data, WsHeartBeatDto.class);
         if (fromWeb.getCode().equals(WS_SUCCESS_CODE)) {
-            sendHeartBeat(webSocketSession);
+            sendHeartBeat(webSocketSession, null);
         }
     }
 
-    private void sendHeartBeat(WebSocketSession webSocketSession) throws IOException {
+    private void sendHeartBeat(WebSocketSession webSocketSession, Object o) throws IOException {
         WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
         fromEndPoint.setCode(WS_SUCCESS_CODE);
+        if (o != null) {
+            fromEndPoint.setData(o);
+        }
         webSocketSession.sendMessage(new TextMessage(JSONObject.toJSONString(fromEndPoint)));
     }
 

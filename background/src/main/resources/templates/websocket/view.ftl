@@ -14,41 +14,46 @@
 
             <el-main>
 
-                <el-row style="margin-top: 14px;">
-
+                <el-row>
                     <el-col :span="24">
-                        <div>WebSocket Page</div>
-                        <div id="message"></div>
-                    <#--<div>-->
-                    <#--<input id="text" />-->
-                    <#--<button id="send" onclick="send()">发送</button>-->
-                    <#--</div>-->
+                        <div class="grid-content bg-purple-dark">
+                            <span style="margin-right: 24px;">等待制作的订单</span>
+                            <el-dropdown @command="handleCommand">
+                                  <span class="el-dropdown-link">
+                                  选择门店: {{shopName}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                  </span>
+                                <el-dropdown-menu slot="dropdown">
+                                <#list shopList as item>
+                                    <el-dropdown-item command="${item.id},${item.name}">${item.name}</el-dropdown-item>
+                                </#list>
 
-
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
                     </el-col>
                 </el-row>
                 <el-row style="margin-top: 14px;">
-                    <div>等待制作的订单</div>
                     <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
-                            <el-table-column
-                                    type="selection"
-                                    width="55">
-                            </el-table-column>
 
-                            <el-table-column label="id" index="5">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.id }}</span>
-                                </template>
-                            </el-table-column>
                             <el-table-column label="订单编号" index="0">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderNo }}</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column label="联系方式" index="8">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.concatPhone }}</span>
+                                </template>
+                            </el-table-column>
                             <el-table-column label="订单状态" index="1">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.orderStatus }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.orderStatus | orderStauts }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="处理状态" index="1">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.isHandler | isHandler}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="订单总价" index="3">
@@ -66,25 +71,15 @@
                                     <span style="margin-left: 10px">{{  scope.row.orderTime }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="联系方式" index="8">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.concatPhone }}</span>
-                                </template>
-                            </el-table-column>
 
-                            <el-table-column label="创建时间" index="4">
+
+                            <el-table-column label="生成时间" index="4">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.createTime | formatDate }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="修改时间" index="2">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>
-                                </template>
-                            </el-table-column>
                         </el-table>
                     </el-col>
-
                 </el-row>
 
             </el-main>
@@ -148,17 +143,40 @@
                     websocket: null,
                     heartbeatTimeout: 3000,
                     timer: null,
-                    reconnectTimer: null
+                    reconnectTimer: null,
+                    shopId:"",
+                    shopName:"",
                 }
             },
 
             created() {
-                const that = this;
-                that.createWs();
 
             },
             mounted() {
                 const that = this;
+            },
+            filters: {
+                orderStauts(val) {
+                    if (val == 1) {
+                        return "等待付款";
+                    }
+                    if (val == 2) {
+                        return "付款成功";
+                    }
+                    if (val == 3) {
+                        return "取消";
+                    }
+                    return "";
+                },
+                isHandler(val) {
+                    if (val == 1) {
+                        return "未处理";
+                    }
+                    if (val == 2) {
+                        return "处理成功";
+                    }
+                    return "";
+                }
             },
             methods: {
                 heartbeat() {
@@ -186,7 +204,7 @@
                     //连接发生错误的回调方法
                     websocket.onerror = function (event) {
 //                        console.log("ws onerror",event);
-                        if(event.readyState == 0){
+                        if (event.readyState == 0) {
                             return;
                         }
                         if (that.timer != null) {
@@ -200,12 +218,11 @@
                         that.websocket = null;
                         setTimeout(function () {
                             that.createWs();
-                        },3000);
+                        }, 3000);
                     };
 
                     //连接成功建立的回调方法
                     websocket.onopen = function (event) {
-//                        console.log("ws onopen",event);
                         that.heartbeat();
                     };
 
@@ -213,13 +230,18 @@
                     websocket.onmessage = function (event) {
 //                        console.log("ws onmessage", event);
 
-                        if (that.timer == null){
+                        if (that.timer == null) {
                             that.heartbeat();
                         }
 
                         var hearbeatDto = JSON.parse(event.data);
+//                        console.log(hearbeatDto);
                         if (hearbeatDto.code == 1 && hearbeatDto.data != null) {
-                            that.tableData.push(hearbeatDto.data);
+                            if (hearbeatDto.data instanceof Array) {
+                                Vue.set(that, "tableData", hearbeatDto.data)
+                            } else {
+                                that.tableData.push(hearbeatDto.data);
+                            }
                         }
                     };
 
@@ -236,8 +258,8 @@
                 createWs() {
                     const that = this;
                     try {
-                        that.websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws");
-                    } catch (e){
+                        that.websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws?shopId=" + that.shopId);
+                    } catch (e) {
                     }
 //                that.websocket = new WebSocket("ws://www.opdar.com/booking/background/springws/websocket.ws");
                     that.initWs();
@@ -276,6 +298,17 @@
                 },
                 onSearch() {
                     const that = this;
+                },
+                handleCommand(command) {
+                    const that = this;
+                    var arr = command.split(",");
+                    if(that.websocket!=null){
+                        that.websocket.close();
+                    }
+                    that.tableData = [];
+                    that.shopId = arr[0];
+                    that.shopName = arr[1];
+                    that.createWs();
                 }
             }
         })

@@ -45,6 +45,7 @@ public class Sprint2Controller {
     @Autowired
     ICacheManager cacheManager;
 
+
     @Request(value = "/sp2/shop/listProducts")
     @Editor(ResultEditor.class)
     public List<ShopTagRelForWebEntity> listPage(String shopId) {

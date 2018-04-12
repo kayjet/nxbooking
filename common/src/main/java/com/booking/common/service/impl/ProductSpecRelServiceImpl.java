@@ -65,6 +65,9 @@ public class ProductSpecRelServiceImpl implements IProductSpecRelService {
     @Override
     public int addProductSpecRel(ProductSpecRelEntity productSpecRelEntity) {
         productSpecRelEntity.setId(UUID.randomUUID().toString());
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        productSpecRelEntity.setUpdateTime(ts);
+        productSpecRelEntity.setCreateTime(ts);
         return productSpecRelMapper.insert(productSpecRelEntity);
     }
 
@@ -72,7 +75,7 @@ public class ProductSpecRelServiceImpl implements IProductSpecRelService {
     public int addProductSpecRel(List<ProductSpecRelEntity> productSpecRelEntitys) {
         int result = 0;
         for (ProductSpecRelEntity entity : productSpecRelEntitys) {
-            result += productSpecRelMapper.insert(entity);
+            result += this.addProductSpecRel(entity);
         }
         return result;
     }

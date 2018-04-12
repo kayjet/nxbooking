@@ -1,7 +1,11 @@
 package com.booking.common.service.impl;
 
+import com.booking.common.dto.ProductSpecDto;
+import com.booking.common.entity.ProductEntity;
+import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.entity.ShopEntity;
 import com.booking.common.entity.ShopTagRelForWebEntity;
+import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.mapper.ShopMapper;
 import com.booking.common.mapper.ShopTagRelWebMapper;
 import com.booking.common.service.IShopService;
@@ -16,6 +20,7 @@ import org.springframework.util.StringUtils;
 
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +38,7 @@ public class ShopServiceImpl implements IShopService {
 
     @Autowired
     ShopMapper shopMapper;
+
     @Autowired
     ShopTagRelWebMapper shopTagRelWebMapper;
 
@@ -125,6 +131,9 @@ public class ShopServiceImpl implements IShopService {
         return page;
     }
 
+    @Autowired
+    ProductSpecRelMapper productSpecRelMapper;
+
     @Override
     public List<ShopTagRelForWebEntity> listProducts(String shopId) {
         ShopTagRelForWebEntity query = new ShopTagRelForWebEntity();
@@ -135,6 +144,25 @@ public class ShopServiceImpl implements IShopService {
             ShopTagRelForWebEntity entity = iterator.next();
             if (CollectionUtils.isEmpty(entity.getTagList().get(0).getProductList())) {
                 iterator.remove();
+            } else {
+                for (ProductEntity productEntity : entity.getTagList().get(0).getProductList()) {
+                    List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(productEntity.getId());
+                    if (!CollectionUtils.isEmpty(specList)) {
+                        List<ProductSpecDto> productSpecDtos = new ArrayList<ProductSpecDto>();
+                        for (ProductSpecEntity specEntity : specList) {
+                            ProductSpecDto dto = new ProductSpecDto();
+                            dto.setParentCode(specEntity.getParentCode());
+                            dto.setParentName(specEntity.getParentName());
+                            if (productSpecDtos.contains(dto)) {
+                                productSpecDtos.get(productSpecDtos.indexOf(dto)).getSpecList().add(specEntity);
+                            } else {
+                                dto.getSpecList().add(specEntity);
+                                productSpecDtos.add(dto);
+                            }
+                        }
+                        productEntity.setRelSpecList(productSpecDtos);
+                    }
+                }
             }
         }
         return result;

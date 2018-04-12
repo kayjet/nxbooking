@@ -45,7 +45,6 @@ public class CommonController {
         try {
             result = commonService.getAvatar(avatarName);
         } catch (IOException e) {
-            e.printStackTrace();
         }
         return result;
     }

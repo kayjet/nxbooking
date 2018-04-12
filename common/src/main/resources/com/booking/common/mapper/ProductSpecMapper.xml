@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.ProductSpecMapper">
+
+    <resultMap id="productSpecResult" type="com.booking.common.entity.ProductSpecEntity">
+        <result column="update_time" property="updateTime"/>
+        <result column="code" property="code"/>
+        <result column="create_time" property="createTime"/>
+        <result column="name" property="name"/>
+        <result column="parent_code" property="parentCode"/>
+        <result column="id" property="id"/>
+    </resultMap>
+
+
+    <sql id="SELECT_PARAMS_KINSHIP">
+        TK.id,
+        TK.code,
+        TK.name,
+        TK.update_time,
+        TK.create_time
+    </sql>
+
+
+    <select id="selectList" resultMap="productSpecResult">
+        SELECT * FROM (
+        SELECT
+        <include refid="SELECT_PARAMS_KINSHIP"/>,
+        TK2.CODE AS CODE2,
+        TK2.NAME AS NAME2
+        FROM t_Product_spec TK
+        LEFT JOIN t_Product_spec TK2 ON (TK2.PARENT_CODE = TK.CODE)
+        WHERE TK.PARENT_CODE
+        ORDER BY TK.CODE, TK2.CODE
+        ) T
+
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="name!=null and name != ''">
+                AND T.NAME2 LIKE '%${name}%'
+            </if>
+            <if test="code!=null and code != ''">
+                AND T.CODE2 = #{code}
+            </if>
+            <if test="code!=null and code != ''">
+                AND T.tid = #{tid}
+            </if>
+        </trim>
+    </select>
+
+    <select id="selectParentSpec" resultMap="productSpecResult">
+        SELECT * FROM t_Product_spec spc WHERE spc.parent_code IS NUll
+    </select>
+
+</mapper>

@@ -193,7 +193,7 @@
                     <el-input v-model="form.title">{{form.title}}</el-input>
                 </el-form-item>
                 <el-form-item label="销售状态">
-               <#--     <el-input v-model="form.isOnSale">{{form.isOnSale | saleStatus}}</el-input>-->
+                <#--     <el-input v-model="form.isOnSale">{{form.isOnSale | saleStatus}}</el-input>-->
                     <el-dropdown @command="handleSaleStatusCommand">
                           <span class="el-dropdown-link">
                             {{form.isOnSale | saleStatus}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -204,6 +204,19 @@
                         </el-dropdown-menu>
                     </el-dropdown>
                 </el-form-item>
+
+                <el-form-item label="选择规格" v-if="allSpecParentList">
+                    <template>
+                        <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
+                            <#--全选-->
+                        <#--</el-checkbox>-->
+                        <div style="margin: 15px 0;"></div>
+                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
+                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}</el-checkbox>
+                        </el-checkbox-group>
+                    </template>
+                </el-form-item>
+
                 <el-form-item label="选择门店">
                     <template>
                         <el-radio-group v-model="selectedShop" @change="onSelectShop">
@@ -248,7 +261,7 @@
                     <div>
                         <img :src="form.pic | avatar" width="100%" alt="">
                     </div>
-                    <#include "../upload.ftl"/>
+                <#include "../upload.ftl"/>
                 </el-form-item>
                 <el-form-item label="介绍">
                     <el-input v-model="form.detail">{{form.detail}}</el-input>
@@ -266,6 +279,17 @@
                             <el-dropdown-item command="2">售罄</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
+                </el-form-item>
+                <el-form-item label="选择规格" v-if="allSpecParentList">
+                    <template>
+                    <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
+                    <#--全选-->
+                    <#--</el-checkbox>-->
+                        <div style="margin: 15px 0;"></div>
+                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
+                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}</el-checkbox>
+                        </el-checkbox-group>
+                    </template>
                 </el-form-item>
                 <el-form-item label="选择门店">
                     <template>
@@ -327,7 +351,10 @@
             window.location.href = window.ctxPath + "/" + model + "/view?";
         },
         listAllTags: function (shopId) {
-            return axios.get(window.ctxPath + '/shopTagRel/listTag?shopId='+shopId);
+            return axios.get(window.ctxPath + '/shopTagRel/listTag?shopId=' + shopId);
+        },
+        listAllSpecParent: function () {
+            return axios.get(window.ctxPath + '/productSpec/listAllParent');
         },
         listAllShop: function () {
             return axios.get(window.ctxPath + '/shop/list');
@@ -355,12 +382,15 @@
                     totalPage: 0,
                     currentPage: 1,
                     checkAll: false,
+                    checkAll2: false,
                     checkedTag: [],
                     tags: [],
                     requestAddTagList: [],
                     isIndeterminate: true,
+                    isIndeterminate2: false,
                     selectedShop: undefined,
-                    shopList: []
+                    shopList: [],
+                    allSpecParentList:[]
                 }
             },
             created() {
@@ -373,13 +403,16 @@
                 window.service.listAllShop().then(function (reponse) {
                     that.shopList = reponse.data.data;
                 });
+                window.service.listAllSpecParent().then(function (reponse) {
+                    that.allSpecParentList = reponse.data.data;
+                });
             },
-            filters:{
-                saleStatus(val){
-                    if(val == 1){
+            filters: {
+                saleStatus(val) {
+                    if (val == 1) {
                         return "在售";
                     }
-                    if(val == 2){
+                    if (val == 2) {
                         return "售罄";
                     }
                     return "未知状态";
@@ -466,7 +499,7 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
-                onSelectShop(val){
+                onSelectShop(val) {
                     const that = this;
                     console.log(val);
                     window.service.listAllTags(val).then(function (response) {
@@ -478,11 +511,18 @@
                     this.isIndeterminate = false;
                 },
                 handleCheckedTag(value) {
-                    console.log("handleCheckedTag",value);
+                    console.log("handleCheckedTag", value);
                     this.form.requestAddTagList = value;
                     let checkedCount = value.length;
                     this.checkAll = checkedCount === this.tags.length;
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.tags.length;
+                },
+                handleCheckedSpec(value) {
+                    console.log("handleCheckedSpec", value);
+                    this.form.productSpecList = value;
+                    let checkedCount = value.length;
+                    this.checkAll2 = checkedCount === this.allSpecParentList.length;
+                    this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.allSpecParentList.length;
                 },
                 uploadSuccess(response, file, fileList) {
                     console.log(response, file, fileList);
@@ -499,8 +539,8 @@
                 handleSizeChange(val) {
                     console.log('每页 ' + val + ' 条');
                 },
-                handleSaleStatusCommand(val){
-                    Vue.set( this.form, "isOnSale", val );
+                handleSaleStatusCommand(val) {
+                    Vue.set(this.form, "isOnSale", val);
                 },
                 handleCurrentChange(val) {
                     console.log('当前页: ' + val);

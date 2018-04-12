@@ -41,6 +41,11 @@ public class ProductSpecServiceImpl implements IProductSpecService {
     }
 
     @Override
+    public List<ProductSpecEntity> listAllParent() {
+        return productSpecMapper.selectParentSpec();
+    }
+
+    @Override
     public Page<List<ProductSpecEntity>> listProductSpecPage(ProductSpecEntity productSpecEntity, Integer pageNo, Integer pageSize) {
         if (pageNo == null) {
             pageNo = 1;

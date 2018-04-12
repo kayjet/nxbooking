@@ -18,6 +18,8 @@ public interface IProductSpecService {
 
     List<ProductSpecEntity> listProductSpec(ProductSpecEntity productSpec);
 
+    List<ProductSpecEntity> listAllParent();
+
     Page<List<ProductSpecEntity>> listProductSpecPage(ProductSpecEntity productSpec, Integer pageNo, Integer pageSize);
 
     ProductSpecEntity getProductSpec(String id);

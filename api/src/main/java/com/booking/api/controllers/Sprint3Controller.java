@@ -9,6 +9,7 @@ import com.booking.common.dto.*;
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeException;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.mapper.OrderShopRelMapper;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.*;
 import com.booking.common.service.impl.WeChatService;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -47,6 +49,9 @@ public class Sprint3Controller {
 
     @Autowired
     IOrderUserRelService orderUserRelService;
+
+    @Autowired
+    OrderShopRelMapper orderShopRelMapper;
 
     @Autowired
     IAdvertisementService advertisementService;
@@ -76,7 +81,15 @@ public class Sprint3Controller {
     public List<OrderUserRelEntity> getOrder(String userId) {
         OrderUserRelEntity orderUserRelEntity = new OrderUserRelEntity();
         orderUserRelEntity.setUserId(userId);
-        return orderUserRelService.listOrderUserRel(orderUserRelEntity);
+        List<OrderUserRelEntity> result = orderUserRelService.listOrderUserRel(orderUserRelEntity);
+        if (!CollectionUtils.isEmpty(result)) {
+            for (OrderUserRelEntity entity : result) {
+                //TODO：查商店
+//                OrderShopRelEntity shopRelEntity = new OrderShopRelEntity();
+//                shopRelEntity.setOrderId(entity.getOrderId());
+            }
+        }
+        return result;
     }
 
     @Request(value = "/sp3/order/getOrderProductList")
@@ -97,9 +110,9 @@ public class Sprint3Controller {
     public String payCallback() {
         try {
             String xml = new String(NetTool.read(Context.getRequest().getInputStream()), "UTF-8");
-            System.out.println("--------------------- wx callback -----------------");
+            System.out.println("---------------------XML from wx callback -----------------");
             System.out.println(xml);
-            System.out.println("-------------------- wx callback -----------------");
+            System.out.println("--------------------XML from wx callback -----------------");
             XmlMapper mapper = new XmlMapper();
             WechatPayCallbackEntity wechatPayCallbackEntity = mapper.readValue(xml, WechatPayCallbackEntity.class);
             if (wechatPayCallbackEntity.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {

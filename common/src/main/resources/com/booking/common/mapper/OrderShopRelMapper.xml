@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.common.mapper.OrderShopRelMapper">
+
+    <resultMap id="orderResult" type="com.booking.common.entity.OrderEntity">
+        <result column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="total_price" property="totalPrice"/>
+        <result column="total_price_from_web" property="totalPriceFromWeb"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="order_type" property="orderType"/>
+        <result column="concat_phone" property="concatPhone"/>
+        <result column="transaction_id" property="transactionId"/>
+        <result column="lock_version" property="lockVersion"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="is_pushed" property="isPushed"/>
+        <result column="is_handler" property="isHandler"/>
+    </resultMap>
+
+    <select id="selectOrderListPushedButNotHandled" parameterType="java.lang.String" resultMap="orderResult">
+            SELECT rel.shop_id,ord.* FROM `t_order_shop_rel` rel LEFT JOIN t_order ord ON ord.id = rel.order_id
+            WHERE ord.is_handler = 1 AND ord.is_pushed = 2 AND rel.shop_id = #{shopId};
+    </select>
+</mapper>
