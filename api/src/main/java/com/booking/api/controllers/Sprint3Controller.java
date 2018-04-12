@@ -10,6 +10,7 @@ import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeException;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.mapper.OrderShopRelMapper;
+import com.booking.common.mapper.ShopMapper;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.*;
 import com.booking.common.service.impl.WeChatService;
@@ -68,6 +69,9 @@ public class Sprint3Controller {
     @Autowired
     ProducerService producerService;
 
+    @Autowired
+    ShopMapper shopMapper;
+
     @Request(value = "/sp3/order/makeOrder")
     @Editor(ResultEditor.class)
     public MakeOrderDto makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
@@ -79,17 +83,16 @@ public class Sprint3Controller {
     @Request(value = "/sp3/order/getOrder")
     @Editor(ResultEditor.class)
     public List<OrderUserRelEntity> getOrder(String userId) {
-        OrderUserRelEntity orderUserRelEntity = new OrderUserRelEntity();
-        orderUserRelEntity.setUserId(userId);
-        List<OrderUserRelEntity> result = orderUserRelService.listOrderUserRel(orderUserRelEntity);
-        if (!CollectionUtils.isEmpty(result)) {
-            for (OrderUserRelEntity entity : result) {
-                //TODO：查商店
-//                OrderShopRelEntity shopRelEntity = new OrderShopRelEntity();
-//                shopRelEntity.setOrderId(entity.getOrderId());
+        OrderUserRelEntity query = new OrderUserRelEntity();
+        query.setUserId(userId);
+        List<OrderUserRelEntity> orderUserRelList = orderUserRelService.listOrderUserRel(query);
+        if (!CollectionUtils.isEmpty(orderUserRelList)) {
+            for (OrderUserRelEntity entity : orderUserRelList) {
+                List<ShopEntity> shops = shopMapper.selectShopByOrderId(entity.getOrderId());
+                entity.setShopList(shops);
             }
         }
-        return result;
+        return orderUserRelList;
     }
 
     @Request(value = "/sp3/order/getOrderProductList")
@@ -111,6 +114,7 @@ public class Sprint3Controller {
         try {
             String xml = new String(NetTool.read(Context.getRequest().getInputStream()), "UTF-8");
             System.out.println("---------------------XML from wx callback -----------------");
+            //TODO:微信sign校验
             System.out.println(xml);
             System.out.println("--------------------XML from wx callback -----------------");
             XmlMapper mapper = new XmlMapper();

@@ -26,6 +26,9 @@ public class OrderUserRelEntity {
     })
     private List<OrderEntity> orderList;
 
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private List<ShopEntity> shopList;
+
     public List<OrderEntity> getOrderList() {
         return orderList;
     }
@@ -74,6 +77,11 @@ public class OrderUserRelEntity {
         this.orderId = orderId;
     }
 
+    public List<ShopEntity> getShopList() {
+        return shopList;
+    }
 
-
+    public void setShopList(List<ShopEntity> shopList) {
+        this.shopList = shopList;
+    }
 }

@@ -45,4 +45,13 @@
         </trim>
     </select>
 
+    <select id="selectShopByOrderId" parameterType="java.lang.String" resultMap="shopResult">
+        SELECT DISTINCT shop.* FROM `t_shop` shop LEFT JOIN t_order_shop_rel rel ON shop.id = rel.shop_id
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="orderId!=null and orderId != ''">
+                AND rel.order_id = #{orderId}
+            </if>
+        </trim>
+    </select>
+
 </mapper>
