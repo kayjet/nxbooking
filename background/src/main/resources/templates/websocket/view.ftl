@@ -36,6 +36,21 @@
                     <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
 
+                            <el-table-column type="expand">
+                                <template slot-scope="props">
+                                    <el-form label-position="left" inline class="demo-table-expand">
+                                        <div   v-for="detail in props.row.orderDetailList">
+                                            <el-form-item label="商品名称：" style="margin-bottom: 0px;">
+                                                <span>{{ detail.productName }}</span>
+                                            </el-form-item>
+                                            <el-form-item label="规格：" style="margin-bottom: 0px;">
+                                                <span v-for="spec in detail.productSpecList" style="margin-right: 12px;">{{ spec }}</span>
+                                            </el-form-item>
+                                        </div>
+                                    </el-form>
+                                </template>
+                            </el-table-column>
+
                             <el-table-column label="订单编号" index="0">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderNo }}</span>

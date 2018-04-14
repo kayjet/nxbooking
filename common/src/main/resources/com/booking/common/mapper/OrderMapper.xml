@@ -46,4 +46,43 @@
         ]]>
     </update>
 
+
+
+    <resultMap id="orderDetailResult" type="com.booking.common.entity.OrderDetailEntity">
+        <result property="orderId" column="order_id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="orderProductRelId" column="order_product_rel_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productId" column="product_id"/>
+        <result property="specName" column="spec_name"/>
+    </resultMap>
+
+
+    <select id="selectOrderDetailList" parameterType="java.lang.String" resultMap="orderDetailResult">
+        SELECT
+        T.*,spec.name as spec_name
+        FROM
+        (
+        SELECT DISTINCT
+        ord.id AS order_id,
+        ord.order_no,
+        order_product_rel.id AS order_product_rel_id,
+        product.title AS product_name,
+        product.id as product_id
+        FROM
+        t_order ord
+        LEFT JOIN t_order_product_rel order_product_rel ON order_product_rel.order_id = ord.id
+        LEFT JOIN t_product product ON order_product_rel.product_id = product.id
+        ORDER BY ord.order_no
+        ) T
+        LEFT JOIN t_order_product_spec_rel spec_rel ON spec_rel.order_product_rel_id = T.order_product_rel_id
+        LEFT JOIN t_product_spec spec ON spec.id = spec_rel.spec_id
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="orderNo!=null and orderNo != ''">
+                AND T.order_no = #{orderNo}
+            </if>
+        </trim>
+
+    </select>
+
 </mapper>

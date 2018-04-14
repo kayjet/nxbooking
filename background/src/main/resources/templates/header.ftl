@@ -109,4 +109,7 @@
                 font-weight: bold;
                 font-size: 22px;
             }
+            .el-form-item__label{
+             font-weight: bold;
+            }
         </style>

@@ -35,11 +35,17 @@ public class ProductEntity {
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ShopTagRelEntity> requestAddTagList;
 
+    //用于修改数据
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ProductSpecEntity> productSpecList;
 
+    //用于返回给前段数据
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ProductSpecDto> relSpecList;
+
+    //用于前段数据请求
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private List<ProductSpecDto> requestSpecList;
 
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
@@ -212,5 +218,13 @@ public class ProductEntity {
 
     public void setRelSpecList(List<ProductSpecDto> relSpecList) {
         this.relSpecList = relSpecList;
+    }
+
+    public List<ProductSpecDto> getRequestSpecList() {
+        return requestSpecList;
+    }
+
+    public void setRequestSpecList(List<ProductSpecDto> requestSpecList) {
+        this.requestSpecList = requestSpecList;
     }
 }

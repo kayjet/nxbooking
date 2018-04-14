@@ -3,11 +3,9 @@ package com.booking.background.websocket;
 import com.alibaba.fastjson.JSONObject;
 import com.booking.background.service.ConsumerService;
 import com.booking.common.base.Constants;
+import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.dto.WsHeartBeatDto;
-import com.booking.common.entity.OrderEntity;
-import com.booking.common.entity.OrderShopRelEntity;
-import com.booking.common.entity.ShopEntity;
-import com.booking.common.entity.WechatPayCallbackEntity;
+import com.booking.common.entity.*;
 import com.booking.common.mapper.OrderMapper;
 import com.booking.common.mapper.OrderShopRelMapper;
 import com.booking.common.service.IOrderService;
@@ -26,7 +24,7 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -133,12 +131,37 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
             String shopId = shop.getId();
             List<OrderEntity> orderList = orderShopRelMapper.selectOrderListPushedButNotHandled(shopId);
             if (!CollectionUtils.isEmpty(orderList)) {
+                setOrderDetail(orderList);
                 ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
                 concurrentLinkedQueue.addAll(orderList);
                 LINKED_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
             }
 
         }
+    }
+
+    private void setOrderDetail(OrderEntity order) {
+        List<OrderDetailEntity> orderDetailEntities = orderMapper.selectOrderDetailList(order.getOrderNo());
+        List<OrderDetailDto> reuslt = new ArrayList<OrderDetailDto>();
+
+        for (OrderDetailEntity detailEntity : orderDetailEntities) {
+            OrderDetailDto dto = new OrderDetailDto(detailEntity);
+            if (reuslt.contains(dto)) {
+                if (!StringUtils.isEmpty(detailEntity.getSpecName())) {
+                    reuslt.get(reuslt.indexOf(dto)).getProductSpecList().add(detailEntity.getSpecName());
+                }
+            } else {
+                reuslt.add(dto);
+            }
+        }
+        order.setOrderDetailList(reuslt);
+    }
+
+    private void setOrderDetail(List<OrderEntity> orderList) {
+        for (OrderEntity orderEntity : orderList) {
+            setOrderDetail(orderEntity);
+        }
+
     }
 
     @Override
@@ -159,6 +182,7 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
                 query.setTransactionId(callbackEntity.getTransaction_id());
                 query.setOrderNo(callbackEntity.getOut_trade_no());
                 OrderEntity ret = orderMapper.selectOne(query);
+                setOrderDetail(ret);
 
                 if (ret.getIsPushed().equals(Constants.OrderPushStatus.NOT_PUSH)) {
                     try {

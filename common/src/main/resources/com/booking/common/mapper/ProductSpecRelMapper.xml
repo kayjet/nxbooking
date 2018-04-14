@@ -19,19 +19,20 @@
 
     <select id="selectSpecList" resultMap="productSpecResult">
         SELECT
-             spc.id as parent_id,
-             spc.name as parent_name, spc2.*
+        spc.id as parent_id,
+        spc.name as parent_name, spc2.*
         FROM
-            `t_product_spec_rel` rel
+        `t_product_spec_rel` rel
         LEFT JOIN t_product ord ON ord.id = rel.pid
         LEFT JOIN t_product_spec spc ON spc.id = rel.spec_id
-        LEFT JOIN t_product_spec spc2  ON (spc2.PARENT_CODE = spc.CODE)
+        LEFT JOIN t_product_spec spc2 ON (spc2.PARENT_CODE = spc.CODE)
         <trim prefix="WHERE" prefixOverrides="AND |OR ">
             <if test="pid!=null and pid != ''">
                 AND rel.pid = #{pid}
             </if>
         </trim>
     </select>
+
 
 
 </mapper>

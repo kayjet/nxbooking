@@ -1,9 +1,11 @@
 package com.booking.common.entity;
 
+import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.mapper.OrderMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * AuthorityEntity
@@ -23,6 +25,7 @@ public class OrderEntity {
     private String concatPhone;
     private String transactionId;
     private Integer lockVersion;
+    @Sort(type = Sort.SortType.DESC)
     private Timestamp createTime;
     private Timestamp updateTime;
     private Integer isPushed;
@@ -58,6 +61,21 @@ public class OrderEntity {
             delete = false,
             select = true)
     private String shopId;
+
+    @Field(resultmap = false,
+            insert = false,
+            update = false,
+            delete = false,
+            select = false)
+    private  List<OrderDetailDto> orderDetailList;
+
+    public List<OrderDetailDto> getOrderDetailList() {
+        return orderDetailList;
+    }
+
+    public void setOrderDetailList(List<OrderDetailDto> orderDetailList) {
+        this.orderDetailList = orderDetailList;
+    }
 
     public Integer getIsPushed() {
         return isPushed;

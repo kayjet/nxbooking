@@ -1,5 +1,6 @@
 package com.booking.common.mapper;
 
+import com.booking.common.entity.OrderDetailEntity;
 import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.entity.ProductSpecRelEntity;
 import com.opdar.plugins.mybatis.core.IBaseMapper;
@@ -16,4 +17,5 @@ import java.util.List;
 public interface ProductSpecRelMapper extends IBaseMapper<ProductSpecRelEntity> {
 
     List<ProductSpecEntity> selectSpecList(@Param("pid") String pid);
+
 }

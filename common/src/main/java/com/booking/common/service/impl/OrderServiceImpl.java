@@ -3,6 +3,7 @@ package com.booking.common.service.impl;
 import com.booking.common.base.Constants;
 import com.booking.common.dto.ProductDto;
 import com.booking.common.dto.ProductListDto;
+import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.entity.*;
 import com.booking.common.mapper.*;
 import com.booking.common.service.IOrderService;
@@ -132,6 +133,9 @@ public class OrderServiceImpl implements IOrderService {
     }
 
 
+    @Autowired
+    private OrderProductSpecRelMapper orderProductSpecRelMapper;
+
     @Override
     public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                  String orderTime, List<List<ProductEntity>> products) {
@@ -151,11 +155,34 @@ public class OrderServiceImpl implements IOrderService {
         orderEntity.setConcatPhone(concatPhone);
         orderEntity.setTotalPriceFromWeb(Double.valueOf(totalPrice));
         Double price = 0D;
-        for (List<ProductEntity> productEntities : products) {
-            for (ProductEntity entity : productEntities) {
+        for (int parentIdx = 0; parentIdx < products.size(); parentIdx++) {
+
+            List<ProductEntity> productEntities = products.get(parentIdx);
+            for (int index = 0; index < productEntities.size(); index++) {
+                ProductEntity entity = productEntities.get(index);
                 ProductEntity p = productMapper.selectOne(new ProductEntity(entity.getId()));
                 price += p.getPrice();
-                insertOrderProductRel(p.getId(), orderId);
+                String orderProductRelId = insertOrderProductRel(p.getId(), orderId);
+                List<ProductSpecDto> productSpecDtoList = entity.getRequestSpecList();
+                if (!CollectionUtils.isEmpty(productSpecDtoList)) {
+                    for (ProductSpecDto specDto : productSpecDtoList) {
+                        List<ProductSpecEntity> productSpecList = specDto.getSpecList();
+                        if (!CollectionUtils.isEmpty(productSpecList)) {
+                            for (ProductSpecEntity specEntity : productSpecList) {
+                                String pid = p.getId();
+                                String specId = specEntity.getId();
+                                Timestamp ts = new Timestamp(System.currentTimeMillis());
+                                OrderProductSpecRelEntity specRelEntity = new OrderProductSpecRelEntity();
+                                specRelEntity.setCreateTime(ts);
+                                specRelEntity.setUpdateTime(ts);
+                                specRelEntity.setId(UUID.randomUUID().toString());
+                                specRelEntity.setSpecId(specId);
+                                specRelEntity.setOrderProductRelId(orderProductRelId);
+                                orderProductSpecRelMapper.insert(specRelEntity);
+                            }
+                        }
+                    }
+                }
             }
         }
         orderEntity.setTotalPrice(price);
@@ -225,7 +252,7 @@ public class OrderServiceImpl implements IOrderService {
         orderUserRelMapper.insert(orderUserRelEntity);
     }
 
-    private void insertOrderProductRel(String productId, String orderId) {
+    private String insertOrderProductRel(String productId, String orderId) {
         Timestamp ts = new Timestamp(System.currentTimeMillis());
         String uid = UUID.randomUUID().toString();
         OrderProductRelEntity orderProductRelEntity = new OrderProductRelEntity();
@@ -235,6 +262,7 @@ public class OrderServiceImpl implements IOrderService {
         orderProductRelEntity.setProductId(productId);
         orderProductRelEntity.setOrderId(orderId);
         orderProductRelMapper.insert(orderProductRelEntity);
+        return uid;
     }
 
     private void insertOrderShopRel(String shopId, String orderId) {
