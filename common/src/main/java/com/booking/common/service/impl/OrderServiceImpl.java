@@ -146,12 +146,13 @@ public class OrderServiceImpl implements IOrderService {
         orderEntity.setOrderNo(orderNo);
         orderEntity.setOrderStatus(Constants.OrderStatus.WAITING_PAY);
         orderEntity.setOrderType(orderType);
-       /* SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (orderType.equals(Constants.OrderType.NOW)) {
-            DateTime date = new DateTime();
-            orderTime = dateFormat.format(date.plusMinutes(5).toDate());
-        }*/
-        orderEntity.setOrderTime(orderTime);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        if (!StringUtils.isEmpty(orderType) && orderType.equals(Constants.OrderType.APPOINT) && !StringUtils.isEmpty(orderTime)) {
+            Date now = new Date(System.currentTimeMillis());
+            orderTime = dateFormat.format(now) + " " + orderTime + ":00";
+            orderEntity.setOrderTime(orderTime);
+        }
         orderEntity.setConcatPhone(concatPhone);
         orderEntity.setTotalPriceFromWeb(Double.valueOf(totalPrice));
         Double price = 0D;

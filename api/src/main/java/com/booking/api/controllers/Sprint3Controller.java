@@ -90,15 +90,21 @@ public class Sprint3Controller {
             for (OrderUserRelEntity entity : orderUserRelList) {
                 List<ShopEntity> shops = shopMapper.selectShopByOrderId(entity.getOrderId());
                 entity.setShopList(shops);
+                if (!CollectionUtils.isEmpty(entity.getOrderList())) {
+                    for (OrderEntity orderEntity : entity.getOrderList()) {
+                        ProductListDto productListDto = orderService.getOrderProductList(orderEntity.getId());
+                        orderEntity.setProductListDto(productListDto);
+                    }
+                }
             }
         }
         return orderUserRelList;
     }
 
-    @Request(value = "/sp3/order/getOrderProductList")
+    @Request(value = "/sp3/order/reMakeOrder")
     @Editor(ResultEditor.class)
-    public ProductListDto getOrderProductList(String orderId) {
-        return orderService.getOrderProductList(orderId);
+    public MakeOrderDto reMakeOrder(String orderNo) {
+        return (MakeOrderDto) cacheManager.get(orderNo);
     }
 
 
@@ -125,6 +131,7 @@ public class Sprint3Controller {
                 orderService.updatePayStatus(orderNo, transaction_id);
                 weChatService.savePayCallbackResult(wechatPayCallbackEntity);
                 producerService.sendMessage(JSONObject.toJSONString(wechatPayCallbackEntity));
+                cacheManager.remove(orderNo);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -53,7 +53,11 @@ public class DefaultCacheManager implements ICacheManager {
 
     @Override
     public void remove(String key) {
-        this.tasks.remove(key);
+        try {
+            this.tasks.remove(key);
+        } catch (Exception e) {
+
+        }
     }
 
     private class ValueTask implements Runnable {

@@ -1,6 +1,7 @@
 package com.booking.api.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.booking.api.quartz.MyQuartzExecutorDelegate;
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;
 import com.booking.common.dto.MakeOrderDto;
@@ -53,6 +54,12 @@ public class MakeOrderCacadeService {
     @Autowired
     ProducerService producerService;
 
+    @Autowired
+    MyQuartzExecutorDelegate quartzExecutorDelegate;
+
+    @Autowired
+    ICacheManager cacheManager;
+
     @Transactional(rollbackFor = Throwable.class)
     public MakeOrderDto makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                   String orderTime, List<List<ProductEntity>> products) {
@@ -72,6 +79,8 @@ public class MakeOrderCacadeService {
             makeOrderDto.setTimeStamp(currentTimeMillis + "");
             makeOrderDto.setNonceStr(nonceStr);
             makeOrderDto.setPrepay_id("prepay_id=" + wechatPayResultDto.getPrepay_id());
+            cacheManager.set(result.getOrderNo(), makeOrderDto, 60000 * 14);
+            quartzExecutorDelegate.addCloseOrderJob(result);
             return makeOrderDto;
         } else {
             throw new ErrCodeException(1, "创建订单失败");

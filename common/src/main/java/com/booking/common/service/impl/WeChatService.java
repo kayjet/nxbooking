@@ -10,6 +10,7 @@ import com.booking.common.mapper.WechatPayCallbackMapper;
 import com.booking.common.utils.NetTool;
 import com.booking.common.utils.WxPayUtil;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -107,7 +109,7 @@ public class WeChatService {
         map.put("mch_id", MCH_ID);
         map.put("nonce_str", WxPayUtil.createNoncestr());
         try {
-            map.put("body", new String("暖系-咖啡".getBytes("UTF-8"), "UTF-8"));
+            map.put("body", new String("暖系-饮品".getBytes("UTF-8"), "UTF-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -117,8 +119,10 @@ public class WeChatService {
 //        int price = (int) (result.getTotalPrice() * 10 * 10);
         map.put("total_fee", String.valueOf(1));
         map.put("spbill_create_ip", ip);
-//        map.put("time_start", "20091225091010");
-//        map.put("time_expire", "20091227091010");
+        DateTime now = new DateTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+        map.put("time_start", dateFormat.format(now.toDate()));
+        map.put("time_expire", dateFormat.format(now.plusMinutes(15).toDate()));
         map.put("notify_url", "https://www.opdar.com/booking/api/sp3/order/payCallback");
         map.put("trade_type", "JSAPI");
         map.put("openid", openId);
@@ -141,15 +145,15 @@ public class WeChatService {
     }
 
     public void savePayCallbackResult(WechatPayCallbackEntity wechatPayCallbackEntity) {
-      try {
-          Timestamp ts = new Timestamp(System.currentTimeMillis());
-          wechatPayCallbackEntity.setCreateTime(ts);
-          wechatPayCallbackEntity.setUpdateTime(ts);
-          wechatPayCallbackEntity.setId(UUID.randomUUID().toString());
-          wechatPayCallbackMapper.insert(wechatPayCallbackEntity);
-      } catch (Exception e){
-          e.printStackTrace();
-      }
+        try {
+            Timestamp ts = new Timestamp(System.currentTimeMillis());
+            wechatPayCallbackEntity.setCreateTime(ts);
+            wechatPayCallbackEntity.setUpdateTime(ts);
+            wechatPayCallbackEntity.setId(UUID.randomUUID().toString());
+            wechatPayCallbackMapper.insert(wechatPayCallbackEntity);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -134,7 +134,7 @@
                             </el-table-column>
                             <el-table-column label="订单类型" index="7">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.orderType }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="预约时间" index="6">
@@ -187,7 +187,7 @@
                     <el-input v-model="form.orderNo">{{form.orderNo}}</el-input>
                 </el-form-item>
                 <el-form-item label="订单状态">
-                    <el-input v-model="form.orderStatus">{{form.orderStatus}}</el-input>
+                    <el-input v-model="form.orderStatus">{{form.orderStatus | orderStauts}}</el-input>
                 </el-form-item>
                 <el-form-item label="修改时间">
                     <el-input v-model="form.updateTime">{{form.updateTime}}</el-input>

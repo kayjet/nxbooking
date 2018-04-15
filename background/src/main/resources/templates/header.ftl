@@ -41,6 +41,36 @@
                 }
                 return '';
             });
+            Vue.filter('orderStauts', function (val) {
+                if (val == 1) {
+                    return "等待付款";
+                }
+                if (val == 2) {
+                    return "付款成功";
+                }
+                if (val == 3) {
+                    return "取消";
+                }
+                return "";
+            });
+            Vue.filter('isHandler', function (val) {
+                if (val == 1) {
+                    return "未处理";
+                }
+                if (val == 2) {
+                    return "处理成功";
+                }
+                return "";
+            });
+            Vue.filter('orderType', function (val) {
+                if (val == 1) {
+                    return "即时";
+                }
+                if (val == 2) {
+                    return "预约";
+                }
+                return "";
+            });
         </script>
         <style>
             html, body {

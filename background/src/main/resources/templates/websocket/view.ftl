@@ -40,7 +40,7 @@
                                 <template slot-scope="props">
                                     <el-form label-position="left" inline class="demo-table-expand">
                                         <div   v-for="detail in props.row.orderDetailList">
-                                            <el-form-item label="商品名称：" style="margin-bottom: 0px;">
+                                            <el-form-item label="等待制作的商品：" style="margin-bottom: 0px;">
                                                 <span>{{ detail.productName }}</span>
                                             </el-form-item>
                                             <el-form-item label="规格：" style="margin-bottom: 0px;">
@@ -78,7 +78,7 @@
                             </el-table-column>
                             <el-table-column label="订单类型" index="7">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.orderType }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="预约时间" index="6">
@@ -171,27 +171,7 @@
                 const that = this;
             },
             filters: {
-                orderStauts(val) {
-                    if (val == 1) {
-                        return "等待付款";
-                    }
-                    if (val == 2) {
-                        return "付款成功";
-                    }
-                    if (val == 3) {
-                        return "取消";
-                    }
-                    return "";
-                },
-                isHandler(val) {
-                    if (val == 1) {
-                        return "未处理";
-                    }
-                    if (val == 2) {
-                        return "处理成功";
-                    }
-                    return "";
-                }
+
             },
             methods: {
                 heartbeat() {

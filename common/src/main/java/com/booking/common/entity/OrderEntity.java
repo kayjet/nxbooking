@@ -1,9 +1,11 @@
 package com.booking.common.entity;
 
 import com.booking.common.dto.OrderDetailDto;
+import com.booking.common.dto.ProductListDto;
 import com.booking.common.mapper.OrderMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
  * @date 2017/12/28
  */
 @Namespace(value = OrderMapper.class)
-public class OrderEntity {
+public class OrderEntity implements Serializable{
     private String id;
     private String orderNo;
     private String orderStatus;
@@ -68,6 +70,29 @@ public class OrderEntity {
             delete = false,
             select = false)
     private  List<OrderDetailDto> orderDetailList;
+
+
+    @Field(resultmap = false,
+            insert = false,
+            update = false,
+            delete = false,
+            select = false)
+    private  ProductListDto productListDto;
+
+    public OrderEntity() {
+    }
+
+    public OrderEntity(String id) {
+        this.id = id;
+    }
+
+    public ProductListDto getProductListDto() {
+        return productListDto;
+    }
+
+    public void setProductListDto(ProductListDto productListDto) {
+        this.productListDto = productListDto;
+    }
 
     public List<OrderDetailDto> getOrderDetailList() {
         return orderDetailList;
