@@ -46,36 +46,38 @@
                                         <el-input v-model="search.orderStatus"
                                                   placeholder="orderStatus"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="修改时间">
-                                        <el-input v-model="search.updateTime"
-                                                  placeholder="updateTime"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="订单总价">
-                                        <el-input v-model="search.totalPrice"
-                                                  placeholder="totalPrice"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="创建时间">
-                                        <el-input v-model="search.createTime"
-                                                  placeholder="createTime"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="id">
-                                        <el-input v-model="search.id"
-                                                  placeholder="id"></el-input>
-                                    </el-form-item>
                                     <el-form-item label="订单类型">
                                         <el-input v-model="search.orderType"
                                                   placeholder="orderType"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="预约时间">
-                                        <el-input v-model="search.orderTime"
-                                                  placeholder="orderTime"></el-input>
                                     </el-form-item>
                                     <el-form-item label="联系方式">
                                         <el-input v-model="search.concatPhone"
                                                   placeholder="concatPhone"></el-input>
                                     </el-form-item>
+                                    <br/>
+                                    <el-form-item label="创建时间">
+                                        <el-date-picker
+                                                v-model="search.createTimeSearch"
+                                                value-format="yyyy-MM-dd HH:mm:ss.0"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="修改时间">
+                                        <el-date-picker
+                                                v-model="search.updateTimeSearch"
+                                                value-format="yyyy-MM-dd HH:mm:ss.0"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
+                                        </el-date-picker>
+                                    </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="onSearch">查询</el-button>
+                                        <el-button type="primary"  @click="onDownloadExcel">下载excel<i class="el-icon-download el-icon--right"></i></el-button>
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
@@ -88,25 +90,24 @@
                         <div class="grid-content bg-purple-dark">
                         <#--<el-button type="primary" icon="el-icon-plus" @click="onInsert">新增</el-button>
                         <el-button type="primary" icon="el-icon-edit" @click="onUpdate">编辑</el-button>-->
-                            <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
+                            <#--<el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>-->
                         <#--<el-button type="primary">上传<i class="el-icon-upload el-icon--right"></i></el-button>-->
-                            <el-button type="primary">下载excel<i class="el-icon-download el-icon--right"></i></el-button>
                         </div>
                     </el-col>
                 </el-row>
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
-                            <el-table-column
-                                    type="selection"
-                                    width="55">
-                            </el-table-column>
+                            <#--<el-table-column-->
+                                    <#--type="selection"-->
+                                    <#--width="55">-->
+                            <#--</el-table-column>-->
 
-                            <el-table-column label="id" index="5">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.id }}</span>
-                                </template>
-                            </el-table-column>
+                            <#--<el-table-column label="id" index="5">-->
+                                <#--<template slot-scope="scope">-->
+                                    <#--<span style="margin-left: 10px">{{  scope.row.id }}</span>-->
+                                <#--</template>-->
+                            <#--</el-table-column>-->
                             <el-table-column label="订单编号" index="0">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderNo }}</span>
@@ -114,7 +115,7 @@
                             </el-table-column>
                             <el-table-column label="订单状态" index="1">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.orderStatus }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.orderStatus | orderStauts}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="订单总价" index="3">
@@ -127,16 +128,22 @@
                                     <span style="margin-left: 10px" v-if="selectedShop">{{selectedShop.payRate}}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="分成" index="9">
+                            <el-table-column label="分成" index="10">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px" v-if="selectedShop">{{  scope.row.totalPrice * selectedShop.payRate }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="订单类型" index="7">
+
+                            <el-table-column label="微信订单号" index="11">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.transactionId }}</span>
                                 </template>
                             </el-table-column>
+                                <el-table-column label="订单类型" index="7">
+                                    <template slot-scope="scope">
+                                        <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
+                                    </template>
+                                </el-table-column>
                             <el-table-column label="预约时间" index="6">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderTime }}</span>
@@ -153,11 +160,11 @@
                                     <span style="margin-left: 10px">{{  scope.row.createTime | formatDate }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="修改时间" index="2">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>
-                                </template>
-                            </el-table-column>
+                            <#--<el-table-column label="修改时间" index="2">-->
+                                <#--<template slot-scope="scope">-->
+                                    <#--<span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>-->
+                                <#--</template>-->
+                            <#--</el-table-column>-->
                         </el-table>
                     </el-col>
 
@@ -278,6 +285,18 @@
             }
             return axios.get(window.ctxPath + '/order/listPage?pageNo=' + pageNo + "&pageSize=" + pageSize + paramString);
         },
+        downloadExcel: function (like) {
+            var paramString = "";
+            if (like != undefined) {
+                for (var x in like) {
+                    if (like.hasOwnProperty(x)) {
+                        paramString += "&" + x + "=" + encodeURI(like[x])
+                    }
+                }
+            }
+            console.log("paramString",paramString);
+            return window.ctxPath + '/order/exportExcel?' + paramString;
+        },
         update: function (form) {
             return axios.post(window.ctxPath + '/order/update', form);
         },
@@ -315,11 +334,6 @@
             },
             created() {
                 const that = this;
-//                window.service.listPage(1, 10, that.search).then(function (response) {
-//                    that.tableData = response.data.data;
-//                    that.currentPage = response.data.pageNo;
-//                    that.totalPage = response.data.countSize;
-//                });
             },
             mounted() {
                 const that = this;
@@ -399,6 +413,11 @@
                         that.currentPage = response.data.pageNo;
                         that.totalPage = response.data.countSize;
                     });
+                },
+                onDownloadExcel() {
+                    const that = this;
+                    alert(1);
+                    window.open(window.service.downloadExcel(that.search));
                 },
                 handleSizeChange(val) {
                     console.log('每页 ' + val + ' 条');

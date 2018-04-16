@@ -76,6 +76,7 @@ public class UserFavShopRelController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList",new String[]{"用户收藏"});
         return "userFavShopRel/view";
     }
 }

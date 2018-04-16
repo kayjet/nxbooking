@@ -1,10 +1,10 @@
 package com.booking.common.service;
 
-import com.booking.common.dto.ProductDto;
 import com.booking.common.dto.ProductListDto;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.resp.Page;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -45,4 +45,7 @@ public interface IOrderService {
     ProductListDto getOrderProductList(String orderId);
 
     void updatePayStatus(String orderNo, String transactionId);
+
+    Workbook exportExcel(OrderEntity orderEntity);
+
 }

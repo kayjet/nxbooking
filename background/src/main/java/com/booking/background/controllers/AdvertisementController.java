@@ -2,6 +2,7 @@ package com.booking.background.controllers;
 
 import com.booking.common.entity.AdvertisementEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IAdvertisementService;
@@ -23,6 +24,7 @@ import java.util.List;
 */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
+@Interceptor(TimeQueryInterceptor.class)
 public class AdvertisementController {
     private static final Logger logger = LoggerFactory.getLogger(AdvertisementController.class);
 
@@ -75,6 +77,7 @@ public class AdvertisementController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList",new String[]{"广告走马灯"});
         return "advertisement/view";
     }
 }

@@ -3,9 +3,9 @@
     <div style="float: left;">
         <el-breadcrumb separator-class="el-icon-arrow-right" style="line-height: inherit;color: #ffffff;" >
             <el-breadcrumb-item>后台</el-breadcrumb-item>
-            <#--<#list navList as nav>-->
-                <#--<el-breadcrumb-item>${nav}</el-breadcrumb-item>-->
-            <#--</#list>-->
+            <#list navList as nav>
+                <el-breadcrumb-item>${nav}</el-breadcrumb-item>
+            </#list>
         </el-breadcrumb>
     </div>
 

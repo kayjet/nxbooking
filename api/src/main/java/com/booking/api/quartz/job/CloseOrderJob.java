@@ -28,7 +28,7 @@ public class CloseOrderJob implements Job {
         try {
             applicationContext = getApplicationContext(jobExecutionContext);
             OrderEntity orderEntity = (OrderEntity) jobExecutionContext.getJobDetail().getJobDataMap().get("task");
-            orderEntity.setOrderType(Constants.OrderStatus.CANCELED);
+            orderEntity.setOrderStatus(Constants.OrderStatus.CANCELED);
 
             OrderMapper orderMapper = applicationContext.getBean(OrderMapper.class);
             orderMapper.update(orderEntity, new OrderEntity(orderEntity.getId()));

@@ -2,6 +2,7 @@ package com.booking.background.controllers;
 
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IProductService;
@@ -30,6 +31,7 @@ import java.util.Set;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
+@Interceptor(TimeQueryInterceptor.class)
 public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
@@ -131,6 +133,7 @@ public class ProductController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList",new String[]{"产品管理","详情记录"});
         return "product/view";
     }
 }

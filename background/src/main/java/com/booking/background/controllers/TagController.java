@@ -4,6 +4,7 @@ import com.booking.common.entity.ShopEntity;
 import com.booking.common.entity.ShopTagRelEntity;
 import com.booking.common.entity.TagEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IShopTagRelService;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
+@Interceptor(TimeQueryInterceptor.class)
 public class TagController {
     private static final Logger logger = LoggerFactory.getLogger(TagController.class);
 
@@ -112,6 +114,7 @@ public class TagController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList",new String[]{"产品管理","标签"});
         return "tag/view";
     }
 }

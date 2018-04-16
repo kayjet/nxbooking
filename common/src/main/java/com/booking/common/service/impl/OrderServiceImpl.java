@@ -1,5 +1,7 @@
 package com.booking.common.service.impl;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
 import com.booking.common.base.Constants;
 import com.booking.common.dto.ProductDto;
 import com.booking.common.dto.ProductListDto;
@@ -7,7 +9,7 @@ import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.entity.*;
 import com.booking.common.mapper.*;
 import com.booking.common.service.IOrderService;
-import org.joda.time.DateTime;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     OrderProductRelMapper orderProductRelMapper;
+
+    @Autowired
+    ShopMapper shopMapper;
 
     @Override
     public List<OrderEntity> listAll() {
@@ -239,6 +244,30 @@ public class OrderServiceImpl implements IOrderService {
             ret.setTransactionId(transactionId);
             orderMapper.updatePayStatusWithLock(ret);
         }
+    }
+
+    @Override
+    public Workbook exportExcel(OrderEntity orderEntity) {
+        String shopId = orderEntity.getShopId();
+        ShopEntity shopResult = shopMapper.selectOne(new ShopEntity(shopId));
+
+        OrderEntity query = new OrderEntity();
+        query.setCreateTimeStart(orderEntity.getCreateTimeStart());
+        query.setCreateTimeEnd(orderEntity.getCreateTimeEnd());
+
+        List<OrderEntity> orderList = orderMapper.selectList(query);
+        if (CollectionUtils.isEmpty(orderList)) {
+            return null;
+        }
+        for (OrderEntity entity : orderList) {
+            entity.setFee(shopResult.getPayRate());
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(shopResult.getName() + " " + simpleDateFormat.format(orderEntity.getCreateTimeStart()) + "到"
+                        + simpleDateFormat.format(orderEntity.getCreateTimeEnd()) + "订单记录", "详情"),
+                OrderEntity.class, orderList);
+        return workbook;
     }
 
     private void insertOrderUserRel(String userId, String orderId) {

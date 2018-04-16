@@ -1,5 +1,6 @@
 package com.booking.common.entity;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.dto.ProductListDto;
 import com.booking.common.mapper.OrderMapper;
@@ -18,16 +19,20 @@ import java.util.List;
 @Namespace(value = OrderMapper.class)
 public class OrderEntity implements Serializable{
     private String id;
+    @Excel(name = "订单号", height = 20, width = 40, isImportField = "true_st")
     private String orderNo;
     private String orderStatus;
+    @Excel(name = "总价", height = 20, width = 40)
     private Double totalPrice;
     private Double totalPriceFromWeb;
     private String orderTime;
     private String orderType;
     private String concatPhone;
+    @Excel(name = "微信订单号", height = 20, width = 40)
     private String transactionId;
     private Integer lockVersion;
     @Sort(type = Sort.SortType.DESC)
+    @Excel(name = "创建时间", height = 20, width = 40, databaseFormat = "yyyyMMddHHmmss", format = "yyyy-MM-dd")
     private Timestamp createTime;
     private Timestamp updateTime;
     private Integer isPushed;
@@ -35,6 +40,10 @@ public class OrderEntity implements Serializable{
 
     @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private Integer hasBeenHandle;
+
+    @Excel(name = "费率", height = 20, width = 40)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
+    private Double fee;
 
     @Field(resultmap = false, insert = false, update = false, delete = false)
     @Where(value = " and create_time >= {}", plain = false)
@@ -79,12 +88,16 @@ public class OrderEntity implements Serializable{
             select = false)
     private  ProductListDto productListDto;
 
+
+
     public OrderEntity() {
     }
 
     public OrderEntity(String id) {
         this.id = id;
     }
+
+
 
     public ProductListDto getProductListDto() {
         return productListDto;
@@ -276,6 +289,14 @@ public class OrderEntity implements Serializable{
 
     public void setConcatPhone(String concatPhone) {
         this.concatPhone = concatPhone;
+    }
+
+    public Double getFee() {
+        return fee;
+    }
+
+    public void setFee(Double fee) {
+        this.fee = fee;
     }
 
     @Override

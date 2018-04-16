@@ -2,7 +2,6 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>element-starter</title>
         <link rel="stylesheet" type="text/css" href="${context}/dist/cssnormalize.css">
         <link rel="stylesheet" href="${context}/dist/element-ui.css">
         <script src="${context}/dist/vue.js"></script>
@@ -70,6 +69,15 @@
                     return "预约";
                 }
                 return "";
+            });
+            Vue.filter('gender', function (val) {
+                if (val == 1) {
+                    return "男";
+                }
+                if (val == 2) {
+                    return "女";
+                }
+                return "未知";
             });
         </script>
         <style>
@@ -143,3 +151,8 @@
              font-weight: bold;
             }
         </style>
+        <title>
+        <#list navList as nav>
+            ${nav}
+        </#list>
+        </title>

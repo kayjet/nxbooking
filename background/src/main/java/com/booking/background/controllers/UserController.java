@@ -76,6 +76,7 @@ public class UserController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList",new String[]{"用户记录"});
         return "user/view";
     }
 }

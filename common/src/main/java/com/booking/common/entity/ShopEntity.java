@@ -26,6 +26,13 @@ public class ShopEntity {
     private Timestamp updateTime;
     private Timestamp createTime;
 
+    public ShopEntity() {
+    }
+
+    public ShopEntity(String id) {
+        this.id = id;
+    }
+
     @Field(insert = false, update = false, delete = false)
     private Double distance;
     @Field(insert = false, update = false, delete = false,select = false)

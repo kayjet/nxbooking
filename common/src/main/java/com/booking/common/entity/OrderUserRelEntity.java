@@ -17,6 +17,7 @@ import java.util.List;
 public class OrderUserRelEntity {
     private Timestamp updateTime;
     private String id;
+    @Sort(type = Sort.SortType.DESC)
     private Timestamp createTime;
     private String userId;
     private String orderId;
