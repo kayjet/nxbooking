@@ -53,4 +53,11 @@
         SELECT * FROM t_Product_spec spc WHERE spc.parent_code IS NUll
     </select>
 
+    <select id="selectMaxParentCode" resultType="java.lang.String">
+        SELECT MAX(`code`) FROM `t_product_spec` WHERE parent_code IS NULL;
+    </select>
+
+    <select id="selectMaxChildCode" parameterType="java.lang.String" resultType="java.lang.String">
+     SELECT MAX(`code`) FROM `t_product_spec` WHERE parent_code =#{parentCode};
+    </select>
 </mapper>

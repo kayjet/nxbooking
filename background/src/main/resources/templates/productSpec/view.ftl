@@ -18,29 +18,38 @@
                         <el-collapse>
                             <el-collapse-item title="点击搜索" name="1">
                                 <el-form :inline="true" :model="search" class="demo-form-inline">
-                                    <el-form-item label="update_time">
-                                        <el-input v-model="search.updateTime"
-                                                  placeholder="updateTime"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="code">
+                                    <el-form-item label="代码">
                                         <el-input v-model="search.code"
                                                   placeholder="code"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="create_time">
-                                        <el-input v-model="search.createTime"
-                                                  placeholder="createTime"></el-input>
-                                    </el-form-item>
-                                    <el-form-item label="name">
+                                    <el-form-item label="名称">
                                         <el-input v-model="search.name"
                                                   placeholder="name"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="parent_code">
+                                    <el-form-item label="父级代码">
                                         <el-input v-model="search.parentCode"
                                                   placeholder="parentCode"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="id">
-                                        <el-input v-model="search.id"
-                                                  placeholder="id"></el-input>
+                                    <br/>
+                                    <el-form-item label="创建时间">
+                                        <el-date-picker
+                                                v-model="search.createTimeSearch"
+                                                value-format="yyyy-MM-dd HH:mm:ss.0"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item label="修改时间">
+                                        <el-date-picker
+                                                v-model="search.updateTimeSearch"
+                                                value-format="yyyy-MM-dd HH:mm:ss.0"
+                                                type="daterange"
+                                                range-separator="至"
+                                                start-placeholder="开始日期"
+                                                end-placeholder="结束日期">
+                                        </el-date-picker>
                                     </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="onSearch">查询</el-button>
@@ -51,7 +60,7 @@
                     </el-col>
                 </el-row>
 
-                <el-row  style="margin-top: 14px;">
+                <el-row style="margin-top: 14px;">
                     <el-col :span="24">
                         <div class="grid-content bg-purple-dark">
                             <el-button type="primary" icon="el-icon-plus" @click="onInsert">新增</el-button>
@@ -67,34 +76,29 @@
                                     type="selection"
                                     width="55">
                             </el-table-column>
-                            <el-table-column label="update_time" index="0">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.updateTime }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="code" index="1">
+                            <el-table-column label="代码" index="1">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.code }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="create_time" index="2">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.createTime }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="name" index="3">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.name }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="parent_code" index="4">
+                            <el-table-column label="父级代码" index="4">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.parentCode }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="id" index="5">
+                            <el-table-column label="名称" index="3">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.id }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.name }}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="创建时间" index="2">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.createTime | formatDate}}</span>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="修改时间" index="0">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -119,26 +123,23 @@
         <el-dialog
                 title="新增数据"
                 :visible.sync="insertDialogVisible"
-                width="30%"
+                width="65%"
                 center>
-            <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="update_time">
-                    <el-input v-model="form.updateTime">{{form.updateTime}}</el-input>
-                </el-form-item>
-                <el-form-item label="code">
-                    <el-input v-model="form.code">{{form.code}}</el-input>
-                </el-form-item>
-                <el-form-item label="create_time">
-                    <el-input v-model="form.createTime">{{form.createTime}}</el-input>
-                </el-form-item>
-                <el-form-item label="name">
+            <el-form ref="form" :model="form" label-width="120px">
+                <el-form-item label="名称">
                     <el-input v-model="form.name">{{form.name}}</el-input>
                 </el-form-item>
-                <el-form-item label="parent_code">
-                    <el-input v-model="form.parentCode">{{form.parentCode}}</el-input>
+                <el-form-item label="是否为父级代码">
+                    <#--<el-input v-model="form.parentCode">{{form.parentCode}}</el-input>-->
+                    <template>
+                        <el-radio v-model="form.isParentCode" label="T">是</el-radio>
+                        <el-radio v-model="form.isParentCode" label="F">否</el-radio>
+                    </template>
                 </el-form-item>
-                <el-form-item label="id">
-                    <el-input v-model="form.id">{{form.id}}</el-input>
+                <el-form-item label="选择所属父级" v-if="form.isParentCode == 'F'">
+                    <template>
+                        <el-radio v-model="form.parentCode" :label="parentCode.code" v-for="parentCode in parentCodeList">{{parentCode.name}}</el-radio>
+                    </template>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('insert')">立即创建</el-button>
@@ -150,26 +151,11 @@
         <el-dialog
                 title="修改数据"
                 :visible.sync="updateDialogVisible"
-                width="30%"
+                width="65%"
                 center>
             <el-form ref="form" :model="form" label-width="80px">
-                <el-form-item label="update_time">
-                    <el-input v-model="form.updateTime">{{form.updateTime}}</el-input>
-                </el-form-item>
-                <el-form-item label="code">
-                    <el-input v-model="form.code">{{form.code}}</el-input>
-                </el-form-item>
-                <el-form-item label="create_time">
-                    <el-input v-model="form.createTime">{{form.createTime}}</el-input>
-                </el-form-item>
-                <el-form-item label="name">
+                <el-form-item label="名称">
                     <el-input v-model="form.name">{{form.name}}</el-input>
-                </el-form-item>
-                <el-form-item label="parent_code">
-                    <el-input v-model="form.parentCode">{{form.parentCode}}</el-input>
-                </el-form-item>
-                <el-form-item label="id">
-                    <el-input v-model="form.id">{{form.id}}</el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
@@ -208,6 +194,9 @@
         deleteList: function (ids) {
             return axios.post(window.ctxPath + '/productSpec/removeList', ids);
         },
+        listAllParent: function () {
+            return axios.post(window.ctxPath + '/productSpec/listAllParent');
+        },
         goTo: function (model) {
             window.location.href = window.ctxPath + "/" + model + "/view?";
         }
@@ -230,7 +219,8 @@
                     },
                     search: {},
                     totalPage: 0,
-                    currentPage: 1
+                    currentPage: 1,
+                    parentCodeList:[],
                 }
             },
             created() {
@@ -240,6 +230,10 @@
                     that.currentPage = response.data.pageNo;
                     that.totalPage = response.data.countSize;
                 });
+                window.service.listAllParent().then(function (response) {
+                    console.log(response);
+                    that.parentCodeList = response.data.data;
+                })
             },
             mounted() {
                 const that = this;

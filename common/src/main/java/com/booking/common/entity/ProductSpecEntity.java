@@ -14,13 +14,22 @@ import java.sql.Timestamp;
 @Namespace(value= ProductSpecMapper.class)
 public class ProductSpecEntity {
     private String id;
+    @Sort
     private String code;
     private String name;
+    @Sort
     private String parentCode;
     private String parentName;
     private String parentId;
     private Timestamp createTime;
     private Timestamp updateTime;
+
+    @Field(resultmap = false,
+            insert = false,
+            update = false,
+            delete = false,
+            select = false)
+    private String isParentCode;
 
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
@@ -153,5 +162,13 @@ public class ProductSpecEntity {
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public String getIsParentCode() {
+        return isParentCode;
+    }
+
+    public void setIsParentCode(String isParentCode) {
+        this.isParentCode = isParentCode;
     }
 }

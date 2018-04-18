@@ -1,5 +1,6 @@
 package com.booking.common.service.impl;
 
+import com.booking.common.base.Constants;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.PageInterceptor;
 import com.booking.common.entity.ProductSpecEntity;
@@ -18,11 +19,11 @@ import java.util.UUID;
 
 
 /**
-* ProductSpecServiceImpl
-*
-* @author kai.liu
-* @date 2018/01/02
-*/
+ * ProductSpecServiceImpl
+ *
+ * @author kai.liu
+ * @date 2018/01/02
+ */
 @Service
 public class ProductSpecServiceImpl implements IProductSpecService {
     Logger logger = LoggerFactory.getLogger(ProductSpecServiceImpl.class);
@@ -53,13 +54,14 @@ public class ProductSpecServiceImpl implements IProductSpecService {
         if (pageSize == null) {
             pageSize = 10;
         }
-        Integer countSize =  productSpecMapper.likeCount(productSpecEntity);
+        Integer countSize = productSpecMapper.likeCount(productSpecEntity);
         Page<List<ProductSpecEntity>> page = new Page<List<ProductSpecEntity>>(pageSize, pageNo, countSize);
         PageInterceptor.setPage(pageNo, pageSize);
-        List<ProductSpecEntity> result =  productSpecMapper.selectLikeList(productSpecEntity);
+        List<ProductSpecEntity> result = productSpecMapper.selectLikeList(productSpecEntity);
         page.setResult(result);
         return page;
     }
+
     @Override
     public ProductSpecEntity getProductSpec(String id) {
         ProductSpecEntity productSpecEntity = new ProductSpecEntity();
@@ -67,9 +69,42 @@ public class ProductSpecServiceImpl implements IProductSpecService {
         return productSpecMapper.selectOne(productSpecEntity);
     }
 
+    public static void main(String[] args) {
+        System.out.println(Integer.valueOf("02"));
+    }
+
     @Override
     public int addProductSpec(ProductSpecEntity productSpecEntity) {
         productSpecEntity.setId(UUID.randomUUID().toString());
+        if (!StringUtils.isEmpty(productSpecEntity.getIsParentCode())) {
+            if (productSpecEntity.getIsParentCode().equals(Constants.IsParentCode.YES)) {
+                String maxCode = productSpecMapper.selectMaxParentCode();
+                Integer max = Integer.valueOf(maxCode);
+                max = max + 1;
+                if (max < 10) {
+                    productSpecEntity.setCode("0" + max);
+                } else {
+                    productSpecEntity.setCode("" + max);
+                }
+                productSpecEntity.setParentCode(null);
+            } else {
+                String parentCode = productSpecEntity.getParentCode();
+                String maxChildCode = productSpecMapper.selectMaxChildCode(parentCode);
+                if (StringUtils.isEmpty(maxChildCode)) {
+                    maxChildCode = "00";
+                }
+                Integer max = Integer.valueOf(maxChildCode);
+                max = max + 1;
+                if (max < 10) {
+                    productSpecEntity.setCode(parentCode + "0" + max);
+                } else {
+                    productSpecEntity.setCode(parentCode + max);
+                }
+            }
+        }
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        productSpecEntity.setCreateTime(ts);
+        productSpecEntity.setUpdateTime(ts);
         return productSpecMapper.insert(productSpecEntity);
     }
 
@@ -84,7 +119,7 @@ public class ProductSpecServiceImpl implements IProductSpecService {
 
     @Override
     public int removeProductSpec(String id) {
-        if(StringUtils.isEmpty(id)){
+        if (StringUtils.isEmpty(id)) {
             throw new RuntimeException("删除操作时，主键不能为空！");
         }
         ProductSpecEntity productSpecEntity = new ProductSpecEntity();
@@ -96,7 +131,7 @@ public class ProductSpecServiceImpl implements IProductSpecService {
     public int removeProductSpec(List<String> ids) {
         int result = 0;
         for (String id : ids) {
-            if(StringUtils.isEmpty(id)){
+            if (StringUtils.isEmpty(id)) {
                 throw new RuntimeException("删除操作时，主键不能为空！");
             }
             ProductSpecEntity productSpecEntity = new ProductSpecEntity();

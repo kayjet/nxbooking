@@ -22,10 +22,6 @@
                                         <el-input v-model="search.price"
                                                   placeholder="price"></el-input>
                                     </el-form-item>
-                                    <el-form-item label="id">
-                                        <el-input v-model="search.id"
-                                                  placeholder="id"></el-input>
-                                    </el-form-item>
                                     <el-form-item label="介绍">
                                         <el-input v-model="search.detail"
                                                   placeholder="detail"></el-input>
@@ -102,11 +98,12 @@
                                     width="55">
                             </el-table-column>
 
-                            <el-table-column label="id" index="3">
+                            <el-table-column label="产品名" index="6">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.id }}</span>
+                                    <span style="margin-left: 10px">{{  scope.row.title }}</span>
                                 </template>
                             </el-table-column>
+
                             <el-table-column label="单价" index="2">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.price }}</span>
@@ -131,11 +128,6 @@
                             <el-table-column label="介绍" index="5">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.detail }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="产品名" index="6">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.title }}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="销售状态" index="7">

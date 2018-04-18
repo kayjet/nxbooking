@@ -2,6 +2,7 @@ package com.booking.background.controllers;
 
 import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
+import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.IProductSpecService;
@@ -23,6 +24,7 @@ import java.util.List;
 */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
+@Interceptor(TimeQueryInterceptor.class)
 public class ProductSpecController {
     private static final Logger logger = LoggerFactory.getLogger(ProductSpecController.class);
 
@@ -67,7 +69,7 @@ public class ProductSpecController {
 
     @Request(value = "/productSpec/listAllParent", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
-    public List<ProductSpecEntity> listAllParent(ProductSpecEntity productSpecEntity) {
+    public List<ProductSpecEntity> listAllParent() {
         return productSpecService.listAllParent();
     }
 
@@ -82,6 +84,7 @@ public class ProductSpecController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("navList", new String[]{"产品管理","规格"});
         return "productSpec/view";
     }
 }

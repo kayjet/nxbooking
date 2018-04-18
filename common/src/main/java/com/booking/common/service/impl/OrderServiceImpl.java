@@ -246,14 +246,21 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
     @Override
     public Workbook exportExcel(OrderEntity orderEntity) {
         String shopId = orderEntity.getShopId();
         ShopEntity shopResult = shopMapper.selectOne(new ShopEntity(shopId));
+        String dateRange = "";
 
         OrderEntity query = new OrderEntity();
-        query.setCreateTimeStart(orderEntity.getCreateTimeStart());
-        query.setCreateTimeEnd(orderEntity.getCreateTimeEnd());
+        if (orderEntity.getCreateTimeStart() != null && orderEntity.getCreateTimeEnd() != null) {
+            query.setCreateTimeStart(orderEntity.getCreateTimeStart());
+            query.setCreateTimeEnd(orderEntity.getCreateTimeEnd());
+            dateRange = simpleDateFormat.format(orderEntity.getCreateTimeStart()) + "到"
+                    + simpleDateFormat.format(orderEntity.getCreateTimeEnd());
+        }
 
         List<OrderEntity> orderList = orderMapper.selectList(query);
         if (CollectionUtils.isEmpty(orderList)) {
@@ -262,10 +269,8 @@ public class OrderServiceImpl implements IOrderService {
         for (OrderEntity entity : orderList) {
             entity.setFee(shopResult.getPayRate());
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(shopResult.getName() + " " + simpleDateFormat.format(orderEntity.getCreateTimeStart()) + "到"
-                        + simpleDateFormat.format(orderEntity.getCreateTimeEnd()) + "订单记录", "详情"),
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(shopResult.getName() + " " + dateRange + "订单记录", "详情"),
                 OrderEntity.class, orderList);
         return workbook;
     }

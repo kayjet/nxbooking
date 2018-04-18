@@ -37,18 +37,24 @@ public class Constants {
         public static final Integer SOLD_OUT = 2;
     }
 
-    public static class WechatPayErrorCode{
-//        商户无此接口权限	商户未开通此接口权限	请商户前往申请此接口权限
+    public static class IsParentCode {
+        public static final String YES = "T";
+        public static final String NO = "F";
+    }
+
+
+    public static class WechatPayErrorCode {
+        //        商户无此接口权限	商户未开通此接口权限	请商户前往申请此接口权限
         public static final String NOAUTH = "NOAUTH";
-//        余额不足	用户帐号余额不足	用户帐号余额不足，请用户充值或更换支付卡后再支付
+        //        余额不足	用户帐号余额不足	用户帐号余额不足，请用户充值或更换支付卡后再支付
         public static final String NOTENOUGH = "NOTENOUGH";
-//        商户订单已支付	商户订单已支付，无需重复操作	商户订单已支付，无需更多操作
+        //        商户订单已支付	商户订单已支付，无需重复操作	商户订单已支付，无需更多操作
         public static final String ORDERPAID = "ORDERPAID";
-//        订单已关闭	当前订单已关闭，无法支付	当前订单已关闭，请重新下单
+        //        订单已关闭	当前订单已关闭，无法支付	当前订单已关闭，请重新下单
         public static final String ORDERCLOSED = "ORDERCLOSED";
-//        系统错误	系统超时	系统异常，请用相同参数重新调用
+        //        系统错误	系统超时	系统异常，请用相同参数重新调用
         public static final String SYSTEMERROR = "SYSTEMERROR";
-//        商户订单号重复	同一笔交易不能多次提交	请核实商户订单号是否重复提交
+        //        商户订单号重复	同一笔交易不能多次提交	请核实商户订单号是否重复提交
         public static final String APPID_NOT_EXIST = "APPID_NOT_EXIST";
         public static final String APPID_MCHID_NOT_MATCH = "APPID_MCHID_NOT_MATCH";
         public static final String LACK_PARAMS = "LACK_PARAMS";
