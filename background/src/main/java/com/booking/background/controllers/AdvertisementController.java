@@ -1,5 +1,6 @@
 package com.booking.background.controllers;
 
+import com.booking.background.interceptor.LoginSessionInterceptor;
 import com.booking.common.entity.AdvertisementEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.interceptor.TimeQueryInterceptor;
@@ -24,7 +25,7 @@ import java.util.List;
 */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-@Interceptor(TimeQueryInterceptor.class)
+@Interceptor({TimeQueryInterceptor.class,LoginSessionInterceptor.class})
 public class AdvertisementController {
     private static final Logger logger = LoggerFactory.getLogger(AdvertisementController.class);
 

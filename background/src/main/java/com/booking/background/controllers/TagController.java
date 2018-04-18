@@ -1,5 +1,6 @@
 package com.booking.background.controllers;
 
+import com.booking.background.interceptor.LoginSessionInterceptor;
 import com.booking.common.entity.ShopEntity;
 import com.booking.common.entity.ShopTagRelEntity;
 import com.booking.common.entity.TagEntity;
@@ -28,7 +29,7 @@ import java.util.List;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-@Interceptor(TimeQueryInterceptor.class)
+@Interceptor({TimeQueryInterceptor.class,LoginSessionInterceptor.class})
 public class TagController {
     private static final Logger logger = LoggerFactory.getLogger(TagController.class);
 

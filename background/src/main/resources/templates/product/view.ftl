@@ -115,9 +115,6 @@
                                 </template>
                             </el-table-column>
                             <el-table-column label="图片" index="4" width="68">
-                            <#-- <template slot-scope="scope">
-                                 <span style="margin-left: 10px">{{  scope.row.pic }}</span>
-                             </template>-->
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -136,6 +133,22 @@
                                     <span style="margin-left: 10px">{{  scope.row.isOnSale | saleStatus}}</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column label="规格" index="8"  width="68">
+                                <template slot-scope="scope">
+                                    <el-popover trigger="hover" placement="top">
+                                        <div>
+                                            <el-tag type="success" v-for="item in scope.row.productSpecList"
+                                                    style="margin-right: 14px;">{{ item.name }}
+                                            </el-tag>
+                                        </div>
+                                        <div slot="reference" class="name-wrapper">
+                                            <el-tag size="medium" v-if="scope.row.productSpecList.length > 0">查看
+                                            </el-tag>
+                                        </div>
+                                    </el-popover>
+                                </template>
+                            </el-table-column>
+
                             <el-table-column label="标签" index="6"  width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
@@ -150,10 +163,8 @@
                                         </div>
                                     </el-popover>
                                 </template>
-                            <#-- <template slot-scope="scope">
-                                 <span style="margin-left: 10px">{{  scope.row.title }}</span>
-                             </template>-->
                             </el-table-column>
+
                             <el-table-column label="创建时间" index="1">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.createTime |formatDate}}</span>

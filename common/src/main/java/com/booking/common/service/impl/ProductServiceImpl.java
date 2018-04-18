@@ -1,7 +1,9 @@
 package com.booking.common.service.impl;
 
 import com.booking.common.entity.ProductEntity;
+import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.mapper.ProductMapper;
+import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.service.IProductService;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.PageInterceptor;
@@ -9,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 
@@ -18,17 +21,20 @@ import java.util.UUID;
 
 
 /**
-* ProductServiceImpl
-*
-* @author kai.liu
-* @date 2018/01/02
-*/
+ * ProductServiceImpl
+ *
+ * @author kai.liu
+ * @date 2018/01/02
+ */
 @Service
 public class ProductServiceImpl implements IProductService {
     Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Autowired
     ProductMapper productMapper;
+
+    @Autowired
+    ProductSpecRelMapper productSpecRelMapper;
 
     @Override
     public List<ProductEntity> listAll() {
@@ -48,13 +54,22 @@ public class ProductServiceImpl implements IProductService {
         if (pageSize == null) {
             pageSize = 10;
         }
-        Integer countSize =  productMapper.likeCount(productEntity);
+        Integer countSize = productMapper.likeCount(productEntity);
         Page<List<ProductEntity>> page = new Page<List<ProductEntity>>(pageSize, pageNo, countSize);
         PageInterceptor.setPage(pageNo, pageSize);
-        List<ProductEntity> result =  productMapper.selectLikeList(productEntity);
+        List<ProductEntity> result = productMapper.selectLikeList(productEntity);
+        if (!CollectionUtils.isEmpty(result)) {
+            for (ProductEntity product : result) {
+                List<ProductSpecEntity> productSpecEntities = productSpecRelMapper.selectProductRelSpecList(product.getId());
+                if (!CollectionUtils.isEmpty(productSpecEntities)) {
+                    product.setProductSpecList(productSpecEntities);
+                }
+            }
+        }
         page.setResult(result);
         return page;
     }
+
     @Override
     public ProductEntity getProduct(String id) {
         ProductEntity productEntity = new ProductEntity();
@@ -83,7 +98,7 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public int removeProduct(String id) {
-        if(StringUtils.isEmpty(id)){
+        if (StringUtils.isEmpty(id)) {
             throw new RuntimeException("删除操作时，主键不能为空！");
         }
         ProductEntity productEntity = new ProductEntity();
@@ -95,7 +110,7 @@ public class ProductServiceImpl implements IProductService {
     public int removeProduct(List<String> ids) {
         int result = 0;
         for (String id : ids) {
-            if(StringUtils.isEmpty(id)){
+            if (StringUtils.isEmpty(id)) {
                 throw new RuntimeException("删除操作时，主键不能为空！");
             }
             ProductEntity productEntity = new ProductEntity();

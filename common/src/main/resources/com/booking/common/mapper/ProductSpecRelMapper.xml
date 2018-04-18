@@ -34,5 +34,14 @@
     </select>
 
 
+    <select id="selectProductRelSpecList" resultMap="productSpecResult">
+        SELECT
+          spec.*
+        FROM
+          t_product_spec spec
+        RIGHT JOIN `t_product_spec_rel` prdRel ON spec.id = prdRel.spec_id
+        WHERE  prdRel.pid = #{pid}
+    </select>
+
 
 </mapper>

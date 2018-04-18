@@ -6,6 +6,7 @@ import com.booking.common.service.impl.CommonService;
 import com.opdar.platform.annotations.Editor;
 import com.opdar.platform.annotations.ErrorHandler;
 import com.opdar.platform.annotations.Request;
+import com.opdar.platform.core.base.Context;
 import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,5 +48,11 @@ public class CommonController {
         } catch (IOException e) {
         }
         return result;
+    }
+
+    @Request(value = "/common/login", format = Request.Format.VIEW)
+    public String login() {
+        Context.putAttribute("context", Context.getRequest().getContextPath());
+        return "login/view";
     }
 }

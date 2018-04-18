@@ -18,4 +18,6 @@ public interface ProductSpecRelMapper extends IBaseMapper<ProductSpecRelEntity> 
 
     List<ProductSpecEntity> selectSpecList(@Param("pid") String pid);
 
+    List<ProductSpecEntity> selectProductRelSpecList(@Param("pid") String pid);
+
 }

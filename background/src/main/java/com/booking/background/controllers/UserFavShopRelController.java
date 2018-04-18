@@ -1,5 +1,6 @@
 package com.booking.background.controllers;
 
+import com.booking.background.interceptor.LoginSessionInterceptor;
 import com.booking.common.service.IUserFavShopRelService;
 import com.booking.common.entity.UserFavShopRelEntity;
 import com.booking.common.exceptions.ErrCodeHandler;
@@ -23,7 +24,7 @@ import java.util.List;
 */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-@Interceptor(TimeQueryInterceptor.class)
+@Interceptor({TimeQueryInterceptor.class,LoginSessionInterceptor.class})
 public class UserFavShopRelController {
     private static final Logger logger = LoggerFactory.getLogger(UserFavShopRelController.class);
 
