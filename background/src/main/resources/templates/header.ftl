@@ -79,6 +79,15 @@
                 }
                 return "未知";
             });
+            Vue.filter('isOnSale', function (val) {
+                if (val == 1) {
+                    return "在售";
+                }
+                if (val == 2) {
+                    return "售罄";
+                }
+                return "";
+            });
         </script>
         <style>
             html, body {

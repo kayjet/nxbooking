@@ -19,7 +19,7 @@
                         <div class="grid-content bg-purple-dark">
                             <span style="margin-right: 24px;">等待制作的订单</span>
                             <el-dropdown @command="handleCommand">
-                                  <span class="el-dropdown-link">
+                                  <span class="el-dropdown-link" style="cursor: pointer;">
                                   选择门店: {{shopName}}<i class="el-icon-arrow-down el-icon--right"></i>
                                   </span>
                                 <el-dropdown-menu slot="dropdown">

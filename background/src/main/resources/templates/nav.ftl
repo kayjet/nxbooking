@@ -16,7 +16,6 @@
             <i class="el-icon-setting" style="margin-right: 15px;cursor: pointer;"></i>
             <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item>登出</el-dropdown-item>
-                <el-dropdown-item>新增</el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
     </div>

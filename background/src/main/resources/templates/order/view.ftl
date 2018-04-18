@@ -49,7 +49,7 @@
                                         <el-dropdown @command="handleOrderStatus">
                                                   <span class="el-dropdown-link"
                                                         style="margin-left: 14px;margin-right: 14px;">
-                                                    {{search.orderStatus?search.orderStatus:"下拉菜单"}}<i
+                                                    {{search.orderStatus | orderStauts}}<i
                                                           class="el-icon-arrow-down el-icon--right"></i>
                                                   </span>
                                             <el-dropdown-menu slot="dropdown">
@@ -66,8 +66,23 @@
                                         </el-dropdown>
                                     </el-form-item>
                                     <el-form-item label="订单类型">
-                                        <el-input v-model="search.orderType"
-                                                  placeholder="orderType"></el-input>
+                                        <#--<el-input v-model="search.orderType"-->
+                                                  <#--placeholder="orderType"></el-input>-->
+                                            <el-dropdown @command="handleOrderType">
+                                                  <span class="el-dropdown-link"
+                                                        style="margin-left: 14px;margin-right: 14px;">
+                                                    {{search.orderType | orderType}}<i
+                                                          class="el-icon-arrow-down el-icon--right"></i>
+                                                  </span>
+                                                <el-dropdown-menu slot="dropdown">
+                                                    <el-dropdown-item command="1">
+                                                        即时
+                                                    </el-dropdown-item>
+                                                    <el-dropdown-item command="2">
+                                                        预约
+                                                    </el-dropdown-item>
+                                                </el-dropdown-menu>
+                                            </el-dropdown>
                                     </el-form-item>
                                     <el-form-item label="联系方式">
                                         <el-input v-model="search.concatPhone"
@@ -452,10 +467,12 @@
                     });
                 },
                 handleOrderStatus(val){
-                    console.log(val);
                     const that = this;
-                    that.search.orderStatus = val;
-                    Vue.set(this,"search.orderStatus",val)
+                    Vue.set(this.search,"orderStatus",val);
+                },
+                handleOrderType(val){
+                    const that = this;
+                    Vue.set(this.search,"orderType",val);
                 },
                 handleCommand(val) {
                     var vars = val.split(",");

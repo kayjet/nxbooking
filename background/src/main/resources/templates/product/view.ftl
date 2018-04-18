@@ -35,8 +35,25 @@
                                                   placeholder="title"></el-input>
                                     </el-form-item>
                                     <el-form-item label="销售状态">
-                                        <el-input v-model="search.isOnSale"
-                                                  placeholder="isOnSale"></el-input>
+                                        <#--<el-input v-model="search.isOnSale"-->
+                                                  <#--placeholder="isOnSale"></el-input>-->
+
+                                        <el-dropdown @command="handleIsOnSale">
+                                                  <span class="el-dropdown-link"
+                                                        style="margin-left: 14px;margin-right: 14px;">
+                                                    {{search.isOnSale | isOnSale}}<i
+                                                          class="el-icon-arrow-down el-icon--right"></i>
+                                                  </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item command="1">
+                                                    在售
+                                                </el-dropdown-item>
+                                                <el-dropdown-item command="2">
+                                                    售罄
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
+
                                     </el-form-item>
                                     <br/>
                                     <el-form-item label="创建时间">
@@ -541,6 +558,9 @@
                 },
                 handleSaleStatusCommand(val) {
                     Vue.set(this.form, "isOnSale", val);
+                },
+                handleIsOnSale(val){
+                    Vue.set(this.search, "isOnSale", val);
                 },
                 handleCurrentChange(val) {
                     console.log('当前页: ' + val);
