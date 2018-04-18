@@ -98,7 +98,11 @@ public class ProductSpecServiceImpl implements IProductSpecService {
                 if (max < 10) {
                     productSpecEntity.setCode(parentCode + "0" + max);
                 } else {
-                    productSpecEntity.setCode(parentCode + max);
+                    if (Integer.valueOf(parentCode) < 10) {
+                        productSpecEntity.setCode("0" + max);
+                    } else {
+                        productSpecEntity.setCode("" + max);
+                    }
                 }
             }
         }

@@ -6,12 +6,12 @@ import com.opdar.plugins.mybatis.annotations.*;
 import java.sql.Timestamp;
 
 /**
-* AuthorityEntity
-*
-* @author kai.liu
-* @date 2017/12/28
-*/
-@Namespace(value= ProductSpecMapper.class)
+ * AuthorityEntity
+ *
+ * @author kai.liu
+ * @date 2017/12/28
+ */
+@Namespace(value = ProductSpecMapper.class)
 public class ProductSpecEntity {
     private String id;
     @Sort
@@ -19,8 +19,12 @@ public class ProductSpecEntity {
     private String name;
     @Sort
     private String parentCode;
+    @Field(insert = false,
+            update = false,
+            delete = false)
     private String parentName;
     private String parentId;
+    private Double price;
     private Timestamp createTime;
     private Timestamp updateTime;
 
@@ -31,25 +35,25 @@ public class ProductSpecEntity {
             select = false)
     private String isParentCode;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time >= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time >= {}", plain = false)
     private Timestamp createTimeStart;
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and create_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and create_time <= {}", plain = false)
     private Timestamp createTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time >= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time >= {}", plain = false)
     private Timestamp updateTimeStart;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false)
-    @Where(value = " and update_time <= {}",plain = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false)
+    @Where(value = " and update_time <= {}", plain = false)
     private Timestamp updateTimeEnd;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String createTimeSearch;
 
-    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String updateTimeSearch;
 
     public Timestamp getCreateTimeStart() {
@@ -170,5 +174,13 @@ public class ProductSpecEntity {
 
     public void setIsParentCode(String isParentCode) {
         this.isParentCode = isParentCode;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
     }
 }

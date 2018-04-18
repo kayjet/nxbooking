@@ -175,6 +175,9 @@ public class OrderServiceImpl implements IOrderService {
                         List<ProductSpecEntity> productSpecList = specDto.getSpecList();
                         if (!CollectionUtils.isEmpty(productSpecList)) {
                             for (ProductSpecEntity specEntity : productSpecList) {
+                                if (specEntity.getPrice() != null) {
+                                    price += specEntity.getPrice();
+                                }
                                 String pid = p.getId();
                                 String specId = specEntity.getId();
                                 Timestamp ts = new Timestamp(System.currentTimeMillis());

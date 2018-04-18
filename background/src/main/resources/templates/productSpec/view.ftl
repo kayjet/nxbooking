@@ -91,6 +91,11 @@
                                     <span style="margin-left: 10px">{{  scope.row.name }}</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column label="额外费用" index="5">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.price }}</span>
+                                </template>
+                            </el-table-column>
                             <el-table-column label="创建时间" index="2">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.createTime | formatDate}}</span>
@@ -141,6 +146,9 @@
                         <el-radio v-model="form.parentCode" :label="parentCode.code" v-for="parentCode in parentCodeList">{{parentCode.name}}</el-radio>
                     </template>
                 </el-form-item>
+                <el-form-item label="额外费用" v-if="form.isParentCode == 'F'">
+                    <el-input v-model="form.price">{{form.price}}</el-input>
+                </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('insert')">立即创建</el-button>
                 </el-form-item>
@@ -156,6 +164,9 @@
             <el-form ref="form" :model="form" label-width="80px">
                 <el-form-item label="名称">
                     <el-input v-model="form.name">{{form.name}}</el-input>
+                </el-form-item>
+                <el-form-item label="额外费用">
+                    <el-input v-model="form.price">{{form.price}}</el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
