@@ -23,6 +23,9 @@ public class ProductSpecEntity {
             update = false,
             delete = false)
     private String parentName;
+    @Field(insert = false,
+            update = false,
+            delete = false)
     private String parentId;
     private Double price;
     private Timestamp createTime;
