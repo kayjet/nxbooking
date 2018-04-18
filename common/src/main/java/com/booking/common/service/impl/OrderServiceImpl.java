@@ -268,6 +268,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         for (OrderEntity entity : orderList) {
             entity.setFee(shopResult.getPayRate());
+            entity.setMustPay((shopResult.getPayRate() * entity.getTotalPrice()) / 100D);
         }
 
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(shopResult.getName() + " " + dateRange + "订单记录", "详情"),

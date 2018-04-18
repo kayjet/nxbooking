@@ -18,10 +18,6 @@
                         <el-collapse>
                             <el-collapse-item title="点击搜索" name="1">
                                 <el-form :inline="true" :model="search" class="demo-form-inline">
-                                    <el-form-item label="id">
-                                        <el-input v-model="search.id"
-                                                  placeholder="id"></el-input>
-                                    </el-form-item>
                                     <el-form-item label="标签名称">
                                         <el-input v-model="search.title"
                                                   placeholder="title"></el-input>
@@ -74,26 +70,7 @@
                                     type="selection"
                                     width="55">
                             </el-table-column>
-                            <el-table-column label="id" index="1">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.id }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="封面图" index="2">
-                               <#-- <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.pic }}</span>
-                                </template>-->
-                                <template slot-scope="scope" >
-                                    <el-popover trigger="hover" placement="top">
-                                        <div>
-                                            <img :src="scope.row.pic | avatar" width="240" height="240" alt="" style="border-radius: 14px;">
-                                        </div>
-                                        <div slot="reference" class="name-wrapper">
-                                            <el-tag size="medium" v-if="scope.row.pic">查看</el-tag>
-                                        </div>
-                                    </el-popover>
-                                </template>
-                            </el-table-column>
+
 
                             <el-table-column label="标签名称" index="4">
                                 <template slot-scope="scope">
@@ -105,7 +82,22 @@
                                     <span style="margin-left: 10px">{{  scope.row.remark }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="所属门店" index="5">
+                            <el-table-column label="封面图" index="2" width="68">
+                            <#-- <template slot-scope="scope">
+                                 <span style="margin-left: 10px">{{  scope.row.pic }}</span>
+                             </template>-->
+                                <template slot-scope="scope" >
+                                    <el-popover trigger="hover" placement="top">
+                                        <div>
+                                            <img :src="scope.row.pic | avatar" width="240" height="240" alt="" style="border-radius: 14px;">
+                                        </div>
+                                        <div slot="reference" class="name-wrapper">
+                                            <el-tag size="medium" v-if="scope.row.pic">查看</el-tag>
+                                        </div>
+                                    </el-popover>
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="所属门店" index="5" width="68">
                                 <template slot-scope="scope" >
                                     <el-popover trigger="hover" placement="top">
                                         <div>

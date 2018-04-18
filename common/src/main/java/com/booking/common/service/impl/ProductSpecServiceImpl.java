@@ -145,12 +145,12 @@ public class ProductSpecServiceImpl implements IProductSpecService {
     public int updateById(ProductSpecEntity productSpecEntity, String id) {
         ProductSpecEntity where = new ProductSpecEntity();
         where.setId(id);
-        where.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return this.update(productSpecEntity, where);
     }
 
     @Override
     public int update(ProductSpecEntity productSpecEntity, ProductSpecEntity where) {
+        productSpecEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return productSpecMapper.update(productSpecEntity, where);
     }
 }

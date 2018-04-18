@@ -18,7 +18,7 @@ public class ShopEntity {
     private String address;
     private Double lat;
     private Double lng;
-    //费率
+    //费率%
     private Double payRate;
     private String openTime;
     private String closeTime;

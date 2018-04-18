@@ -103,13 +103,18 @@
                                     <span style="margin-left: 10px">{{  scope.row.title }}</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column label="介绍" index="5">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.detail }}</span>
+                                </template>
+                            </el-table-column>
 
-                            <el-table-column label="单价" index="2">
+                            <el-table-column label="单价" index="2" width="68">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.price }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="图片" index="4">
+                            <el-table-column label="图片" index="4" width="68">
                             <#-- <template slot-scope="scope">
                                  <span style="margin-left: 10px">{{  scope.row.pic }}</span>
                              </template>-->
@@ -125,17 +130,13 @@
                                     </el-popover>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="介绍" index="5">
-                                <template slot-scope="scope">
-                                    <span style="margin-left: 10px">{{  scope.row.detail }}</span>
-                                </template>
-                            </el-table-column>
-                            <el-table-column label="销售状态" index="7">
+
+                            <el-table-column label="销售状态" index="7" width="88">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.isOnSale | saleStatus}}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="标签" index="6">
+                            <el-table-column label="标签" index="6"  width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>

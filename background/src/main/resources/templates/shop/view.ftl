@@ -102,7 +102,7 @@
                                             <span style="margin-left: 10px">{{  scope.row.name }}</span>
                                         </template>
                                     </el-table-column>
-                                    <el-table-column label="费率" index="7">
+                                    <el-table-column label="费率%" index="7">
                                         <template slot-scope="scope">
                                             <span style="margin-left: 10px">{{  scope.row.payRate }}</span>
                                         </template>
@@ -190,7 +190,7 @@
                                         placeholder="选择时间">
                                 </el-time-select>
                         </el-form-item>
-                        <el-form-item label="费率">
+                        <el-form-item label="费率%">
                             <el-input v-model="form.payRate">{{form.payRate}}</el-input>
                         </el-form-item>
                         <el-form-item>
@@ -242,7 +242,7 @@
                                         placeholder="选择时间">
                                 </el-time-select>
                         </el-form-item>
-                        <el-form-item label="费率">
+                        <el-form-item label="费率%">
                             <el-input v-model="form.payRate">{{form.payRate}}</el-input>
                         </el-form-item>
                         <el-form-item>

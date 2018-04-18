@@ -158,14 +158,14 @@
                                     <span style="margin-left: 10px">{{  scope.row.totalPrice }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="费率" index="9">
+                            <el-table-column label="费率%" index="9">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px" v-if="selectedShop">{{selectedShop.payRate}}</span>
                                 </template>
                             </el-table-column>
                             <el-table-column label="分成" index="10">
                                 <template slot-scope="scope">
-                                    <span style="margin-left: 10px" v-if="selectedShop">{{  scope.row.totalPrice * selectedShop.payRate }}</span>
+                                    <span style="margin-left: 10px" v-if="selectedShop">{{  (scope.row.totalPrice * selectedShop.payRate)/100 }}</span>
                                 </template>
                             </el-table-column>
 

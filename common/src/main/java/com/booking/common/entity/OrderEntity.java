@@ -41,9 +41,12 @@ public class OrderEntity implements Serializable{
     @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private Integer hasBeenHandle;
 
-    @Excel(name = "费率", height = 20, width = 40)
+    @Excel(name = "费率%", height = 20, width = 40)
     @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private Double fee;
+    @Excel(name = "分成", height = 20, width = 40)
+    @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
+    private Double mustPay;
 
     @Field(resultmap = false, insert = false, update = false, delete = false)
     @Where(value = " and create_time >= {}", plain = false)
@@ -97,7 +100,13 @@ public class OrderEntity implements Serializable{
         this.id = id;
     }
 
+    public Double getMustPay() {
+        return mustPay;
+    }
 
+    public void setMustPay(Double mustPay) {
+        this.mustPay = mustPay;
+    }
 
     public ProductListDto getProductListDto() {
         return productListDto;
