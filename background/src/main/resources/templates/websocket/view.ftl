@@ -39,12 +39,13 @@
                             <el-table-column type="expand">
                                 <template slot-scope="props">
                                     <el-form label-position="left" inline class="demo-table-expand">
-                                        <div   v-for="detail in props.row.orderDetailList">
+                                        <div v-for="detail in props.row.orderDetailList">
                                             <el-form-item label="等待制作的商品：" style="margin-bottom: 0px;">
                                                 <span>{{ detail.productName }}</span>
                                             </el-form-item>
                                             <el-form-item label="规格：" style="margin-bottom: 0px;">
-                                                <span v-for="spec in detail.productSpecList" style="margin-right: 12px;">{{ spec }}</span>
+                                                <span v-for="spec in detail.productSpecList"
+                                                      style="margin-right: 12px;">{{ spec }}</span>
                                             </el-form-item>
                                         </div>
                                     </el-form>
@@ -93,6 +94,15 @@
                                     <span style="margin-left: 10px">{{  scope.row.createTime | formatDate }}</span>
                                 </template>
                             </el-table-column>
+                            <el-table-column label="操作">
+                                <template slot-scope="scope">
+                                    <el-button type="primary"
+                                               size="mini"
+                                               @click="handleEdit(scope.$index, scope.row)">处理
+                                    </el-button>
+                                </template>
+                            </el-table-column>
+
                         </el-table>
                     </el-col>
                 </el-row>
@@ -159,8 +169,8 @@
                     heartbeatTimeout: 3000,
                     timer: null,
                     reconnectTimer: null,
-                    shopId:"",
-                    shopName:"",
+                    shopId: "",
+                    shopName: "",
                 }
             },
 
@@ -170,9 +180,7 @@
             mounted() {
                 const that = this;
             },
-            filters: {
-
-            },
+            filters: {},
             methods: {
                 heartbeat() {
                     const that = this;
@@ -237,6 +245,16 @@
                             } else {
                                 that.tableData.push(hearbeatDto.data);
                             }
+                        } else if (hearbeatDto.code == 2){
+                            var arr = [];
+                            for(var i = 0; i < that.tableData.length ;i++){
+                                if(that.tableData[i].id != hearbeatDto.data){
+                                    arr.push(that.tableData[i]);
+                                }
+                            }
+                            that.tableData = arr;
+                            console.log(that.tableData);
+
                         }
                     };
 
@@ -294,10 +312,30 @@
                 onSearch() {
                     const that = this;
                 },
+                handleEdit(index, data) {
+                    console.log(arguments);
+                    data.shopId = this.shopId;
+                    this.$confirm('订单确认后,将无法回退，是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        this.websocket.send(JSON.stringify({
+                            code: 2,
+                            data: data
+                        }));
+                        this.$message({
+                            type: 'success',
+                            message: '确认成功!'
+                        });
+                    }).catch(() => {
+                    });
+
+                },
                 handleCommand(command) {
                     const that = this;
                     var arr = command.split(",");
-                    if(that.websocket!=null){
+                    if (that.websocket != null) {
                         that.websocket.close();
                     }
                     that.tableData = [];

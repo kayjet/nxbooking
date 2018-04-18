@@ -92,14 +92,18 @@
 
 
     <!-- 配置消息队列监听者（Queue） -->
-    <bean id="queueMessageListener" class="com.booking.background.websocket.WebsocketController" />
+    <bean id="queueMessageListener" class="com.booking.background.websocket.WebsocketController"/>
 
     <!-- 显示注入消息监听容器（Queue），配置连接工厂，监听的目标是demoQueueDestination，监听器是上面定义的监听器 -->
     <bean id="queueListenerContainer"
           class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-        <property name="connectionFactory" ref="connectionFactory" />
-        <property name="destination" ref="demoQueueDestination" />
-        <property name="messageListener" ref="queueMessageListener" />
+        <property name="connectionFactory" ref="connectionFactory"/>
+        <property name="destination" ref="demoQueueDestination"/>
+        <property name="messageListener" ref="queueMessageListener"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
     </bean>
 
 </beans>

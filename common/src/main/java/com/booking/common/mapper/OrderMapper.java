@@ -8,15 +8,17 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
-* AuthorityMapper
-*
-* @author kai.liu
-* @date 2017/12/28
-*/
+ * AuthorityMapper
+ *
+ * @author kai.liu
+ * @date 2017/12/28
+ */
 public interface OrderMapper extends IBaseMapper<OrderEntity> {
     int updatePayStatusWithLock(OrderEntity order);
 
     int updatePushStatusWithLock(OrderEntity order);
+
+    int updateHandlerStatusWithLock(@Param("orderNo") String orderNo, @Param("lockVersion") Integer lockVersion);
 
     List<OrderDetailEntity> selectOrderDetailList(@Param("orderNo") String orderNo);
 

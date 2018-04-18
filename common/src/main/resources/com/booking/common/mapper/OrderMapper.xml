@@ -46,6 +46,14 @@
         ]]>
     </update>
 
+    <update id="updateHandlerStatusWithLock" parameterType="com.booking.common.entity.OrderEntity" >
+        <![CDATA[
+            update `booking`.`t_order`
+            set is_handler=2, lock_version= lock_version + 1
+            where id=#{id}  and lock_version=#{lockVersion}
+        ]]>
+    </update>
+
 
 
     <resultMap id="orderDetailResult" type="com.booking.common.entity.OrderDetailEntity">

@@ -17,14 +17,15 @@
                 <el-row>
 
                     <el-col :span="24" style="font-size: 14px;">
-                        <span >选择门店：</span>
-                        <el-dropdown @command="handleCommand" >
+                        <span>选择门店：</span>
+                        <el-dropdown @command="handleCommand">
                           <span class="el-dropdown-link" style="margin-left: 14px;margin-right: 14px;">
                             {{selectedShop?selectedShop.name:"下拉菜单"}}<i class="el-icon-arrow-down el-icon--right"></i>
                           </span>
                             <el-dropdown-menu slot="dropdown">
                             <#list shops as shop>
-                                <el-dropdown-item command="${shop.id},${shop.name},<#if shop.payRate??>${shop.payRate}</#if>">${shop.name}</el-dropdown-item>
+                                <el-dropdown-item
+                                        command="${shop.id},${shop.name},<#if shop.payRate??>${shop.payRate}</#if>">${shop.name}</el-dropdown-item>
                             </#list>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -43,8 +44,26 @@
                                                   placeholder="orderNo"></el-input>
                                     </el-form-item>
                                     <el-form-item label="订单状态">
-                                        <el-input v-model="search.orderStatus"
-                                                  placeholder="orderStatus"></el-input>
+                                    <#--<el-input v-model="search.orderStatus"-->
+                                    <#--placeholder="orderStatus"></el-input>-->
+                                        <el-dropdown @command="handleOrderStatus">
+                                                  <span class="el-dropdown-link"
+                                                        style="margin-left: 14px;margin-right: 14px;">
+                                                    {{search.orderStatus?search.orderStatus:"下拉菜单"}}<i
+                                                          class="el-icon-arrow-down el-icon--right"></i>
+                                                  </span>
+                                            <el-dropdown-menu slot="dropdown">
+                                                <el-dropdown-item command="1">
+                                                    付款成功
+                                                </el-dropdown-item>
+                                                <el-dropdown-item command="2">
+                                                    等待支付
+                                                </el-dropdown-item>
+                                                <el-dropdown-item command="3">
+                                                    取消
+                                                </el-dropdown-item>
+                                            </el-dropdown-menu>
+                                        </el-dropdown>
                                     </el-form-item>
                                     <el-form-item label="订单类型">
                                         <el-input v-model="search.orderType"
@@ -77,7 +96,8 @@
                                     </el-form-item>
                                     <el-form-item>
                                         <el-button type="primary" @click="onSearch">查询</el-button>
-                                        <el-button type="primary"  @click="onDownloadExcel">下载excel<i class="el-icon-download el-icon--right"></i></el-button>
+                                        <el-button type="primary" @click="onDownloadExcel">下载excel<i
+                                                class="el-icon-download el-icon--right"></i></el-button>
                                     </el-form-item>
                                 </el-form>
                             </el-collapse-item>
@@ -98,16 +118,16 @@
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
-                            <#--<el-table-column-->
-                                    <#--type="selection"-->
-                                    <#--width="55">-->
-                            <#--</el-table-column>-->
+                        <#--<el-table-column-->
+                        <#--type="selection"-->
+                        <#--width="55">-->
+                        <#--</el-table-column>-->
 
-                            <#--<el-table-column label="id" index="5">-->
-                                <#--<template slot-scope="scope">-->
-                                    <#--<span style="margin-left: 10px">{{  scope.row.id }}</span>-->
-                                <#--</template>-->
-                            <#--</el-table-column>-->
+                        <#--<el-table-column label="id" index="5">-->
+                        <#--<template slot-scope="scope">-->
+                        <#--<span style="margin-left: 10px">{{  scope.row.id }}</span>-->
+                        <#--</template>-->
+                        <#--</el-table-column>-->
                             <el-table-column label="订单编号" index="0">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderNo }}</span>
@@ -139,11 +159,11 @@
                                     <span style="margin-left: 10px">{{  scope.row.transactionId }}</span>
                                 </template>
                             </el-table-column>
-                                <el-table-column label="订单类型" index="7">
-                                    <template slot-scope="scope">
-                                        <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
-                                    </template>
-                                </el-table-column>
+                            <el-table-column label="订单类型" index="7">
+                                <template slot-scope="scope">
+                                    <span style="margin-left: 10px">{{  scope.row.orderType | orderType}}</span>
+                                </template>
+                            </el-table-column>
                             <el-table-column label="预约时间" index="6">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.orderTime }}</span>
@@ -160,11 +180,11 @@
                                     <span style="margin-left: 10px">{{  scope.row.createTime | formatDate }}</span>
                                 </template>
                             </el-table-column>
-                            <#--<el-table-column label="修改时间" index="2">-->
-                                <#--<template slot-scope="scope">-->
-                                    <#--<span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>-->
-                                <#--</template>-->
-                            <#--</el-table-column>-->
+                        <#--<el-table-column label="修改时间" index="2">-->
+                        <#--<template slot-scope="scope">-->
+                        <#--<span style="margin-left: 10px">{{  scope.row.updateTime | formatDate}}</span>-->
+                        <#--</template>-->
+                        <#--</el-table-column>-->
                         </el-table>
                     </el-col>
 
@@ -294,7 +314,7 @@
                     }
                 }
             }
-            console.log("paramString",paramString);
+            console.log("paramString", paramString);
             return window.ctxPath + '/order/exportExcel?' + paramString;
         },
         update: function (form) {
@@ -329,7 +349,7 @@
                     search: {},
                     totalPage: 0,
                     currentPage: 1,
-                    selectedShop:null,
+                    selectedShop: null,
                 }
             },
             created() {
@@ -431,13 +451,19 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
-                handleCommand(val){
+                handleOrderStatus(val){
+                    console.log(val);
+                    const that = this;
+                    that.search.orderStatus = val;
+                    Vue.set(this,"search.orderStatus",val)
+                },
+                handleCommand(val) {
                     var vars = val.split(",");
                     const that = this;
                     this.selectedShop = {
-                        id:vars[0],
-                        name:vars[1],
-                        payRate:vars[2]
+                        id: vars[0],
+                        name: vars[1],
+                        payRate: vars[2]
                     };
                     that.search.shopId = this.selectedShop.id;
                     window.service.listPage(1, 10, that.search).then(function (response) {
@@ -445,7 +471,7 @@
                         that.currentPage = response.data.pageNo;
                         that.totalPage = response.data.countSize;
                     });
-                    console.log("val",vars);
+                    console.log("val", vars);
                 },
             }
         })

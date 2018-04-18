@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.*;
@@ -24,8 +25,12 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * OrderController
@@ -54,7 +59,11 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
     @Autowired
     OrderShopRelMapper orderShopRelMapper;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     private static final Integer WS_SUCCESS_CODE = 1;
+    private static final Integer WS_HANDLE_MESSAGE = 2;
 
 
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
@@ -76,7 +85,7 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
                 resultData = LINKED_QUEUE_CONCURRENT_MAP.get(shopId);
             }
         }
-        sendHeartBeat(webSocketSession, resultData);
+        sendHeartBeat(webSocketSession, WS_SUCCESS_CODE, resultData);
     }
 
     @Override
@@ -85,13 +94,29 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
         String data = String.valueOf(webSocketMessage.getPayload());
         WsHeartBeatDto fromWeb = JSONObject.parseObject(data, WsHeartBeatDto.class);
         if (fromWeb.getCode().equals(WS_SUCCESS_CODE)) {
-            sendHeartBeat(webSocketSession, null);
+            sendHeartBeat(webSocketSession, WS_SUCCESS_CODE, null);
+        } else if (fromWeb.getCode().equals(WS_HANDLE_MESSAGE)) {
+            JSONObject jsonObject = (JSONObject) fromWeb.getData();
+            OrderEntity waitingHandleOrder = JSONObject.parseObject(jsonObject.toJSONString(), OrderEntity.class);
+            waitingHandleOrder.setIsHandler(Constants.OrderPushHandlerStatus.HANDLERED);
+            jdbcTemplate.update(" update `booking`.`t_order`\n" +
+                    "            set is_handler=2, lock_version= lock_version + 1\n" +
+                    "            where id='" + waitingHandleOrder.getId() + "'  and lock_version=" + waitingHandleOrder.getLockVersion());
+            ConcurrentLinkedQueue<OrderEntity> orderEntities = LINKED_QUEUE_CONCURRENT_MAP.get(waitingHandleOrder.getShopId());
+            Iterator<OrderEntity> iterator = orderEntities.iterator();
+            while (iterator.hasNext()) {
+                OrderEntity orderEntity = iterator.next();
+                if (orderEntity.getId().equals(waitingHandleOrder.getId())) {
+                    iterator.remove();
+                }
+            }
+            sendHeartBeat(webSocketSession, WS_HANDLE_MESSAGE, waitingHandleOrder.getId());
         }
     }
 
-    private void sendHeartBeat(WebSocketSession webSocketSession, Object o) throws IOException {
+    private void sendHeartBeat(WebSocketSession webSocketSession, Integer code, Object o) throws IOException {
         WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
-        fromEndPoint.setCode(WS_SUCCESS_CODE);
+        fromEndPoint.setCode(code);
         if (o != null) {
             fromEndPoint.setData(o);
         }
@@ -167,52 +192,50 @@ public class WebsocketController implements WebSocketHandler, MessageListener, A
     @Override
     public void onMessage(Message message) {
         javax.jms.TextMessage tm = (javax.jms.TextMessage) message;
-        for (WebSocketSession webSocketSession : WEB_SOCKET_SESSION_CONCURRENT_MAP.values()) {
-            String txtMsg = null;
-            try {
-                txtMsg = tm.getText();
-            } catch (JMSException e) {
-                e.printStackTrace();
-            }
-            if (!StringUtils.isEmpty(txtMsg)) {
-                System.out.println("QueueMessageListener监听到了文本消息：\t" + txtMsg);
-                WechatPayCallbackEntity callbackEntity = JSONObject.parseObject(txtMsg, WechatPayCallbackEntity.class);
+        String txtMsg = null;
+        try {
+            txtMsg = tm.getText();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+        if (!StringUtils.isEmpty(txtMsg)) {
+            System.out.println("QueueMessageListener监听到了文本消息：\t" + txtMsg);
+            WechatPayCallbackEntity callbackEntity = JSONObject.parseObject(txtMsg, WechatPayCallbackEntity.class);
 
-                OrderEntity query = new OrderEntity();
-                query.setTransactionId(callbackEntity.getTransaction_id());
-                query.setOrderNo(callbackEntity.getOut_trade_no());
-                OrderEntity ret = orderMapper.selectOne(query);
-                setOrderDetail(ret);
+            OrderEntity query = new OrderEntity();
+            query.setTransactionId(callbackEntity.getTransaction_id());
+            query.setOrderNo(callbackEntity.getOut_trade_no());
+            OrderEntity ret = orderMapper.selectOne(query);
+            setOrderDetail(ret);
 
-                if (ret.getIsPushed().equals(Constants.OrderPushStatus.NOT_PUSH)) {
-                    try {
-                        WsHeartBeatDto<OrderEntity> fromEndPoint = new WsHeartBeatDto<OrderEntity>();
-                        fromEndPoint.setCode(WS_SUCCESS_CODE);
-                        fromEndPoint.setData(ret);
-                        TextMessage wsMsg = new TextMessage(JSONObject.toJSONString(fromEndPoint));
-                        webSocketSession.sendMessage(wsMsg);
-                        ret.setIsPushed(Constants.OrderPushStatus.PUSHED);
-                        orderMapper.updatePushStatusWithLock(ret);
-
-                        OrderShopRelEntity queryShop = new OrderShopRelEntity();
-                        queryShop.setOrderId(ret.getId());
-                        String shopId = orderShopRelMapper.selectOne(queryShop).getShopId();
-
-                        if (LINKED_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
+            if (ret.getIsPushed().equals(Constants.OrderPushStatus.NOT_PUSH)) {
+                OrderShopRelEntity orderShopRel = new OrderShopRelEntity();
+                orderShopRel.setOrderId(ret.getId());
+                orderShopRel = orderShopRelMapper.selectOne(orderShopRel);
+                String shopId = orderShopRel.getShopId();
+                if (!StringUtils.isEmpty(shopId)) {
+                    WebSocketSession webSocketSession = WEB_SOCKET_SESSION_CONCURRENT_MAP.get(shopId);
+                    if (webSocketSession != null) {
+                        try {
+                            sendHeartBeat(webSocketSession, WS_SUCCESS_CODE, ret);
+                            ret.setIsPushed(Constants.OrderPushStatus.PUSHED);
+                        } catch (IOException e) {
+                            e.printStackTrace();
                             if (!LINKED_QUEUE_CONCURRENT_MAP.get(shopId).contains(ret)) {
                                 LINKED_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
+                            } else {
+                                ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
+                                concurrentLinkedQueue.add(ret);
+                                LINKED_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
                             }
-                        } else {
-                            ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
-                            concurrentLinkedQueue.add(ret);
-                            LINKED_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        orderMapper.updatePushStatusWithLock(ret);
                     }
                 }
             }
         }
+
+
     }
 
     private static boolean isInited = false;

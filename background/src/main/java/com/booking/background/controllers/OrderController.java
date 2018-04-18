@@ -113,7 +113,7 @@ public class OrderController {
 
     @Request(value = "/websocket/view", format = Request.Format.VIEW)
     public String websocket() {
-        logger.info("访问view页");
+        logger.info("访问websocket页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("shopList", shopService.listAll());
         Context.putAttribute("navList", new String[]{"即时订单"});
