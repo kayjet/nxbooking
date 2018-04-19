@@ -171,16 +171,4 @@ public class Sprint1Controller {
         userService.addUser(userEntity);
         return userEntity;
     }
-
-    public static void main(String[] args) throws ParseException {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat yyyyMMddHHmm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String today = simpleDateFormat.format(new DateTime().toDate());
-        System.out.println(today);
-        Date openDate = yyyyMMddHHmm.parse(today + " 10:00:00");
-        Date closeDate = yyyyMMddHHmm.parse(today + " 22:00:00");
-        System.out.println(openDate);
-        System.out.println(closeDate);
-
-    }
 }

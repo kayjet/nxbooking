@@ -30,7 +30,7 @@ public class MyQuartzExecutorDelegate {
     public Object addCloseOrderJob(OrderEntity orderEntity) {
         DateTime startDate = new DateTime();
         return quartzExecutor.addJob(orderEntity.getOrderNo(), CloseOrderJob.class, orderEntity, startDate.plusMinutes(14).toDate(),
-                JOB_GROUP_NAME);
+                JOB_GROUP_NAME, 0, 0);
     }
 
     /**

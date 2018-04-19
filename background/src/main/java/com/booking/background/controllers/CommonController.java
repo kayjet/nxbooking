@@ -55,4 +55,11 @@ public class CommonController {
         Context.putAttribute("context", Context.getRequest().getContextPath());
         return "login/view";
     }
+
+    @Request(value = "/common/login/action", format = Request.Format.JSON)
+    @Editor(ResultEditor.class)
+    public Boolean loginAction(String username, String password) {
+        Context.putAttribute("context", Context.getRequest().getContextPath());
+        return true;
+    }
 }

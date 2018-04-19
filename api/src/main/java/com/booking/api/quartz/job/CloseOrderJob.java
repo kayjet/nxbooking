@@ -17,9 +17,8 @@ import org.springframework.context.ApplicationContext;
  * @author kai.liu
  * @date 2018/04/15
  */
-public class CloseOrderJob implements Job {
+public class CloseOrderJob extends AbstractJob{
     Logger logger = LoggerFactory.getLogger(CloseOrderJob.class);
-    private static final String APPLICATION_CONTEXT_KEY = "applicationContext";
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -43,12 +42,4 @@ public class CloseOrderJob implements Job {
         logger.debug("---执行定时任务 关闭订单 结束---");
     }
 
-    private ApplicationContext getApplicationContext(JobExecutionContext context) throws Exception {
-        ApplicationContext appCtx = null;
-        appCtx = (ApplicationContext) context.getScheduler().getContext().get(APPLICATION_CONTEXT_KEY);
-        if (appCtx == null) {
-            throw new JobExecutionException("No application context available in scheduler context for key \"" + APPLICATION_CONTEXT_KEY + "\"");
-        }
-        return appCtx;
-    }
 }

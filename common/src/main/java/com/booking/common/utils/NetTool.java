@@ -29,7 +29,7 @@ public class NetTool {
         return null;
     }
 
-    public static byte[] POST_JSON(String url, String params) {
+    public static byte[] POST_JSON(String url, String params) throws Exception {
         //写
         OutputStream out = null;
         //		InputStream in = null;   //读
@@ -50,7 +50,7 @@ public class NetTool {
                 return bytes;
             }
         } catch (Exception e) {
-
+            throw e;
         } finally {
             if (out != null) {
                 try {

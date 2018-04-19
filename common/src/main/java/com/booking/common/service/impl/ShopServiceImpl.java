@@ -1,5 +1,6 @@
 package com.booking.common.service.impl;
 
+import com.booking.common.base.Constants;
 import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.entity.ProductSpecEntity;
@@ -145,24 +146,32 @@ public class ShopServiceImpl implements IShopService {
             if (CollectionUtils.isEmpty(entity.getTagList().get(0).getProductList())) {
                 iterator.remove();
             } else {
-                for (ProductEntity productEntity : entity.getTagList().get(0).getProductList()) {
-                    List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(productEntity.getId());
-                    if (!CollectionUtils.isEmpty(specList)) {
-                        List<ProductSpecDto> productSpecDtos = new ArrayList<ProductSpecDto>();
-                        for (ProductSpecEntity specEntity : specList) {
-                            ProductSpecDto dto = new ProductSpecDto();
-                            dto.setParentCode(specEntity.getParentCode());
-                            dto.setParentName(specEntity.getParentName());
-                            if (productSpecDtos.contains(dto)) {
-                                productSpecDtos.get(productSpecDtos.indexOf(dto)).getSpecList().add(specEntity);
-                            } else {
-                                dto.getSpecList().add(specEntity);
-                                productSpecDtos.add(dto);
+                Iterator<ProductEntity> productEntityIterator = entity.getTagList().get(0).getProductList().iterator();
+                while (productEntityIterator.hasNext()) {
+                    ProductEntity productEntity = productEntityIterator.next();
+                    if (productEntity.getIsOnSale() != null && productEntity.getIsOnSale().equals(Constants.ProductSaleStatus.ON_SALE)) {
+                        List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(productEntity.getId());
+                        if (!CollectionUtils.isEmpty(specList)) {
+                            List<ProductSpecDto> productSpecDtos = new ArrayList<ProductSpecDto>();
+                            for (ProductSpecEntity specEntity : specList) {
+                                ProductSpecDto dto = new ProductSpecDto();
+                                dto.setParentCode(specEntity.getParentCode());
+                                dto.setParentName(specEntity.getParentName());
+                                if (productSpecDtos.contains(dto)) {
+                                    productSpecDtos.get(productSpecDtos.indexOf(dto)).getSpecList().add(specEntity);
+                                } else {
+                                    dto.getSpecList().add(specEntity);
+                                    productSpecDtos.add(dto);
+                                }
                             }
+                            productEntity.setRelSpecList(productSpecDtos);
                         }
-                        productEntity.setRelSpecList(productSpecDtos);
+                    } else {
+                        productEntityIterator.remove();
                     }
+
                 }
+
             }
         }
         return result;

@@ -2,40 +2,19 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-4.3.xsd
     http://www.springframework.org/schema/tx
     http://www.springframework.org/schema/tx/spring-tx.xsd">
-    <context:property-placeholder location="classpath*:/config.properties" system-properties-mode="FALLBACK" />
+
+    <context:property-placeholder location="classpath*:/config.properties" system-properties-mode="FALLBACK"/>
     <context:component-scan base-package="com.booking"/>
 
     <bean id="propertyConfigure"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <bean id="cacheManager"
-          class="com.booking.common.base.DefaultCacheManager"/>
-
-    <!--Session管理-->
-    <bean class="com.opdar.platform.core.session.MemorySessionManager" />
-    <!--Session管理-->
-
-    <!--视图渲染-->
-    <bean class="com.opdar.platform.core.view.FreemarkerViewTemplate">
-        <property name="prefix" value="classpath:/templates/"/>
-    </bean>
-    <!--视图渲染-->
-
-    <!--文件上传-->
-    <bean name="fileItemFactory" class="org.apache.commons.fileupload.disk.DiskFileItemFactory">
-        <property name="sizeThreshold" value="1024000"/>
-    </bean>
-    <bean class="org.apache.commons.fileupload.servlet.ServletFileUpload">
-        <property name="fileItemFactory" ref="fileItemFactory"/>
-    </bean>
-    <!--文件上传-->
 
     <!--Druid数据源配置-->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
@@ -89,8 +68,8 @@
         <property name="basePackage" value="com.booking.common.mapper"/>
     </bean>
 
-    <bean class="com.booking.common.base.FastJSONConvert"/>
-    <!--<import resource="active-mq.xml"/>-->
-    <import resource="quartz.xml"/>
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
 
 </beans>

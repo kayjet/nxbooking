@@ -31,7 +31,7 @@ public class MyQuartzExecutor {
      *                通过context.getMergedJobDataMap().getString("context"); 获取
      * @return 0 添加成功 1：任务已经存在 2：添加异常
      */
-    public int addJob(String jobName, Class<? extends Job> job, Object task, Date startDate, String jobGorupName) {
+    public int addJob(String jobName, Class<? extends Job> job, Object task, Date startDate, String jobGorupName, int seconds, int setRepeatCount) {
         try {
             // 判断任务是否存在
             JobKey jobKey = JobKey.jobKey(jobName, jobGorupName);
@@ -54,15 +54,17 @@ public class MyQuartzExecutor {
             // 什么时候开始执行
             simpleTrigger.setStartTime(startDate);
             // 间隔时间
-//            simpleTrigger.setRepeatInterval(1000 * seconds);
+            if (seconds != 0) {
+                simpleTrigger.setRepeatInterval(1000 * seconds);
+            }
             // 最多执行次数 默认执行一次
-            simpleTrigger.setRepeatCount(0);
+            simpleTrigger.setRepeatCount(setRepeatCount);
             // 通过SchedulerFactory获取一个调度器实例
             scheduler.scheduleJob(jobDetail, simpleTrigger);//  注册并进行调度
             scheduler.start();// ⑤调度启动
             return 0;// 添加成功
         } catch (Exception e) {
-             e.printStackTrace();
+            e.printStackTrace();
             return 2;// 操作异常
         }
     }

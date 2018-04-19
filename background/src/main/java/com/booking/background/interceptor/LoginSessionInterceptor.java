@@ -19,16 +19,16 @@ public class LoginSessionInterceptor implements Interceptor {
 
     @Override
     public boolean before() {
-        Object loginUser = Context.getRequest().getSession().getAttribute(LOGIN_USER);
-        if (loginUser == null) {
-            try {
-                String contextPath = Context.getRequest().getContextPath();
-                Context.getResponse().sendRedirect(contextPath + "/common/login");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
+//        Object loginUser = Context.getRequest().getSession().getAttribute(LOGIN_USER);
+//        if (loginUser == null) {
+//            try {
+//                String contextPath = Context.getRequest().getContextPath();
+//                Context.getResponse().sendRedirect(contextPath + "/common/login");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return false;
+//        }
         return true;
     }
 

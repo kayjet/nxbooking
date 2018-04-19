@@ -47,7 +47,7 @@ public class Sprint3ControllerTest extends AbstractTransactionalTestService {
                 "  <mch_id><![CDATA[10000100]]></mch_id>\n" +
                 "  <nonce_str><![CDATA[5d2b6c2a8db53831f7eda20af46e531c]]></nonce_str>\n" +
                 "  <openid><![CDATA[oUpF8uMEb4qRXf22hE3X68TekukE]]></openid>\n" +
-                "  <out_trade_no><![CDATA[1409811653]]></out_trade_no>\n" +
+                "  <out_trade_no><![CDATA[WX1524067211801]]></out_trade_no>\n" +
                 "  <result_code><![CDATA[SUCCESS]]></result_code>\n" +
                 "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
                 "  <sign><![CDATA[B552ED6B279343CB493C5DD0D78AB241]]></sign>\n" +
@@ -59,7 +59,7 @@ public class Sprint3ControllerTest extends AbstractTransactionalTestService {
                 "<coupon_id><![CDATA[10000]]></coupon_id>\n" +
                 "<coupon_fee><![CDATA[100]]></coupon_fee>\n" +
                 "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
-                "  <transaction_id><![CDATA[1004400740201409030005092168]]></transaction_id>\n" +
+                "  <transaction_id><![CDATA[4200000067201804190940781232]]></transaction_id>\n" +
                 "</xml>";
         NetTool.POST_XML("http://localhost:8080/api/sp3/order/payCallback", xml);
     }

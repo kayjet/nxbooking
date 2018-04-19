@@ -52,9 +52,6 @@ public class MakeOrderCacadeService {
     IUserService userService;
 
     @Autowired
-    ProducerService producerService;
-
-    @Autowired
     MyQuartzExecutorDelegate quartzExecutorDelegate;
 
     @Autowired

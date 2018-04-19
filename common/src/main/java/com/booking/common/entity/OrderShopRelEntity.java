@@ -2,6 +2,7 @@ package com.booking.common.entity;
 
 import com.booking.common.mapper.OrderMapper;
 import com.booking.common.mapper.OrderShopRelMapper;
+import com.booking.common.mapper.ShopMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -26,7 +27,7 @@ public class OrderShopRelEntity {
     })
     private List<OrderEntity> orderList;
 
-    @Collection(mapper = ShopEntity.class,select = "selectList",values = {
+    @Collection(mapper = ShopMapper.class,select = "selectList",values = {
             @Value(key = "id",value = "shopId")
     })
     private List<ShopEntity> shopList;
