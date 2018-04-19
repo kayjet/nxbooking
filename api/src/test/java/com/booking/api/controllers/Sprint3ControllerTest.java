@@ -61,7 +61,7 @@ public class Sprint3ControllerTest extends AbstractTransactionalTestService {
                 "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
                 "  <transaction_id><![CDATA[4200000067201804190940781232]]></transaction_id>\n" +
                 "</xml>";
-        NetTool.POST_XML("http://localhost:8080/api/sp3/order/payCallback", xml);
+        NetTool.POST_XML("http://localhost:8080/background/sp3/order/payCallback", xml);
     }
 
 }

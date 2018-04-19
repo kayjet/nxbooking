@@ -40,28 +40,11 @@ public class WebsocketController implements WebSocketHandler {
     private static final Logger logger = LoggerFactory.getLogger(WebsocketController.class);
 
     @Autowired
-    IOrderService orderService;
-
-    @Autowired
-    IOrderShopRelService orderShopRelService;
-
-
-    @Autowired
-    OrderMapper orderMapper;
-
-    @Autowired
-    IShopService shopService;
-
-    @Autowired
-    OrderShopRelMapper orderShopRelMapper;
-
-    @Autowired
     JdbcTemplate jdbcTemplate;
 
     public static final Integer WS_SUCCESS_CODE = 1;
     public static final Integer WS_HANDLE_MESSAGE = 2;
 
-    private static boolean isInited = false;
 
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
 
