@@ -97,10 +97,6 @@ public class ProductServiceImpl implements IProductService {
         return result;
     }
 
-    @Autowired
-    ProductSpecRelMapper productSpecRelMapper;
-
-
     @Override
     public int removeProduct(String id) {
         if (StringUtils.isEmpty(id)) {
