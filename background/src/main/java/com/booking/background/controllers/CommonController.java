@@ -34,27 +34,6 @@ public class CommonController {
     @Autowired
     BackgroundUserService backgroundUserService;
 
-    @Request(value = "/common/uploadAvatar", format = Request.Format.JSON)
-    @Editor(ResultEditor.class)
-    public String uploadAvatar(FileItem[] file) {
-        try {
-            return commonService.uploadAvatar(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @Request(value = "/common/getAvatar", format = Request.Format.STREAM)
-    public byte[] getAvatar(String avatarName) {
-        byte[] result = null;
-        try {
-            result = commonService.getAvatar(avatarName);
-        } catch (IOException e) {
-        }
-        return result;
-    }
-
     @Request(value = "/common/login", format = Request.Format.VIEW)
     public String login() {
         Context.putAttribute("context", Context.getRequest().getContextPath());
@@ -80,16 +59,7 @@ public class CommonController {
             }
         }
     }
-
-//    @Request(value = "/common/register", format = Request.Format.JSON)
-//    @Editor(ResultEditor.class)
-//    public Boolean register() {
-//        String password = "21232F297A57A5A743894A0E4A801FC3";
-//        String username = "admin";
-//        backgroundUserService.register(username, password);
-//        return true;
-//    }
-
+    
     @Request(value = "/common/logout/action", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public Boolean logoutAction() {

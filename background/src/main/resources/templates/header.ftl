@@ -88,6 +88,9 @@
                 }
                 return "";
             });
+            function logout() {
+                alert(1);
+            }
         </script>
         <style>
             html, body {
