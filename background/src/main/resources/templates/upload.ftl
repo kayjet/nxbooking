@@ -1,6 +1,6 @@
 <el-upload
         class="upload-demo"
-        action="http://localhost:8080/background/common/uploadAvatar"
+        action="http://localhost:8080/image/image/uploadAvatar"
         :on-preview="handlePreview"
         :on-remove="handleRemove"
         :file-list="fileList2"

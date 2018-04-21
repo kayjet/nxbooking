@@ -12,6 +12,7 @@
         <module>common</module>
         <module>background</module>
         <module>api</module>
+        <module>image</module>
     </modules>
 
 

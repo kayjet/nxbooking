@@ -36,7 +36,7 @@
             });
             Vue.filter('avatar', function (avatar) {
                 if (avatar != '' || avatar != undefined) {
-                    return "http://localhost:8080/${context}/common/getAvatar?avatarName=" + avatar;
+                    return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
                 }
                 return '';
             });

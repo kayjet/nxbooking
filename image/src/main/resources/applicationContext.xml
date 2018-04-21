@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+    <context:property-placeholder location="classpath*:/config.properties" system-properties-mode="FALLBACK"/>
+    <bean class="com.booking.common.service.impl.CommonService"/>
+    <context:component-scan base-package="com.booking.image.controllers"/>
+
+    <bean id="propertyConfigure"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+
+    <!--视图渲染-->
+    <bean class="com.opdar.platform.core.view.FreemarkerViewTemplate">
+        <property name="prefix" value="classpath:/templates/"/>
+    </bean>
+    <!--视图渲染-->
+
+    <!--文件上传-->
+    <bean name="fileItemFactory" class="org.apache.commons.fileupload.disk.DiskFileItemFactory">
+        <property name="sizeThreshold" value="1024000"/>
+    </bean>
+    <bean class="org.apache.commons.fileupload.servlet.ServletFileUpload">
+        <property name="fileItemFactory" ref="fileItemFactory"/>
+    </bean>
+    <!--文件上传-->
+
+
+</beans>
