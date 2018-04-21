@@ -2,6 +2,7 @@ package com.booking.common.service.impl;
 
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.entity.ProductSpecEntity;
+import com.booking.common.entity.ProductSpecRelEntity;
 import com.booking.common.mapper.ProductMapper;
 import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.service.IProductService;
@@ -96,6 +97,10 @@ public class ProductServiceImpl implements IProductService {
         return result;
     }
 
+    @Autowired
+    ProductSpecRelMapper productSpecRelMapper;
+
+
     @Override
     public int removeProduct(String id) {
         if (StringUtils.isEmpty(id)) {
@@ -103,6 +108,12 @@ public class ProductServiceImpl implements IProductService {
         }
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(id);
+        try {
+            ProductSpecRelEntity relEntity = new ProductSpecRelEntity();
+            relEntity.setPid(id);
+            productSpecRelMapper.delete(relEntity);
+        } catch (Exception e) {
+        }
         return productMapper.delete(productEntity);
     }
 
