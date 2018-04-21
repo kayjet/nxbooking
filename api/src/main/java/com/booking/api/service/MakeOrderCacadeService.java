@@ -1,7 +1,6 @@
 package com.booking.api.service;
 
-import com.alibaba.fastjson.JSONObject;
-import com.booking.api.quartz.MyQuartzExecutorDelegate;
+import com.booking.common.quartz.MyQuartzExecutorDelegate;
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;
 import com.booking.common.dto.MakeOrderDto;
@@ -16,7 +15,6 @@ import com.booking.common.service.IOrderUserRelService;
 import com.booking.common.service.IUserService;
 import com.booking.common.service.impl.WeChatService;
 import com.booking.common.utils.WxPayUtil;
-import com.opdar.platform.annotations.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

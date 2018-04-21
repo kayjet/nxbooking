@@ -1,11 +1,8 @@
-package com.booking.api.quartz;
+package com.booking.common.quartz;
 
-import org.joda.time.DateTime;
 import org.quartz.*;
 import org.quartz.core.jmx.JobDetailSupport;
 import org.quartz.impl.triggers.SimpleTriggerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;

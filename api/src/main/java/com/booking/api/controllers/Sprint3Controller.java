@@ -58,9 +58,6 @@ public class Sprint3Controller {
     MakeOrderCacadeService makeOrderCacadeService;
 
 
-//    @Autowired
-//    ProducerService producerService;
-
     @Autowired
     ShopMapper shopMapper;
 

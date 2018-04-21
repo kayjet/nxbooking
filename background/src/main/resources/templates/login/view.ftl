@@ -5,6 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Login</title>
     <script type="text/javascript" src="${context}/dist/jquery.js"></script>
+    <script type="text/javascript" src="${context}/dist/md5.js"></script>
     <style>
         body {
             background: #ebebeb;
@@ -173,27 +174,54 @@
         <div id="right_hand" class="initial_right_hand" style="right:-112px;top:-12px"></div>
     </div>
 
-    <p style="padding: 30px 0px 10px 0px;position: relative;">
-        <span class="u_logo"></span>
-        <input class="ipt" type="text" placeholder="请输入用户名">
-    </p>
-    <p style="position: relative;">
-        <span class="p_logo"></span>
-        <input id="password" class="ipt" type="password" placeholder="请输入密码">
-    </p>
-
-    <div style="height: 50px;line-height: 50px;margin-top: 30px;border-top: 1px solid #e7e7e7;">
-        <p style="margin: 0px 35px 20px 45px;">
-            <span style="float: left"><a href="javascript:void(0)" style="color:#ccc;">忘记密码?</a></span>
-            <span style="float: right">
-               <a href="javascript:void(0)"
-                  style="background: #008ead;padding: 7px 10px;border-radius: 4px;border: 1px solid #1a7598;color: #FFF;font-weight: bold;">登陆</a>
-           </span>
+    <form action="${context}/common/login/action" method="post" onsubmit="onSubmit(true)">
+        <p style="padding: 30px 0px 10px 0px;position: relative;">
+            <span class="u_logo"></span>
+            <input class="ipt" id="username" type="text" name="username" placeholder="请输入用户名">
         </p>
-    </div>
+        <p style="position: relative;">
+            <span class="p_logo"></span>
+            <input id="password" class="ipt" type="password" name="password" placeholder="请输入密码">
+        </p>
+
+
+        <div style="height: 50px;line-height: 50px;margin-top: 30px;border-top: 1px solid #e7e7e7;">
+            <p style="margin: 0px 35px 20px 45px;">
+                <span style="float: left"><a href="javascript:void(0)" style="color:#ccc;">忘记密码?</a></span>
+                <span style="float: right">
+               <input href="javascript:void(0)"
+                  id="loginBtn" value="登陆"
+                      type="submit"
+                  style="background: #008ead;padding: 7px 10px;border-radius: 4px;border: 1px solid #1a7598;color: #FFF;font-weight: bold;"/>
+           </span>
+            </p>
+        </div>
+    </form>
 
 </div>
+<script>
+    function onSubmit() {
+//        var username = $("#username").val();
+        var password = $("#password").val();
+        password = md5(password);
+        $("#password").val(password);
+    }
 
+    <#--$(document).ready(function () {-->
+        <#--$("#loginBtn").click(function (evt) {-->
+
+            <#--$.post("${context}/common/login/action", {-->
+                <#--username: username,-->
+                <#--password: password,-->
+            <#--}, function (res) {-->
+                <#--res = JSON.parse(res);-->
+                <#--if (res.code == 0 && res.data) {-->
+                    <#--window.location.href = "${context}/user/view";-->
+                <#--}-->
+            <#--});-->
+        <#--});-->
+    <#--});-->
+</script>
 
 </body>
 </html>

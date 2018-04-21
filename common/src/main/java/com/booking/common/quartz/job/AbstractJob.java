@@ -1,10 +1,8 @@
-package com.booking.api.quartz.job;
+package com.booking.common.quartz.job;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 /**

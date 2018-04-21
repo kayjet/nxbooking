@@ -4,6 +4,7 @@ import com.booking.background.service.OrderCallbackService;
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;
 import com.booking.common.entity.WechatPayCallbackEntity;
+import com.booking.common.quartz.MyQuartzExecutorDelegate;
 import com.booking.common.service.IOrderService;
 import com.booking.common.service.impl.WeChatService;
 import com.booking.common.utils.NetTool;
@@ -37,9 +38,12 @@ public class WechatCallbackController {
     @Autowired
     WeChatService weChatService;
 
-
     @Autowired
     OrderCallbackService orderCallbackService;
+
+
+    @Autowired
+    MyQuartzExecutorDelegate quartzExecutorDelegate;
 
 
     @Request(value = "/sp3/order/payCallback", format = Request.Format.XML)
@@ -74,6 +78,11 @@ public class WechatCallbackController {
             weChatService.savePayCallbackResult(wechatPayCallbackEntity);
             orderCallbackService.handle(wechatPayCallbackEntity);
             cacheManager.remove(orderNo);
+            try {
+                quartzExecutorDelegate.removeCloseOrderJob(orderNo);
+            } catch (Exception e) {
+
+            }
         }
 
         return WxPayUtil.setXML("SUCCESS", "OK");

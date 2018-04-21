@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by shiju on 2018/1/31.
  */
 public class DefaultCacheManager implements ICacheManager {
-    private ConcurrentHashMap<String, ValueTask> tasks = new ConcurrentHashMap<String, ValueTask>();
+    private ConcurrentHashMap<String, Value> tasks = new ConcurrentHashMap<String, Value>();
     private ExecutorService executorService = Executors.newCachedThreadPool();
     private Logger logger = LoggerFactory.getLogger("SessionManager");
     private AtomicBoolean isDestory = new AtomicBoolean(false);
@@ -24,9 +24,15 @@ public class DefaultCacheManager implements ICacheManager {
 
     @Override
     public void set(String key, Object value, long timeout) {
-        DefaultCacheManager.ValueTask task = null;
-        this.tasks.put(key, task = new DefaultCacheManager.ValueTask(key, value, timeout));
-        this.executorService.execute(task);
+        DefaultCacheManager.Value task = null;
+        if(timeout == -1){
+            task = new Value2(value);
+        }else{
+            task = new DefaultCacheManager.ValueTask(key, value, timeout);
+            this.executorService.execute((Runnable) task);
+        }
+
+        this.tasks.put(key, task);
     }
 
     @Override
@@ -43,7 +49,10 @@ public class DefaultCacheManager implements ICacheManager {
 
     @Override
     public void clearTimeout(String key) {
-        (this.tasks.get(key)).clearTimeout();
+        Value task = (this.tasks.get(key));
+        if(task instanceof ValueTask){
+            ((ValueTask)task).clearTimeout();
+        }
     }
 
     @Override
@@ -60,13 +69,33 @@ public class DefaultCacheManager implements ICacheManager {
         }
     }
 
-    private class ValueTask implements Runnable {
+    public interface Value{
+        public Object getValue();
+    }
+
+     static class Value2 implements Value {
+
+         private Object value;
+
+         public Value2(Object value) {
+             this.value = value;
+         }
+
+         @Override
+         public Object getValue() {
+             return this.value;
+         }
+
+     }
+
+    class ValueTask implements Value,Runnable {
         private String key;
         private Object value;
         private long timeout = 60000L;
         private long lastRefreshTime = System.currentTimeMillis();
         private AtomicBoolean isRunning = new AtomicBoolean(true);
 
+        @Override
         public Object getValue() {
             return value;
         }

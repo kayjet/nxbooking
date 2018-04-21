@@ -32,7 +32,7 @@ import java.util.Set;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-@Interceptor({TimeQueryInterceptor.class,LoginSessionInterceptor.class})
+@Interceptor({TimeQueryInterceptor.class, LoginSessionInterceptor.class})
 public class ProductController {
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 
@@ -108,7 +108,7 @@ public class ProductController {
                 productSpecRelService.removeProductSpecRel(specRelEntity.getId());
             }
             insertProductSpecRel(product);
-        } else if(CollectionUtils.isEmpty(specRelEntities) && !CollectionUtils.isEmpty(product.getProductSpecList())){
+        } else if (CollectionUtils.isEmpty(specRelEntities) && !CollectionUtils.isEmpty(product.getProductSpecList())) {
             insertProductSpecRel(product);
         }
         return ret;

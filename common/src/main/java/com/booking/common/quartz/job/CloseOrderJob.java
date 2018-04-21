@@ -1,10 +1,9 @@
-package com.booking.api.quartz.job;
+package com.booking.common.quartz.job;
 
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;
 import com.booking.common.entity.OrderEntity;
 import com.booking.common.mapper.OrderMapper;
-import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
@@ -27,9 +26,12 @@ public class CloseOrderJob extends AbstractJob{
         try {
             applicationContext = getApplicationContext(jobExecutionContext);
             OrderEntity orderEntity = (OrderEntity) jobExecutionContext.getJobDetail().getJobDataMap().get("task");
-            orderEntity.setOrderStatus(Constants.OrderStatus.CANCELED);
-
             OrderMapper orderMapper = applicationContext.getBean(OrderMapper.class);
+            OrderEntity ret = orderMapper.selectOne(new OrderEntity(orderEntity.getId()));
+            if(ret.getOrderStatus().equals(Constants.OrderStatus.PAID)){
+                return;
+            }
+            orderEntity.setOrderStatus(Constants.OrderStatus.CANCELED);
             orderMapper.update(orderEntity, new OrderEntity(orderEntity.getId()));
 
             ICacheManager cacheManager = applicationContext.getBean(ICacheManager.class);

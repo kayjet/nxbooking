@@ -1,6 +1,6 @@
-package com.booking.api.quartz;
+package com.booking.common.quartz;
 
-import com.booking.api.quartz.job.CloseOrderJob;
+import com.booking.common.quartz.job.CloseOrderJob;
 import com.booking.common.entity.OrderEntity;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -38,8 +38,8 @@ public class MyQuartzExecutorDelegate {
      *
      * @return
      */
-    public Object removeCloseOrderJob(OrderEntity orderEntity) {
-        return quartzExecutor.closeJob(orderEntity.getOrderNo(), JOB_GROUP_NAME);
+    public Object removeCloseOrderJob(String orderNo) {
+        return quartzExecutor.closeJob(orderNo, JOB_GROUP_NAME);
     }
 
     /**
