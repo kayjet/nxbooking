@@ -59,7 +59,7 @@ public class CommonController {
             }
         }
     }
-    
+
     @Request(value = "/common/logout/action", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public Boolean logoutAction() {

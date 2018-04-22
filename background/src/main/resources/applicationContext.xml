@@ -48,7 +48,9 @@
 
     <import resource="jdbc.xml"/>
     <import resource="quartz.xml"/>
-    <bean id="cacheManager"
-          class="com.booking.common.base.DefaultCacheManager"/>
+    <import resource="redis.xml"/>
+
+    <!--<bean id="cacheManager"
+          class="com.booking.common.base.DefaultCacheManager"/>-->
 
 </beans>

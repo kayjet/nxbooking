@@ -15,8 +15,8 @@
     <bean id="propertyConfigure"
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <bean id="cacheManager"
-          class="com.booking.common.base.DefaultCacheManager"/>
+    <!--<bean id="cacheManager"
+          class="com.booking.common.base.DefaultCacheManager"/>-->
 
     <!--Session管理-->
     <bean class="com.opdar.platform.core.session.MemorySessionManager" />
@@ -92,5 +92,6 @@
     <bean class="com.booking.common.base.FastJSONConvert"/>
     <!--<import resource="active-mq.xml"/>-->
     <import resource="quartz.xml"/>
+    <import resource="redis.xml"/>
 
 </beans>

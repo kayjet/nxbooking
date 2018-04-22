@@ -2,8 +2,10 @@ package com.booking.api.controllers;
 
 import com.alibaba.fastjson.JSON;
 import com.booking.api.AbstractTransactionalTestService;
+import com.booking.common.base.ICacheManager;
 import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.entity.ProductEntity;
+import com.booking.common.service.IOrderService;
 import com.booking.common.service.IProductService;
 import com.booking.common.utils.NetTool;
 import org.junit.Test;
@@ -62,6 +64,17 @@ public class Sprint3ControllerTest extends AbstractTransactionalTestService {
                 "  <transaction_id><![CDATA[4200000067201804190940781232]]></transaction_id>\n" +
                 "</xml>";
         NetTool.POST_XML("http://localhost:8080/background/sp3/order/payCallback", xml);
+    }
+
+    @Autowired
+    ICacheManager cacheManager;
+
+    @Autowired
+    IOrderService orderService;
+
+    @Test
+    public void testSetRedis(){
+        cacheManager.set("heihei", orderService.getOrder("74b20f4d-aefa-49e7-baf1-7e46171d9803"),5000);
     }
 
 }
