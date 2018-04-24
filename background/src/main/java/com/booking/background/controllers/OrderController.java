@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
@@ -39,6 +40,9 @@ public class OrderController {
 
     @Autowired
     IShopService shopService;
+
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/order/add")
     @Editor(ResultEditor.class)
@@ -118,6 +122,7 @@ public class OrderController {
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("shopList", shopService.listAll());
         Context.putAttribute("navList", new String[]{"即时订单"});
+        Context.putAttribute("proxyContext", proxyContext);
         return "websocket/view";
     }
 }

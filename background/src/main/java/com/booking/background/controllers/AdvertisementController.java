@@ -12,6 +12,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 
@@ -74,11 +75,16 @@ public class AdvertisementController {
         return advertisementService.listAdvertisementPage(advertisementEntity, pageNo , pageSize);
     }
 
+    @Value("${proxy.context}")
+    private String proxyContext;
+
     @Request(value = "/advertisement/view", format = Request.Format.VIEW)
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("navList",new String[]{"广告走马灯"});
+        Context.putAttribute("proxyContext", proxyContext);
+
         return "advertisement/view";
     }
 }

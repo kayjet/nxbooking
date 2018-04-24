@@ -4,8 +4,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Login</title>
-    <script type="text/javascript" src="${context}/dist/jquery.js"></script>
-    <script type="text/javascript" src="${context}/dist/md5.js"></script>
+    <script type="text/javascript" src="${proxyContext}${context}/dist/jquery.js"></script>
+    <script type="text/javascript" src="${proxyContext}${context}/dist/md5.js"></script>
     <style>
         body {
             background: #ebebeb;
@@ -46,7 +46,7 @@
         }
 
         .u_logo {
-            background: url("${context}/dist/username.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/username.png") no-repeat;
             padding: 10px 10px;
             position: absolute;
             top: 43px;
@@ -55,7 +55,7 @@
         }
 
         .p_logo {
-            background: url("${context}/dist/password.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/password.png") no-repeat;
             padding: 10px 10px;
             position: absolute;
             top: 12px;
@@ -67,7 +67,7 @@
         }
 
         .tou {
-            background: url("${context}/dist/tou.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/tou.png") no-repeat;
             width: 97px;
             height: 92px;
             position: absolute;
@@ -76,7 +76,7 @@
         }
 
         .left_hand {
-            background: url("${context}/dist/left_hand.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/left_hand.png") no-repeat;
             width: 32px;
             height: 37px;
             position: absolute;
@@ -85,7 +85,7 @@
         }
 
         .right_hand {
-            background: url("${context}/dist/right_hand.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/right_hand.png") no-repeat;
             width: 32px;
             height: 37px;
             position: absolute;
@@ -94,7 +94,7 @@
         }
 
         .initial_left_hand {
-            background: url("${context}/dist/hand.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/hand.png") no-repeat;
             width: 30px;
             height: 20px;
             position: absolute;
@@ -103,7 +103,7 @@
         }
 
         .initial_right_hand {
-            background: url("${context}/dist/hand.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/hand.png") no-repeat;
             width: 30px;
             height: 20px;
             position: absolute;
@@ -112,7 +112,7 @@
         }
 
         .left_handing {
-            background: url("${context}/dist/left-handing.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/left-handing.png") no-repeat;
             width: 30px;
             height: 20px;
             position: absolute;
@@ -121,7 +121,7 @@
         }
 
         .right_handinging {
-            background: url("${context}/dist/right_handing.png") no-repeat;
+            background: url("${proxyContext}${context}/dist/right_handing.png") no-repeat;
             width: 30px;
             height: 20px;
             position: absolute;
@@ -174,7 +174,7 @@
         <div id="right_hand" class="initial_right_hand" style="right:-112px;top:-12px"></div>
     </div>
 
-    <form action="${context}/common/login/action" method="post" onsubmit="onSubmit(true)">
+    <form action="${proxyContext}${context}/common/login/action" method="post" onsubmit="onSubmit(true)">
         <p style="padding: 30px 0px 10px 0px;position: relative;">
             <span class="u_logo"></span>
             <input class="ipt" id="username" type="text" name="username" placeholder="请输入用户名">
@@ -201,26 +201,10 @@
 </div>
 <script>
     function onSubmit() {
-//        var username = $("#username").val();
         var password = $("#password").val();
         password = md5(password);
         $("#password").val(password);
     }
-
-    <#--$(document).ready(function () {-->
-        <#--$("#loginBtn").click(function (evt) {-->
-
-            <#--$.post("${context}/common/login/action", {-->
-                <#--username: username,-->
-                <#--password: password,-->
-            <#--}, function (res) {-->
-                <#--res = JSON.parse(res);-->
-                <#--if (res.code == 0 && res.data) {-->
-                    <#--window.location.href = "${context}/user/view";-->
-                <#--}-->
-            <#--});-->
-        <#--});-->
-    <#--});-->
 </script>
 
 </body>

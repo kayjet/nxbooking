@@ -12,7 +12,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -34,24 +36,42 @@ public class CommonController {
     @Autowired
     BackgroundUserService backgroundUserService;
 
+    @Value("${proxy.context}")
+    private String proxyContext;
+
     @Request(value = "/common/login", format = Request.Format.VIEW)
     public String login() {
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("proxyContext", proxyContext);
         return "login/view";
     }
 
     @Request(value = "/common/login/action", format = Request.Format.JSON)
     @Editor(ResultEditor.class)
     public void loginAction(String username, String password) {
-        if (backgroundUserService.login(username, password)) {
+        String contextPath = Context.getRequest().getContextPath();
+        boolean ret = backgroundUserService.login(username, password);
+        logger.info("loginAction login result = " + ret);
+        logger.info("loginAction username = " + username + ", password=" + password);
+        if (ret) {
             try {
-                Context.getResponse().sendRedirect(Context.getRequest().getContextPath() + "/user/view");
+                String redirectUrl = contextPath + "/user/view";
+                if (!StringUtils.isEmpty(proxyContext)) {
+                    redirectUrl = proxyContext + redirectUrl;
+                }
+                logger.info("sendRedirect url =" + redirectUrl);
+                Context.getResponse().sendRedirect(redirectUrl);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
             try {
-                Context.getRequest().getRequestDispatcher(Context.getRequest().getContextPath() + "/common/login").forward(Context.getRequest(), Context.getResponse());
+                String redirectUrl = contextPath + "/common/login";
+                if (!StringUtils.isEmpty(proxyContext)) {
+                    redirectUrl = proxyContext + redirectUrl;
+                }
+                logger.info("getRequestDispatcher url = " + redirectUrl);
+                Context.getRequest().getRequestDispatcher(redirectUrl).forward(Context.getRequest(), Context.getResponse());
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (ServletException e) {

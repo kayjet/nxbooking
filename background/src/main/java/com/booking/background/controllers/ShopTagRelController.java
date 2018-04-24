@@ -10,6 +10,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 
@@ -28,6 +29,9 @@ public class ShopTagRelController {
 
     @Autowired
     IShopTagRelService shopTagRelService;
+
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/shopTagRel/add")
     @Editor(ResultEditor.class)
@@ -81,6 +85,7 @@ public class ShopTagRelController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("proxyContext", proxyContext);
         return "shopTagRel/view";
     }
 }

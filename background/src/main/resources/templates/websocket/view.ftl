@@ -271,10 +271,9 @@
                 createWs() {
                     const that = this;
                     try {
-                        that.websocket = new WebSocket("ws://localhost:8080/background/springws/websocket.ws?shopId=" + that.shopId);
+                        that.websocket = new WebSocket(window.wsAddress+"?shopId=" + that.shopId);
                     } catch (e) {
                     }
-//                that.websocket = new WebSocket("ws://www.opdar.com/booking/background/springws/websocket.ws");
                     that.initWs();
                 },
                 onInsert() {

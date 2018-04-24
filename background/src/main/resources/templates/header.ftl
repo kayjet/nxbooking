@@ -2,11 +2,11 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="${context}/dist/cssnormalize.css">
-        <link rel="stylesheet" href="${context}/dist/element-ui.css">
-        <script src="${context}/dist/vue.js"></script>
-        <script src="${context}/dist/axios.js"></script>
-        <script src="${context}/dist/element-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="${proxyContext}${context}/dist/cssnormalize.css">
+        <link rel="stylesheet" href="${proxyContext}${context}/dist/element-ui.css">
+        <script src="${proxyContext}${context}/dist/vue.js"></script>
+        <script src="${proxyContext}${context}/dist/axios.js"></script>
+        <script src="${proxyContext}${context}/dist/element-ui.js"></script>
         <script >
             window.ctxPath = "${context}";
             Date.prototype.format = function (format) {
@@ -88,9 +88,8 @@
                 }
                 return "";
             });
-            function logout() {
-                alert(1);
-            }
+            window.wsAddress = "ws://localhost:8080/background/springws/websocket.ws";
+//            window.wsAddress = "ws://www.opdar.com/booking/background/springws/websocket.ws";
         </script>
         <style>
             html, body {
@@ -99,8 +98,8 @@
 
             @font-face {
                 font-family: element-icons;
-                src: url('${context}/dist/6f0a76321d30f3c8120915e57f7bd77e.ttf'),
-                url('${context}/dist/6f0a76321d30f3c8120915e57f7bd77e.ttf'); /* IE9+,可以是具体的实际链接 */
+                src: url('${proxyContext}${context}/dist/6f0a76321d30f3c8120915e57f7bd77e.ttf'),
+                url('${proxyContext}${context}/dist/6f0a76321d30f3c8120915e57f7bd77e.ttf'); /* IE9+,可以是具体的实际链接 */
             }
 
             .el-header {

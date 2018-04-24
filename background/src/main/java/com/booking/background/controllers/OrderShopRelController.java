@@ -10,6 +10,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class OrderShopRelController {
 
     @Autowired
     IOrderShopRelService orderShopIdService;
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/orderShopId/add")
     @Editor(ResultEditor.class)
@@ -74,6 +77,7 @@ public class OrderShopRelController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("proxyContext", proxyContext);
         return "orderShopId/view";
     }
 }

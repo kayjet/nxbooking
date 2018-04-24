@@ -12,6 +12,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -30,6 +31,9 @@ public class UserController {
 
     @Autowired
     IUserService userService;
+
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/user/add")
     @Editor(ResultEditor.class)
@@ -78,6 +82,7 @@ public class UserController {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("navList",new String[]{"用户记录"});
+        Context.putAttribute("proxyContext", proxyContext);
         return "user/view";
     }
 }

@@ -12,6 +12,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -30,6 +31,9 @@ public class UserFavShopRelController {
 
     @Autowired
     IUserFavShopRelService userFavShopRelService;
+
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/userFavShopRel/add")
     @Editor(ResultEditor.class)
@@ -78,6 +82,7 @@ public class UserFavShopRelController {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("navList",new String[]{"用户收藏"});
+        Context.putAttribute("proxyContext", proxyContext);
         return "userFavShopRel/view";
     }
 }

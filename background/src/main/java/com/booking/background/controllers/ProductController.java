@@ -15,6 +15,7 @@ import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -44,6 +45,9 @@ public class ProductController {
 
     @Autowired
     IProductSpecRelService productSpecRelService;
+
+    @Value("${proxy.context}")
+    private String proxyContext;
 
     @Request(value = "/product/add")
     @Editor(ResultEditor.class)
@@ -155,6 +159,7 @@ public class ProductController {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("navList", new String[]{"产品管理", "详情记录"});
+        Context.putAttribute("proxyContext", proxyContext);
         return "product/view";
     }
 }
