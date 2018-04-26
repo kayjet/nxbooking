@@ -7,7 +7,6 @@
 <div id="app"></div>
 <template id="myComponent">
     <el-container style="height: 100%; border: 1px solid #eee">
-    <#include "../leftbar.ftl"/>
 
         <el-container>
         <#include "../nav.ftl"/>

@@ -30,9 +30,9 @@
             <i class="el-icon-menu"></i>
             <span slot="title"><a href="${proxyContext}${context}/advertisement/view">广告走马灯</a></span>
         </el-menu-item>
-        <el-menu-item index="8">
+       <#-- <el-menu-item index="8">
             <i class="el-icon-menu"></i>
             <span slot="title"><a href="${proxyContext}${context}/websocket/view">即时订单</a></span>
-        </el-menu-item>
+        </el-menu-item>-->
     </el-menu>
 </el-aside>

@@ -1,6 +1,7 @@
 package com.booking.background.service;
 
 import com.booking.background.interceptor.LoginSessionInterceptor;
+import com.booking.background.interceptor.WSLoginSessionInterceptor;
 import com.booking.common.base.ICacheManager;
 import com.booking.common.entity.BackgroundUserEntity;
 import com.booking.common.exceptions.ErrCodeException;
@@ -40,15 +41,23 @@ public class BackgroundUserService {
             result.setToken(token);
             Context.getRequest().getSession().setMaxInactiveInterval(-1);
             Context.getRequest().getSession().setAttribute(LoginSessionInterceptor.LOGIN_USER,result);
-//            Cookie cookie = new Cookie("bgToken", token);
-//            cookie.setMaxAge(-1);
-//            Context.getResponse().addCookie(cookie);
-//            result.setToken(token);
-//            cacheManager.set(token, result, -1);
             return true;
         }
         return false;
     }
+
+    public boolean wsLogin(String username, String password) {
+        BackgroundUserEntity result = this.auth(username, password);
+        if (result != null) {
+            String token = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
+            result.setToken(token);
+            Context.getRequest().getSession().setMaxInactiveInterval(-1);
+            Context.getRequest().getSession().setAttribute(WSLoginSessionInterceptor.WS_LOGIN_USER,result);
+            return true;
+        }
+        return false;
+    }
+
 
     private BackgroundUserEntity auth(String username, String userPwd) {
         BackgroundUserEntity query = new BackgroundUserEntity();

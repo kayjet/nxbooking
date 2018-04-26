@@ -116,13 +116,13 @@ public class OrderController {
         return "order/view";
     }
 
-    @Request(value = "/websocket/view", format = Request.Format.VIEW)
-    public String websocket() {
-        logger.info("访问websocket页");
-        Context.putAttribute("context", Context.getRequest().getContextPath());
-        Context.putAttribute("shopList", shopService.listAll());
-        Context.putAttribute("navList", new String[]{"即时订单"});
-        Context.putAttribute("proxyContext", proxyContext);
-        return "websocket/view";
-    }
+//    @Request(value = "/websocket/view", format = Request.Format.VIEW)
+//    public String websocket() {
+//        logger.info("访问websocket页");
+//        Context.putAttribute("context", Context.getRequest().getContextPath());
+//        Context.putAttribute("shopList", shopService.listAll());
+//        Context.putAttribute("navList", new String[]{"即时订单"});
+//        Context.putAttribute("proxyContext", proxyContext);
+//        return "websocket/view";
+//    }
 }
