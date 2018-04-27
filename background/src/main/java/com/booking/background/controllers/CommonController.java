@@ -51,32 +51,25 @@ public class CommonController {
     public void loginAction(String username, String password) {
         String contextPath = Context.getRequest().getContextPath();
         boolean ret = backgroundUserService.login(username, password);
-        logger.info("loginAction login result = " + ret);
-        logger.info("loginAction username = " + username + ", password=" + password);
+        String redirectUrl = "";
         if (ret) {
-            try {
-                String redirectUrl = contextPath + "/user/view";
-                if (!StringUtils.isEmpty(proxyContext)) {
-                    redirectUrl = proxyContext + redirectUrl;
-                }
-                logger.info("sendRedirect url =" + redirectUrl);
-                Context.getResponse().sendRedirect(redirectUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
+            redirectUrl = contextPath + "/user/view";
+            if (!StringUtils.isEmpty(proxyContext)) {
+                redirectUrl = proxyContext + redirectUrl;
             }
         } else {
-            try {
-                String redirectUrl = contextPath + "/common/login";
-                if (!StringUtils.isEmpty(proxyContext)) {
-                    redirectUrl = proxyContext + redirectUrl;
-                }
-                logger.info("getRequestDispatcher url = " + redirectUrl);
-                Context.getRequest().getRequestDispatcher(redirectUrl).forward(Context.getRequest(), Context.getResponse());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ServletException e) {
-                e.printStackTrace();
+            redirectUrl = contextPath + "/common/login";
+            if (!StringUtils.isEmpty(proxyContext)) {
+                redirectUrl = proxyContext + redirectUrl;
             }
+        }
+        logger.info("loginAction login result = " + ret);
+        logger.info("sendRedirect url =" + redirectUrl);
+
+        try {
+            Context.getResponse().sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

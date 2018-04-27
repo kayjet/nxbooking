@@ -19,6 +19,8 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd http://www.
 
 
     <import resource="jdbc.xml"/>
+    <import resource="quartz.xml"/>
+    <import resource="redis.xml"/>
 
     <websocket:handlers allowed-origins="*">
         <websocket:mapping path="/springws/websocket.ws" handler="demoWSHandler"/>

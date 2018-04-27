@@ -3,7 +3,6 @@ package com.booking.background.controllers;
 import com.booking.background.service.BackgroundUserService;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.resp.ResultEditor;
-import com.booking.common.service.impl.CommonService;
 import com.opdar.platform.annotations.Editor;
 import com.opdar.platform.annotations.ErrorHandler;
 import com.opdar.platform.annotations.Request;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
@@ -26,11 +24,8 @@ import java.io.IOException;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-public class WsLoginController {
-    Logger logger = LoggerFactory.getLogger(WsLoginController.class);
-
-    @Autowired
-    CommonService commonService;
+public class WebSocketLoginController {
+    Logger logger = LoggerFactory.getLogger(WebSocketLoginController.class);
 
     @Autowired
     BackgroundUserService backgroundUserService;
@@ -50,32 +45,25 @@ public class WsLoginController {
     public void loginAction(String username, String password) {
         String contextPath = Context.getRequest().getContextPath();
         boolean ret = backgroundUserService.wsLogin(username, password);
-        logger.info("ws loginAction login result = " + ret);
-        logger.info("ws loginAction username = " + username + ", password=" + password);
+        String redirectUrl = "";
         if (ret) {
-            try {
-                String redirectUrl = contextPath + "/websocket/view";
-                if (!StringUtils.isEmpty(proxyContext)) {
-                    redirectUrl = proxyContext + redirectUrl;
-                }
-                logger.info("sendRedirect url =" + redirectUrl);
-                Context.getResponse().sendRedirect(redirectUrl);
-            } catch (IOException e) {
-                e.printStackTrace();
+            redirectUrl = contextPath + "/websocket/view";
+            if (!StringUtils.isEmpty(proxyContext)) {
+                redirectUrl = proxyContext + redirectUrl;
             }
+
         } else {
-            try {
-                String redirectUrl = contextPath + "/websocket/login";
-                if (!StringUtils.isEmpty(proxyContext)) {
-                    redirectUrl = proxyContext + redirectUrl;
-                }
-                logger.info("getRequestDispatcher url = " + redirectUrl);
-                Context.getRequest().getRequestDispatcher(redirectUrl).forward(Context.getRequest(), Context.getResponse());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ServletException e) {
-                e.printStackTrace();
+            redirectUrl = contextPath + "/websocket/login";
+            if (!StringUtils.isEmpty(proxyContext)) {
+                redirectUrl = proxyContext + redirectUrl;
             }
+        }
+        logger.info("ws loginAction login result = " + ret);
+        logger.info("sendRedirect url =" + redirectUrl);
+        try {
+            Context.getResponse().sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

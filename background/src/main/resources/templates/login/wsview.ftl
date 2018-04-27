@@ -166,7 +166,11 @@
     </script>
 </head>
 <body>
-<div class="top_div"></div>
+<div class="top_div">
+    <div style="text-align: center;padding-top: 140px;">
+        <span style="color: #ffffff;font-size: 24px;font-weight: bold;">Sunshine Green 即时订单系统</span>
+    </div>
+</div>
 <div style="width: 400px;height: 200px;margin: auto auto;background: #ffffff;text-align: center;margin-top: -100px;border: 1px solid #e7e7e7">
     <div style="width: 165px;height: 96px;position: absolute">
         <div class="tou"></div>

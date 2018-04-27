@@ -34,7 +34,7 @@ public class WSLoginSessionInterceptor implements Interceptor {
         } else {
             try {
                 String contextPath = Context.getRequest().getContextPath();
-                String redirectUrl = contextPath + "/common/login";
+                String redirectUrl = contextPath + "/websocket/login";
                 if (!StringUtils.isEmpty(proxyContext)) {
                     redirectUrl = proxyContext + redirectUrl;
                 }
