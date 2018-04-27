@@ -1,5 +1,6 @@
 package com.booking.background.controllers;
 
+import com.booking.background.interceptor.LoginSessionInterceptor;
 import com.booking.background.service.BackgroundUserService;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.resp.ResultEditor;
@@ -46,7 +47,7 @@ public class CommonController {
         return "login/view";
     }
 
-    @Request(value = "/common/login/action", format = Request.Format.JSON)
+    @Request(value = "/common/login/action")
     @Editor(ResultEditor.class)
     public void loginAction(String username, String password) {
         String contextPath = Context.getRequest().getContextPath();
@@ -73,10 +74,18 @@ public class CommonController {
         }
     }
 
-    @Request(value = "/common/logout/action", format = Request.Format.JSON)
-    @Editor(ResultEditor.class)
-    public Boolean logoutAction() {
-        Context.putAttribute("context", Context.getRequest().getContextPath());
-        return true;
+    @Request(value = "/common/logout/action")
+    public void logoutAction() {
+        Context.getRequest().getSession().removeAttribute(LoginSessionInterceptor.LOGIN_USER);
+        String contextPath = Context.getRequest().getContextPath();
+        String redirectUrl = contextPath + "/common/login";
+        if (!StringUtils.isEmpty(proxyContext)) {
+            redirectUrl = proxyContext + redirectUrl;
+        }
+        try {
+            Context.getResponse().sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

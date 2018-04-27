@@ -40,7 +40,7 @@ public class BackgroundUserService {
             String token = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
             result.setToken(token);
             Context.getRequest().getSession().setMaxInactiveInterval(-1);
-            Context.getRequest().getSession().setAttribute(LoginSessionInterceptor.LOGIN_USER,result);
+            Context.getRequest().getSession().setAttribute(LoginSessionInterceptor.LOGIN_USER, result);
             return true;
         }
         return false;
@@ -52,7 +52,7 @@ public class BackgroundUserService {
             String token = UUID.randomUUID().toString().replaceAll("-", "").toUpperCase();
             result.setToken(token);
             Context.getRequest().getSession().setMaxInactiveInterval(-1);
-            Context.getRequest().getSession().setAttribute(WSLoginSessionInterceptor.WS_LOGIN_USER,result);
+            Context.getRequest().getSession().setAttribute(WSLoginSessionInterceptor.WS_LOGIN_USER, result);
             return true;
         }
         return false;

@@ -12,6 +12,6 @@
     <div style="float: right;">
         <span style="color: #ffffff;margin-right: 8px;">Admin</span>
 
-        <logout></logout>
+        <wslogout></wslogout>
     </div>
 </el-header>

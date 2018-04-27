@@ -9,7 +9,7 @@
     <el-container style="height: 100%; border: 1px solid #eee">
 
         <el-container>
-        <#include "../nav.ftl"/>
+        <#include "../wsNav.ftl"/>
 
             <el-main>
 

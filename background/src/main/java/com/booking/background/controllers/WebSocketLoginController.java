@@ -1,5 +1,7 @@
 package com.booking.background.controllers;
 
+import com.booking.background.interceptor.LoginSessionInterceptor;
+import com.booking.background.interceptor.WSLoginSessionInterceptor;
 import com.booking.background.service.BackgroundUserService;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.resp.ResultEditor;
@@ -60,6 +62,22 @@ public class WebSocketLoginController {
         }
         logger.info("ws loginAction login result = " + ret);
         logger.info("sendRedirect url =" + redirectUrl);
+        try {
+            Context.getResponse().sendRedirect(redirectUrl);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Request(value = "/websocket/logout/action")
+    public void logoutAction() {
+        Context.getRequest().getSession().removeAttribute(WSLoginSessionInterceptor.WS_LOGIN_USER);
+        String contextPath = Context.getRequest().getContextPath();
+        String redirectUrl = contextPath + "/websocket/login";
+        if (!StringUtils.isEmpty(proxyContext)) {
+            redirectUrl = proxyContext + redirectUrl;
+        }
         try {
             Context.getResponse().sendRedirect(redirectUrl);
         } catch (IOException e) {
