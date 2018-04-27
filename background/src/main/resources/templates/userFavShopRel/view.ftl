@@ -50,9 +50,6 @@
                                     <el-form-item>
                                         <el-button type="primary" @click="onSearch">查询</el-button>
                                     </el-form-item>
-                                    <el-form-item>
-                                        <el-button type="primary" @click="onSearch">查询</el-button>
-                                    </el-form-item>
                                 </el-form>
                             </el-collapse-item>
                         </el-collapse>

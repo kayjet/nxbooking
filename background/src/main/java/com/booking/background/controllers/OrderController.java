@@ -110,6 +110,7 @@ public class OrderController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
+        Context.putAttribute("proxyContext", proxyContext);
         List<ShopEntity> shops = shopService.listAll();
         Context.putAttribute("shops", shops);
         Context.putAttribute("navList", new String[]{"订单", "订单详情"});

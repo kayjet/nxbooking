@@ -451,7 +451,6 @@
                 },
                 onDownloadExcel() {
                     const that = this;
-                    alert(1);
                     window.open(window.service.downloadExcel(that.search));
                 },
                 handleSizeChange(val) {
