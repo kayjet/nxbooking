@@ -88,4 +88,14 @@ public class CommonController {
             e.printStackTrace();
         }
     }
+
+    @Request(value = "/index", format = Request.Format.VIEW)
+    public String index() {
+        String contextPath = Context.getRequest().getContextPath();
+        String wsLogin = contextPath + "/websocket/login";
+        String commonLogin = contextPath + "/common/login";
+        Context.putAttribute("commonLogin", commonLogin);
+        Context.putAttribute("wsLogin", wsLogin);
+        return "index";
+    }
 }
