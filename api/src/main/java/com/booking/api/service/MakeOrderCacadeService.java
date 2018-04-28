@@ -18,6 +18,7 @@ import com.booking.common.utils.WxPayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,13 +56,16 @@ public class MakeOrderCacadeService {
     @Autowired
     ICacheManager cacheManager;
 
+    @Value("${wechat.order.ip}")
+    String orderIp;
+
     @Transactional(rollbackFor = Throwable.class)
     public MakeOrderDto makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                   String orderTime, List<List<ProductEntity>> products) {
         MakeOrderDto makeOrderDto = new MakeOrderDto();
         OrderEntity result = orderService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType, orderTime, products);
         UserEntity user = userService.listUser(new UserEntity(userId)).get(0);
-        String ip = "123.206.217.60";
+        String ip = orderIp;
         String openId = user.getOpenid();
         WechatPayResultDto wechatPayResultDto = weChatService.prepareSmallAppOrder(result, ip, openId);
         if (wechatPayResultDto.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)
