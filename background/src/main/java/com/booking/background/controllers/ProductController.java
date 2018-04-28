@@ -59,10 +59,12 @@ public class ProductController {
         if (!CollectionUtils.isEmpty(product.getRequestAddTagList())) {
             List<TagProductRelEntity> tagProductRelEntities = new ArrayList<TagProductRelEntity>();
             for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-                TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
-                tagProductRelEntity.setPid(productRet.getId());
-                tagProductRelEntity.setTid(tagEntity.getTagId());
-                tagProductRelEntities.add(tagProductRelEntity);
+                if(!StringUtils.isEmpty(tagEntity.getTagId())){
+                    TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
+                    tagProductRelEntity.setPid(productRet.getId());
+                    tagProductRelEntity.setTid(tagEntity.getTagId());
+                    tagProductRelEntities.add(tagProductRelEntity);
+                }
             }
             tagProductRelService.addTagProductRel(tagProductRelEntities);
         }
