@@ -48,6 +48,7 @@ public class WechatCallbackController {
 
     @Request(value = "/sp3/order/payCallback", format = Request.Format.XML)
     public String payCallback() {
+        logger.info("通知支付成功 start ！");
         String xml = null;
         try {
             xml = new String(NetTool.read(Context.getRequest().getInputStream()), "UTF-8");
@@ -81,9 +82,12 @@ public class WechatCallbackController {
             try {
                 quartzExecutorDelegate.removeCloseOrderJob(orderNo);
             } catch (Exception e) {
-
+                logger.error("删除定时任务出错");
+                logger.error(e.getMessage());
+                logger.error("-------------");
             }
         }
+        logger.info("通知支付成功 end ！");
 
         return WxPayUtil.setXML("SUCCESS", "OK");
     }
