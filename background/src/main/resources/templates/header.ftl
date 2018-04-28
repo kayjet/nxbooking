@@ -8,7 +8,7 @@
     <script src="${proxyContext}${context}/dist/axios.js"></script>
     <script src="${proxyContext}${context}/dist/element-ui.js"></script>
     <script>
-        window.ctxPath = "${context}";
+        window.ctxPath = "${proxyContext}${context}";
         Date.prototype.format = function (format) {
             var o = {
                 "M+": this.getMonth() + 1, //month
@@ -36,7 +36,8 @@
         });
         Vue.filter('avatar', function (avatar) {
             if (avatar != '' || avatar != undefined) {
-                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
+                return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;
+//                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
             }
             return '';
         });

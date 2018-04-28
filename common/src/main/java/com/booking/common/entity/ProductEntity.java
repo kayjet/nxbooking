@@ -47,6 +47,11 @@ public class ProductEntity {
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ProductSpecDto> requestSpecList;
 
+
+    //用于前段数据请求
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private String tagId;
+
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
     private Timestamp createTimeStart;
@@ -226,5 +231,13 @@ public class ProductEntity {
 
     public void setRequestSpecList(List<ProductSpecDto> requestSpecList) {
         this.requestSpecList = requestSpecList;
+    }
+
+    public String getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
     }
 }

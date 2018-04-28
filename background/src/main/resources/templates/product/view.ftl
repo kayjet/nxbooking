@@ -89,6 +89,16 @@
                             <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
                         </div>
                     </el-col>
+                    <el-col :span="24">
+                        <div style="margin-top: 20px">
+                            <span style="font-size:12px; ">标签：</span>
+                            <el-radio-group v-model="search.tagId" size="small" @change="changeTag">
+                            <#list tagList as tag>
+                                <el-radio-button label="${tag.id}" >${tag.title}</el-radio-button>
+                            </#list>
+                            </el-radio-group>
+                        </div>
+                    </el-col>
                 </el-row>
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
@@ -411,7 +421,8 @@
                     isIndeterminate2: false,
                     selectedShop: undefined,
                     shopList: [],
-                    allSpecParentList:[]
+                    allSpecParentList:[],
+                    tagList:[]
                 }
             },
             created() {
@@ -575,6 +586,14 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
+                changeTag(){
+                    var that = this;
+                    window.service.listPage(1, 10, that.search).then(function (response) {
+                        that.tableData = response.data.data;
+                        that.currentPage = response.data.pageNo;
+                        that.totalPage = response.data.countSize;
+                    });
+                }
             }
         })
     }

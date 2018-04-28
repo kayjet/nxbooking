@@ -58,7 +58,12 @@ public class ProductServiceImpl implements IProductService {
         Integer countSize = productMapper.likeCount(productEntity);
         Page<List<ProductEntity>> page = new Page<List<ProductEntity>>(pageSize, pageNo, countSize);
         PageInterceptor.setPage(pageNo, pageSize);
-        List<ProductEntity> result = productMapper.selectLikeList(productEntity);
+        List<ProductEntity> result = null;
+        if (productEntity != null && !StringUtils.isEmpty(productEntity.getTagId())) {
+            result = productMapper.selectListByTagId(productEntity.getTagId());
+        } else {
+            result = productMapper.selectLikeList(productEntity);
+        }
         if (!CollectionUtils.isEmpty(result)) {
             for (ProductEntity product : result) {
                 List<ProductSpecEntity> productSpecEntities = productSpecRelMapper.selectProductRelSpecList(product.getId());

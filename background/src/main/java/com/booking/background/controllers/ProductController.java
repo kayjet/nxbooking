@@ -46,6 +46,9 @@ public class ProductController {
     @Autowired
     IProductSpecRelService productSpecRelService;
 
+    @Autowired
+    ITagService tagService;
+
     @Value("${proxy.context}")
     private String proxyContext;
 
@@ -120,10 +123,12 @@ public class ProductController {
 
     private void insertShopTagRel(@JSON ProductEntity product) {
         for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-            TagProductRelEntity rel = new TagProductRelEntity();
-            rel.setPid(product.getId());
-            rel.setTid(tagEntity.getTagId());
-            tagProductRelService.addTagProductRel(rel);
+            if(!StringUtils.isEmpty(tagEntity.getTagId())){
+                TagProductRelEntity rel = new TagProductRelEntity();
+                rel.setPid(product.getId());
+                rel.setTid(tagEntity.getTagId());
+                tagProductRelService.addTagProductRel(rel);
+            }
         }
     }
 
@@ -159,6 +164,7 @@ public class ProductController {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("navList", new String[]{"产品管理", "详情记录"});
+        Context.putAttribute("tagList", tagService.listAll());
         Context.putAttribute("proxyContext", proxyContext);
         return "product/view";
     }
