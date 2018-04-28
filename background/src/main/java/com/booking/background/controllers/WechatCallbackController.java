@@ -58,10 +58,10 @@ public class WechatCallbackController {
         if (xml == null) {
             return WxPayUtil.setXML("FAIL", "xml转换失败");
         }
-        System.out.println("---------------------XML from wx callback -----------------");
+        logger.info("---------------------XML from wx callback -----------------");
         //TODO:微信sign校验
-        System.out.println(xml);
-        System.out.println("--------------------XML from wx callback -----------------");
+        logger.info(xml);
+        logger.info("--------------------XML from wx callback -----------------");
         XmlMapper mapper = new XmlMapper();
         WechatPayCallbackEntity wechatPayCallbackEntity = null;
         try {

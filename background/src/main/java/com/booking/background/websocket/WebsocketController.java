@@ -111,7 +111,7 @@ public class WebsocketController implements WebSocketHandler {
     public void afterConnectionClosed(WebSocketSession webSocketSession, CloseStatus closeStatus) throws Exception {
         WEB_SOCKET_SESSION_CONCURRENT_MAP.remove(webSocketSession.getId());
         removeSessionRel(webSocketSession.getId());
-        System.out.println("websocket connection closed......");
+        logger.info("websocket connection closed......");
     }
 
     @Override

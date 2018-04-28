@@ -69,10 +69,6 @@ public class ProductSpecServiceImpl implements IProductSpecService {
         return productSpecMapper.selectOne(productSpecEntity);
     }
 
-    public static void main(String[] args) {
-        System.out.println(Integer.valueOf("02"));
-    }
-
     @Override
     public int addProductSpec(ProductSpecEntity productSpecEntity) {
         productSpecEntity.setId(UUID.randomUUID().toString());

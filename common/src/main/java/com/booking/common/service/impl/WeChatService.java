@@ -85,7 +85,6 @@ public class WeChatService {
             byte[] b = NetTool.GET(url);
             String ret = new String(b, "UTF-8");
             result = JSON.parseObject(ret, OpenidResult.class);
-            System.out.println(ret);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -134,9 +133,9 @@ public class WeChatService {
         WechatPayResultDto wechatPayResultDto = null;
         try {
             String prepareSmallAppOrder = new String(ret, "UTF-8");
-            System.out.println("--------- prepareSmallAppOrder ------------------------");
-            System.out.println(prepareSmallAppOrder);
-            System.out.println("--------- prepareSmallAppOrder ------------------------");
+            logger.info("--------- prepareSmallAppOrder ------------------------");
+            logger.info(prepareSmallAppOrder);
+            logger.info("--------- prepareSmallAppOrder ------------------------");
             wechatPayResultDto = mapper.readValue(prepareSmallAppOrder, WechatPayResultDto.class);
         } catch (IOException e) {
             e.printStackTrace();

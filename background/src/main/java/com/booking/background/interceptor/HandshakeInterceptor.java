@@ -29,7 +29,7 @@ public class HandshakeInterceptor extends HttpSessionHandshakeInterceptor {
                     "permessage-deflate");
         }
 
-        System.out.println("Before Handshake");
+        logger.info("Before Handshake");
         return super.beforeHandshake(request, response, wsHandler, attributes);
     }
 
@@ -37,7 +37,7 @@ public class HandshakeInterceptor extends HttpSessionHandshakeInterceptor {
     public void afterHandshake(ServerHttpRequest request,
                                ServerHttpResponse response, WebSocketHandler wsHandler,
                                Exception ex) {
-        System.out.println("After Handshake");
+        logger.info("After Handshake");
         super.afterHandshake(request, response, wsHandler, ex);
     }
 
