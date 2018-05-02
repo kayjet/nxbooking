@@ -115,23 +115,68 @@ public class WeChatService {
         logger.info("验证回调sign start");
         SortedMap<String, String> map = new TreeMap<String, String>();
         if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAttach())) {
-            String[] ret = wechatPayCallbackEntity.getAttach().split(",");
-            String time_start = ret[0];
-            String time_expire = ret[1];
-            map.put("time_start", time_start);
-            map.put("time_expire", time_expire);
             map.put("attach", wechatPayCallbackEntity.getAttach());
         }
-        map.put("appid", APP_ID);
-        map.put("mch_id", MCH_ID);
-        map.put("spbill_create_ip", orderIp);
-        map.put("notify_url", wechatCallbackUrl);
-        map.put("fee_type", "CNY");
-        map.put("trade_type", "JSAPI");
-        map.put("nonce_str", wechatPayCallbackEntity.getNonce_str());
-        map.put("out_trade_no", wechatPayCallbackEntity.getOut_trade_no());
-        map.put("total_fee", wechatPayCallbackEntity.getTotal_fee());
-        map.put("openid", wechatPayCallbackEntity.getOpenid());
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAppid())) {
+            map.put("appid", wechatPayCallbackEntity.getAppid());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getBank_type())) {
+            map.put("bank_type", wechatPayCallbackEntity.getBank_type());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getFee_type())) {
+            map.put("fee_type", wechatPayCallbackEntity.getFee_type());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getCash_fee())) {
+            map.put("cash_fee", wechatPayCallbackEntity.getCash_fee());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getIs_subscribe())) {
+            map.put("is_subscribe", wechatPayCallbackEntity.getIs_subscribe());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getMch_id())) {
+            map.put("mch_id", wechatPayCallbackEntity.getMch_id());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getNonce_str())) {
+            map.put("nonce_str", wechatPayCallbackEntity.getNonce_str());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getOpenid())) {
+            map.put("openid", wechatPayCallbackEntity.getOpenid());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getOut_trade_no())) {
+            map.put("out_trade_no", wechatPayCallbackEntity.getOut_trade_no());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getResult_code())) {
+            map.put("result_code", wechatPayCallbackEntity.getResult_code());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getResult_code())) {
+            map.put("return_code", wechatPayCallbackEntity.getResult_code());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getSub_mch_id())) {
+            map.put("sub_mch_id", wechatPayCallbackEntity.getSub_mch_id());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getTime_end())) {
+            map.put("time_end", wechatPayCallbackEntity.getTime_end());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getTotal_fee())) {
+            map.put("total_fee", wechatPayCallbackEntity.getTotal_fee());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getCoupon_count())) {
+            map.put("coupon_count", wechatPayCallbackEntity.getCoupon_count());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getCoupon_type())) {
+            map.put("coupon_type", wechatPayCallbackEntity.getCoupon_type());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getCoupon_id())) {
+            map.put("coupon_id", wechatPayCallbackEntity.getCoupon_id());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getCoupon_fee())) {
+            map.put("coupon_fee", wechatPayCallbackEntity.getCoupon_fee());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getTrade_type())) {
+            map.put("trade_type", wechatPayCallbackEntity.getTrade_type());
+        }
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getTransaction_id())) {
+            map.put("transaction_id", wechatPayCallbackEntity.getTransaction_id());
+        }
         String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
         boolean result = false;
         if (sign.equalsIgnoreCase(wechatPayCallbackEntity.getSign())) {
@@ -172,6 +217,7 @@ public class WeChatService {
         map.put("trade_type", "JSAPI");
         map.put("openid", openId);
         map.put("attach", time_start + "," + time_expire);
+        logger.info("attach=" + time_start + "," + time_expire);
         String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
         map.put("sign", sign);
         String requestData = WxPayUtil.getRequestXml(map);

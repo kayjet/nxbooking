@@ -74,7 +74,7 @@ public class WechatCallbackController {
         if (wechatPayCallbackEntity.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {
             String orderNo = wechatPayCallbackEntity.getOut_trade_no();
             String transaction_id = wechatPayCallbackEntity.getTransaction_id();
-            Double totalPrice = Double.valueOf(wechatPayCallbackEntity.getTotal_fee());
+            Double totalPrice = Double.valueOf(wechatPayCallbackEntity.getTotal_fee()) / 100D;
             if (weChatService.validateSign(wechatPayCallbackEntity) && orderService.validateOrderPrice(orderNo, totalPrice)) {
                 orderService.updatePayStatus(orderNo, transaction_id);
                 weChatService.savePayCallbackResult(wechatPayCallbackEntity);

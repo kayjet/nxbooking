@@ -4,13 +4,15 @@ import com.booking.common.entity.OrderEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+
 /**
  * MakeOrderDto
  *
  * @author kai.liu
  * @date 2018/04/05
  */
-public class MakeOrderDto {
+public class MakeOrderDto implements Serializable {
     private OrderEntity orderEntity;
     private String paySign;
     private String timeStamp;//		是	时间戳从1970年1月1日00:00:00至今的秒数,即当前的时间
