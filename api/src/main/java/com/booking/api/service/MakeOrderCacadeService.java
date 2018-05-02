@@ -34,7 +34,6 @@ import java.util.List;
 public class MakeOrderCacadeService {
     Logger logger = LoggerFactory.getLogger(MakeOrderCacadeService.class);
 
-
     @Autowired
     IOrderService orderService;
 
@@ -56,18 +55,15 @@ public class MakeOrderCacadeService {
     @Autowired
     ICacheManager cacheManager;
 
-    @Value("${wechat.order.ip}")
-    String orderIp;
-
     @Transactional(rollbackFor = Throwable.class)
     public MakeOrderDto makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                   String orderTime, List<List<ProductEntity>> products) {
+        logger.info("创建订单 CacadeService start");
         MakeOrderDto makeOrderDto = new MakeOrderDto();
         OrderEntity result = orderService.makeOrder(shopId, userId, concatPhone, totalPrice, orderType, orderTime, products);
         UserEntity user = userService.listUser(new UserEntity(userId)).get(0);
-        String ip = orderIp;
         String openId = user.getOpenid();
-        WechatPayResultDto wechatPayResultDto = weChatService.prepareSmallAppOrder(result, ip, openId);
+        WechatPayResultDto wechatPayResultDto = weChatService.prepareSmallAppOrder(result, openId);
         if (wechatPayResultDto.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)
                 && wechatPayResultDto.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {
             String nonceStr = WxPayUtil.createNoncestr();
@@ -80,8 +76,10 @@ public class MakeOrderCacadeService {
             makeOrderDto.setPrepay_id("prepay_id=" + wechatPayResultDto.getPrepay_id());
             cacheManager.set(result.getOrderNo(), makeOrderDto, 60000 * 14);
             quartzExecutorDelegate.addCloseOrderJob(result);
+            logger.info("创建订单 CacadeService end");
             return makeOrderDto;
         } else {
+            logger.error("创建订单CacadeService 失败！");
             throw new ErrCodeException(1, "创建订单失败");
         }
     }

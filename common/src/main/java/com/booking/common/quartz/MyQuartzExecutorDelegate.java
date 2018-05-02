@@ -28,6 +28,7 @@ public class MyQuartzExecutorDelegate {
      * @return
      */
     public Object addCloseOrderJob(OrderEntity orderEntity) {
+        logger.info("添加等待支付定时任务，orderNo=" + orderEntity.getOrderNo());
         DateTime startDate = new DateTime();
         return quartzExecutor.addJob(orderEntity.getOrderNo(), CloseOrderJob.class, orderEntity, startDate.plusMinutes(14).toDate(),
                 JOB_GROUP_NAME, 0, 0);
@@ -39,6 +40,7 @@ public class MyQuartzExecutorDelegate {
      * @return
      */
     public Object removeCloseOrderJob(String orderNo) {
+        logger.info("删除等待支付定时任务，orderNo=" + orderNo);
         return quartzExecutor.closeJob(orderNo, JOB_GROUP_NAME);
     }
 

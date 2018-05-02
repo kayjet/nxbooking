@@ -48,4 +48,6 @@ public interface IOrderService {
 
     Workbook exportExcel(OrderEntity orderEntity);
 
+    boolean validateOrderPrice(String orderNo, Double price);
+
 }

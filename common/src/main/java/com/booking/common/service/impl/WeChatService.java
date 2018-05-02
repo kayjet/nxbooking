@@ -43,17 +43,17 @@ public class WeChatService {
             "appid=" + APP_ID + "&secret=" + SECRET + "&js_code=%s&grant_type=authorization_code";
     private static final String WX_MAKE_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
-
-    @Autowired
-    private OrderWechatMapper orderWechatMapper;
-
     @Autowired
     private WechatPayCallbackMapper wechatPayCallbackMapper;
 
     @Value("${wechat.callback}")
     private String wechatCallbackUrl;
+
     @Value("${wechat.isdebug}")
     private boolean wechatIsDebug;
+
+    @Value("${wechat.order.ip}")
+    private String orderIp;
 
     public static class OpenidResult {
         private String session_key;
@@ -99,6 +99,7 @@ public class WeChatService {
     }
 
     public String createSmallAppPaySign(String prepay_id, long currentTimeMillis, String nonceStr) {
+        logger.info("创建小程序paySign start");
         SortedMap<String, String> map = new TreeMap<String, String>();
         map.put("appId", APP_ID);
         map.put("timeStamp", currentTimeMillis + "");
@@ -106,60 +107,42 @@ public class WeChatService {
         map.put("package", "prepay_id=" + prepay_id);
         map.put("signType", "MD5");
         String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
+        logger.info("创建小程序paySign end");
         return sign;
     }
 
-//    public boolean validateSign(WechatPayCallbackEntity wechatPayCallbackEntity) {
-//        SortedMap<String, String> map = new TreeMap<String, String>();
-//        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAppid())) {
-//            map.put("appid",wechatPayCallbackEntity.getAppid());
-//        }
-//        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAttach())) {
-//            map.put("attach",wechatPayCallbackEntity.getAttach());
-//        }
-//        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getBank_type())) {
-//            map.put("bank_type",wechatPayCallbackEntity.getBank_type());
-//        }
-//        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getFee_type())) {
-//            map.put("fee_type",wechatPayCallbackEntity.getFee_type());
-//        }
-//
-//        map.put("appid", APP_ID);
-//        map.put("mch_id", MCH_ID);
-//        map.put("nonce_str", WxPayUtil.createNoncestr());
-//        map.put("out_trade_no", result.getOrderNo());
-//        map.put("fee_type", "CNY");
-//        map.put("total_fee", String.valueOf(1));
-//        map.put("spbill_create_ip", ip);
-//        map.put("time_start", dateFormat.format(now.toDate()));
-//        map.put("time_expire", dateFormat.format(now.plusMinutes(15).toDate()));
-//        map.put("notify_url", "https://www.opdar.com/booking/api/sp3/order/payCallback");
-//        map.put("trade_type", "JSAPI");
-//        map.put("openid", openId);
-//        String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
-//        String bank_type;
-//        String fee_type;
-//        String cash_fee;
-//        String is_subscribe;
-//        String mch_id;
-//        String nonce_str;
-//        String openid;
-//        String out_trade_no;
-//        String result_code;
-//        String return_code;
-//        String sub_mch_id;
-//        String time_end;
-//        String total_fee;
-//        String coupon_count;
-//        String coupon_type;
-//        String coupon_id;
-//        String coupon_fee;
-//        String trade_type;
-//        String transaction_id;
-//        return sign;
-//    }
+    public boolean validateSign(WechatPayCallbackEntity wechatPayCallbackEntity) {
+        logger.info("验证回调sign start");
+        SortedMap<String, String> map = new TreeMap<String, String>();
+        if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAttach())) {
+            String[] ret = wechatPayCallbackEntity.getAttach().split(",");
+            String time_start = ret[0];
+            String time_expire = ret[1];
+            map.put("time_start", time_start);
+            map.put("time_expire", time_expire);
+            map.put("attach", wechatPayCallbackEntity.getAttach());
+        }
+        map.put("appid", APP_ID);
+        map.put("mch_id", MCH_ID);
+        map.put("spbill_create_ip", orderIp);
+        map.put("notify_url", wechatCallbackUrl);
+        map.put("fee_type", "CNY");
+        map.put("trade_type", "JSAPI");
+        map.put("nonce_str", wechatPayCallbackEntity.getNonce_str());
+        map.put("out_trade_no", wechatPayCallbackEntity.getOut_trade_no());
+        map.put("total_fee", wechatPayCallbackEntity.getTotal_fee());
+        map.put("openid", wechatPayCallbackEntity.getOpenid());
+        String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
+        boolean result = false;
+        if (sign.equalsIgnoreCase(wechatPayCallbackEntity.getSign())) {
+            result = true;
+        }
+        logger.info("验证回调sign end ，结果为 result = " + result);
+        return result;
+    }
 
-    public WechatPayResultDto prepareSmallAppOrder(OrderEntity result, String ip, String openId) {
+    public WechatPayResultDto prepareSmallAppOrder(OrderEntity result, String openId) {
+        logger.info("创建微信订单 start");
         SortedMap<String, String> map = new TreeMap<String, String>();
         map.put("appid", APP_ID);
         map.put("mch_id", MCH_ID);
@@ -178,15 +161,17 @@ public class WeChatService {
             int price = (int) (result.getTotalPrice() * 10 * 10);
             map.put("total_fee", String.valueOf(price));
         }
-        map.put("spbill_create_ip", ip);
+        map.put("spbill_create_ip", orderIp);
         DateTime now = new DateTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-        map.put("time_start", dateFormat.format(now.toDate()));
-        map.put("time_expire", dateFormat.format(now.plusMinutes(15).toDate()));
+        String time_start = dateFormat.format(now.toDate());
+        String time_expire = dateFormat.format(now.plusMinutes(15).toDate());
+        map.put("time_start", time_start);
+        map.put("time_expire", time_expire);
         map.put("notify_url", wechatCallbackUrl);
-//        map.put("notify_url", "https://www.opdar.com/booking/api/sp3/order/payCallback");
         map.put("trade_type", "JSAPI");
         map.put("openid", openId);
+        map.put("attach", time_start + "," + time_expire);
         String sign = WxPayUtil.createSign(KEY, "UTF-8", map);
         map.put("sign", sign);
         String requestData = WxPayUtil.getRequestXml(map);
@@ -200,8 +185,9 @@ public class WeChatService {
             logger.info("--------- prepareSmallAppOrder ------------------------");
             wechatPayResultDto = mapper.readValue(prepareSmallAppOrder, WechatPayResultDto.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.info(e.getMessage());
         }
+        logger.info("创建微信订单 end");
         return wechatPayResultDto;
     }
 

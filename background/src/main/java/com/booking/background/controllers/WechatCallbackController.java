@@ -41,25 +41,23 @@ public class WechatCallbackController {
     @Autowired
     OrderCallbackService orderCallbackService;
 
-
     @Autowired
     MyQuartzExecutorDelegate quartzExecutorDelegate;
 
 
     @Request(value = "/sp3/order/payCallback", format = Request.Format.XML)
     public String payCallback() {
-        logger.info("通知支付成功 start ！");
+        logger.info("通知支付成功回调 start ！");
         String xml = null;
         try {
             xml = new String(NetTool.read(Context.getRequest().getInputStream()), "UTF-8");
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         if (xml == null) {
-            return WxPayUtil.setXML("FAIL", "xml转换失败");
+            return WxPayUtil.setXML(Constants.WechatPayErrorCode.FAIL, "xml转换失败");
         }
         logger.info("---------------------XML from wx callback -----------------");
-        //TODO:微信sign校验
         logger.info(xml);
         logger.info("--------------------XML from wx callback -----------------");
         XmlMapper mapper = new XmlMapper();
@@ -67,28 +65,34 @@ public class WechatCallbackController {
         try {
             wechatPayCallbackEntity = mapper.readValue(xml, WechatPayCallbackEntity.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         if (wechatPayCallbackEntity == null) {
-            return WxPayUtil.setXML("FAIL", "XML读取失败");
+            return WxPayUtil.setXML(Constants.WechatPayErrorCode.FAIL, "XML读取失败");
         }
+
         if (wechatPayCallbackEntity.getResult_code().equals(Constants.WechatPayErrorCode.SUCCESS)) {
             String orderNo = wechatPayCallbackEntity.getOut_trade_no();
             String transaction_id = wechatPayCallbackEntity.getTransaction_id();
-            orderService.updatePayStatus(orderNo, transaction_id);
-            weChatService.savePayCallbackResult(wechatPayCallbackEntity);
-            orderCallbackService.handle(wechatPayCallbackEntity);
-            cacheManager.remove(orderNo);
-            try {
-                quartzExecutorDelegate.removeCloseOrderJob(orderNo);
-            } catch (Exception e) {
-                logger.error("删除定时任务出错");
-                logger.error(e.getMessage());
-                logger.error("-------------");
+            Double totalPrice = Double.valueOf(wechatPayCallbackEntity.getTotal_fee());
+            if (weChatService.validateSign(wechatPayCallbackEntity) && orderService.validateOrderPrice(orderNo, totalPrice)) {
+                orderService.updatePayStatus(orderNo, transaction_id);
+                weChatService.savePayCallbackResult(wechatPayCallbackEntity);
+                orderCallbackService.handle(wechatPayCallbackEntity);
+                cacheManager.remove(orderNo);
+                try {
+                    quartzExecutorDelegate.removeCloseOrderJob(orderNo);
+                } catch (Exception e) {
+                    logger.error("删除定时任务出错");
+                    logger.error(e.getMessage());
+                    logger.error("-------------");
+                }
+                return WxPayUtil.setXML(Constants.WechatPayErrorCode.SUCCESS, "OK");
+            } else {
+                return WxPayUtil.setXML(Constants.WechatPayErrorCode.FAIL, "验证sign失败，或订单价格不符");
             }
         }
-        logger.info("通知支付成功 end ！");
-
-        return WxPayUtil.setXML("SUCCESS", "OK");
+        logger.info("通知支付成功回调 end ！");
+        return WxPayUtil.setXML(Constants.WechatPayErrorCode.FAIL, "未知错误");
     }
 }

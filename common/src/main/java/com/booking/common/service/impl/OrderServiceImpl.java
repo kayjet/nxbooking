@@ -144,6 +144,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                  String orderTime, List<List<ProductEntity>> products) {
+        logger.info("创建订单 start");
         OrderEntity orderEntity = new OrderEntity();
         String orderId = UUID.randomUUID().toString();
         String orderNo = "WX" + System.currentTimeMillis();
@@ -201,6 +202,7 @@ public class OrderServiceImpl implements IOrderService {
         orderMapper.insert(orderEntity);
         insertOrderUserRel(userId, orderId);
         insertOrderShopRel(shopId, orderId);
+        logger.info("创建订单 end");
         return orderEntity;
     }
 
@@ -277,6 +279,17 @@ public class OrderServiceImpl implements IOrderService {
         Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(shopResult.getName() + " " + dateRange + "订单记录", "详情"),
                 OrderEntity.class, orderList);
         return workbook;
+    }
+
+    @Override
+    public boolean validateOrderPrice(String orderNo, Double price) {
+        OrderEntity query = new OrderEntity();
+        query.setOrderNo(orderNo);
+        OrderEntity order = orderMapper.selectOne(query);
+        if (price != null && order != null && order.getTotalPrice().equals(price)) {
+            return true;
+        }
+        return false;
     }
 
     private void insertOrderUserRel(String userId, String orderId) {

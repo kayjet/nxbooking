@@ -65,6 +65,7 @@ public class Constants {
         public static final String POST_DATA_EMPTY = "POST_DATA_EMPTY";
         public static final String NOT_UTF8 = "NOT_UTF8";
         public static final String SUCCESS = "SUCCESS";
+        public static final String FAIL = "FAIL";
 
 
     }
