@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -55,7 +56,7 @@ public class WeChatService {
     @Value("${wechat.order.ip}")
     private String orderIp;
 
-    public static class OpenidResult {
+    public static class OpenidResult implements Serializable {
         private String session_key;
         private Long expires_in;
         private String openid;
