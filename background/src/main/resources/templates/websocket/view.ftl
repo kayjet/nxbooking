@@ -199,6 +199,7 @@
                 closeWebSocket() {
                     const that = this;
                     that.websocket.close();
+                    that.websocket = null;
                 },
                 initWs() {
                     const that = this;
@@ -244,10 +245,10 @@
                             } else {
                                 that.tableData.push(hearbeatDto.data);
                             }
-                        } else if (hearbeatDto.code == 2){
+                        } else if (hearbeatDto.code == 2) {
                             var arr = [];
-                            for(var i = 0; i < that.tableData.length ;i++){
-                                if(that.tableData[i].id != hearbeatDto.data){
+                            for (var i = 0; i < that.tableData.length; i++) {
+                                if (that.tableData[i].id != hearbeatDto.data) {
                                     arr.push(that.tableData[i]);
                                 }
                             }
@@ -270,7 +271,7 @@
                 createWs() {
                     const that = this;
                     try {
-                        that.websocket = new WebSocket(window.wsAddress+"?shopId=" + that.shopId);
+                        that.websocket = new WebSocket(window.wsAddress + "?shopId=" + that.shopId);
                     } catch (e) {
                     }
                     that.initWs();
@@ -339,6 +340,9 @@
                     that.tableData = [];
                     that.shopId = arr[0];
                     that.shopName = arr[1];
+                    if (that.websocket != null) {
+                        that.closeWebSocket();
+                    }
                     that.createWs();
                 }
             }
