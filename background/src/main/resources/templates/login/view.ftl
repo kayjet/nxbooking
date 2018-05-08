@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Login</title>
+    <title>后台管理系统</title>
     <script type="text/javascript" src="${proxyContext}${context}/dist/jquery.js"></script>
     <script type="text/javascript" src="${proxyContext}${context}/dist/md5.js"></script>
     <style>
