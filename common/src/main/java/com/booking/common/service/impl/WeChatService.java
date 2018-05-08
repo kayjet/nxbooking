@@ -215,6 +215,7 @@ public class WeChatService {
         map.put("time_start", time_start);
         map.put("time_expire", time_expire);
         map.put("notify_url", wechatCallbackUrl);
+        logger.info("回掉地址为=" + wechatCallbackUrl);
         map.put("trade_type", "JSAPI");
         map.put("openid", openId);
         map.put("attach", time_start + "," + time_expire);

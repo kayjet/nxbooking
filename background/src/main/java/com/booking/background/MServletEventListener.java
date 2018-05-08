@@ -1,5 +1,6 @@
 package com.booking.background;
 
+import com.booking.background.service.NotHandledOrderService;
 import com.booking.background.websocket.WebsocketController;
 import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.entity.OrderDetailEntity;
@@ -38,24 +39,8 @@ public class MServletEventListener extends ServletEventListener {
         Context.putResourceMapping("/dist", "/dist");
         super.contextInitialized(servletContextEvent);
         ApplicationContext applicationContext = (ApplicationContext) servletContextEvent.getServletContext().getAttribute("applicationContext");
-        getAllShopNotHandledOrderList(applicationContext);
-    }
-
-    private void getAllShopNotHandledOrderList(ApplicationContext applicationContext) {
-        IShopService shopService = applicationContext.getBean(IShopService.class);
-        OrderShopRelMapper orderShopRelMapper = applicationContext.getBean(OrderShopRelMapper.class);
-        List<ShopEntity> shops = shopService.listAll();
-        for (ShopEntity shop : shops) {
-            String shopId = shop.getId();
-            List<OrderEntity> orderList = orderShopRelMapper.selectOrderListPushedButNotHandled(shopId);
-            if (!CollectionUtils.isEmpty(orderList)) {
-                setOrderDetail(orderList,applicationContext);
-                ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
-                concurrentLinkedQueue.addAll(orderList);
-                WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
-            }
-
-        }
+        NotHandledOrderService notHandledOrderService = applicationContext.getBean(NotHandledOrderService.class);
+        notHandledOrderService.getAllShopNotHandledOrderList();
     }
 
 
@@ -65,28 +50,5 @@ public class MServletEventListener extends ServletEventListener {
 
     }
 
-    private void setOrderDetail(OrderEntity order, ApplicationContext applicationContext) {
-        OrderMapper orderMapper = applicationContext.getBean(OrderMapper.class);
-        List<OrderDetailEntity> orderDetailEntities = orderMapper.selectOrderDetailList(order.getOrderNo());
-        List<OrderDetailDto> reuslt = new ArrayList<OrderDetailDto>();
 
-        for (OrderDetailEntity detailEntity : orderDetailEntities) {
-            OrderDetailDto dto = new OrderDetailDto(detailEntity);
-            if (reuslt.contains(dto)) {
-                if (!StringUtils.isEmpty(detailEntity.getSpecName())) {
-                    reuslt.get(reuslt.indexOf(dto)).getProductSpecList().add(detailEntity.getSpecName());
-                }
-            } else {
-                reuslt.add(dto);
-            }
-        }
-        order.setOrderDetailList(reuslt);
-    }
-
-    private void setOrderDetail(List<OrderEntity> orderList, ApplicationContext applicationContext) {
-        for (OrderEntity orderEntity : orderList) {
-            setOrderDetail(orderEntity, applicationContext);
-        }
-
-    }
 }

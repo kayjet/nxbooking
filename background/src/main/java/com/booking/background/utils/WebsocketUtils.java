@@ -1,5 +1,6 @@
 package com.booking.background.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.booking.common.dto.WsHeartBeatDto;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ public class WebsocketUtils {
         WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
         fromEndPoint.setCode(code);
         if (o != null) {
+            logger.info("发送带有数据的心跳，" + JSON.toJSONString(o));
             fromEndPoint.setData(o);
         }
         webSocketSession.sendMessage(new TextMessage(JSONObject.toJSONString(fromEndPoint)));
