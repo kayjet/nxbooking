@@ -267,6 +267,7 @@ public class OrderServiceImpl implements IOrderService {
                     + simpleDateFormat.format(orderEntity.getCreateTimeEnd());
         }
 
+        query.setOrderStatus(Constants.OrderStatus.PAID);
         List<OrderEntity> orderList = orderMapper.selectList(query);
         if (CollectionUtils.isEmpty(orderList)) {
             return null;
