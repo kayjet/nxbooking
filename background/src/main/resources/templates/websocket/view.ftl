@@ -33,6 +33,12 @@
                 </el-row>
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
+                        <audio controls="controls" style="display: none;" id="audio">
+                            <source src="${proxyContext}${context}/dist/new_msg.mp3" type="audio/mp3">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </el-col>
+                    <el-col :span="24">
                         <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
 
                             <el-table-column type="expand">
@@ -239,13 +245,16 @@
 
                         var hearbeatDto = JSON.parse(event.data);
 //                        console.log(hearbeatDto);
+                        var audio = document.getElementById("audio");
                         if (hearbeatDto.code == 1 && hearbeatDto.data != null) {
+                            audio.play();
                             if (hearbeatDto.data instanceof Array) {
                                 Vue.set(that, "tableData", hearbeatDto.data)
                             } else {
                                 that.tableData.push(hearbeatDto.data);
                             }
                         } else if (hearbeatDto.code == 2) {
+                            audio.play();
                             var arr = [];
                             for (var i = 0; i < that.tableData.length; i++) {
                                 if (that.tableData[i].id != hearbeatDto.data) {
