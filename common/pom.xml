@@ -167,5 +167,10 @@
             <version>2.9.0</version>
         </dependency>
     </dependencies>
+    <build>
+        <filters>
+            <filter>${project.basedir}/../profiles/${env}.properties</filter>
+        </filters>
+    </build>
 
 </project>

@@ -11,6 +11,9 @@
     <packaging>war</packaging>
     <build>
         <finalName>image</finalName>
+        <filters>
+            <filter>${project.basedir}/../profiles/${env}.properties</filter>
+        </filters>
     </build>
 
     <artifactId>image</artifactId>

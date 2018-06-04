@@ -12,6 +12,9 @@
     <artifactId>api</artifactId>
     <build>
         <finalName>api</finalName>
+        <filters>
+            <filter>${project.basedir}/../profiles/${env}.properties</filter>
+        </filters>
     </build>
 
 
@@ -54,9 +57,9 @@
 
         <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
         <!--<dependency>-->
-            <!--<groupId>org.springframework</groupId>-->
-            <!--<artifactId>spring-core</artifactId>-->
-            <!--<version>4.3.9.RELEASE</version>-->
+        <!--<groupId>org.springframework</groupId>-->
+        <!--<artifactId>spring-core</artifactId>-->
+        <!--<version>4.3.9.RELEASE</version>-->
         <!--</dependency>-->
 
 
@@ -119,7 +122,6 @@
             <artifactId>gexin-rp-sdk-base</artifactId>
             <version>4.0.0.22</version>
         </dependency>
-
 
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
