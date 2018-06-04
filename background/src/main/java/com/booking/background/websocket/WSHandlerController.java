@@ -7,19 +7,11 @@ import com.booking.common.base.Constants;
 import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.dto.WsHeartBeatDto;
 import com.booking.common.entity.*;
-import com.booking.common.mapper.OrderMapper;
-import com.booking.common.mapper.OrderShopRelMapper;
-import com.booking.common.service.IOrderService;
-import com.booking.common.service.IOrderShopRelService;
-import com.booking.common.service.IShopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.socket.*;
@@ -28,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -39,8 +30,8 @@ import java.util.concurrent.ConcurrentMap;
  * @author kai.liu
  * @date 2017/12/29
  */
-public class WebsocketController implements WebSocketHandler {
-    private static final Logger logger = LoggerFactory.getLogger(WebsocketController.class);
+public class WSHandlerController implements WebSocketHandler {
+    private static final Logger logger = LoggerFactory.getLogger(WSHandlerController.class);
     public static final Integer WS_SUCCESS_CODE = 1;
     public static final Integer WS_HANDLE_MESSAGE = 2;
     private static final ConcurrentMap<String, WebSocketSession> WEB_SOCKET_SESSION_CONCURRENT_MAP = new ConcurrentHashMap<String, WebSocketSession>();
@@ -48,8 +39,6 @@ public class WebsocketController implements WebSocketHandler {
     public static final ConcurrentMap<String, ConcurrentLinkedQueue<OrderEntity>>
             ORDER_QUEUE_CONCURRENT_MAP = new ConcurrentHashMap<String, ConcurrentLinkedQueue<OrderEntity>>();
 
-    @Autowired
-    private NotHandledOrderService notHandledOrderService;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -66,7 +55,7 @@ public class WebsocketController implements WebSocketHandler {
             if (!CollectionUtils.isEmpty(orderList)) {
                 setOrderDetail(orderList);
                 if (ORDER_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
-                    ConcurrentLinkedQueue<OrderEntity> queue = WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId);
+                    ConcurrentLinkedQueue<OrderEntity> queue = WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId);
                     for (OrderEntity orderEntity : orderList) {
                         if (!queue.contains(orderEntity)) {
                             queue.add(orderEntity);
@@ -75,7 +64,7 @@ public class WebsocketController implements WebSocketHandler {
                 } else {
                     ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
                     concurrentLinkedQueue.addAll(orderList);
-                    WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
+                    WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
                 }
             }
 
@@ -213,7 +202,7 @@ public class WebsocketController implements WebSocketHandler {
         WebsocketUtils.sendHeartBeat(webSocketSession, WS_HANDLE_MESSAGE, waitingHandleOrder.getId());
     }
 
-    public static WebSocketSession getSession(String shopId) {
+    public synchronized static WebSocketSession getSession(String shopId) {
         if (WEB_SOCKET_SESSION_SHOP_ID_REL_MAP.containsKey(shopId)) {
             String wsSessionId = WEB_SOCKET_SESSION_SHOP_ID_REL_MAP.get(shopId);
             return WEB_SOCKET_SESSION_CONCURRENT_MAP.get(wsSessionId);

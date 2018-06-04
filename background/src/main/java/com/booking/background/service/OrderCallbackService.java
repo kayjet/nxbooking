@@ -1,7 +1,7 @@
 package com.booking.background.service;
 
 import com.booking.background.utils.WebsocketUtils;
-import com.booking.background.websocket.WebsocketController;
+import com.booking.background.websocket.WSHandlerController;
 import com.booking.common.base.Constants;
 import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.entity.OrderDetailEntity;
@@ -47,28 +47,28 @@ public class OrderCallbackService {
             orderShopRel = orderShopRelMapper.selectOne(orderShopRel);
             String shopId = orderShopRel.getShopId();
             if (!StringUtils.isEmpty(shopId)) {
-                WebSocketSession webSocketSession = WebsocketController.getSession(shopId);
+                WebSocketSession webSocketSession = WSHandlerController.getSession(shopId);
                 if (webSocketSession != null) {
                     try {
-                        WebsocketUtils.sendHeartBeat(webSocketSession, WebsocketController.WS_SUCCESS_CODE, ret);
+                        WebsocketUtils.sendHeartBeat(webSocketSession, WSHandlerController.WS_SUCCESS_CODE, ret);
                         ret.setIsPushed(Constants.OrderPushStatus.PUSHED);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        if (!WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).contains(ret)) {
-                            WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
+                        if (!WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).contains(ret)) {
+                            WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
                         } else {
                             ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
                             concurrentLinkedQueue.add(ret);
-                            WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
+                            WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
                         }
                     }
                     orderMapper.updatePushStatusWithLock(ret);
                     return true;
                 } else {
-                    if (!WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
-                        WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, new ConcurrentLinkedQueue<OrderEntity>());
+                    if (!WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.containsKey(shopId)) {
+                        WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, new ConcurrentLinkedQueue<OrderEntity>());
                     }
-                    WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
+                    WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.get(shopId).add(ret);
                     return true;
                 }
             }

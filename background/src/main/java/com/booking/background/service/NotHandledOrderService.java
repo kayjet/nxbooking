@@ -1,6 +1,6 @@
 package com.booking.background.service;
 
-import com.booking.background.websocket.WebsocketController;
+import com.booking.background.websocket.WSHandlerController;
 import com.booking.common.dto.OrderDetailDto;
 import com.booking.common.entity.OrderDetailEntity;
 import com.booking.common.entity.OrderEntity;
@@ -11,7 +11,6 @@ import com.booking.common.service.IShopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -50,7 +49,7 @@ public class NotHandledOrderService {
                 setOrderDetail(orderList);
                 ConcurrentLinkedQueue<OrderEntity> concurrentLinkedQueue = new ConcurrentLinkedQueue<OrderEntity>();
                 concurrentLinkedQueue.addAll(orderList);
-                WebsocketController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
+                WSHandlerController.ORDER_QUEUE_CONCURRENT_MAP.put(shopId, concurrentLinkedQueue);
             }
 
         }
