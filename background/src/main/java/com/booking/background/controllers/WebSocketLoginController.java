@@ -50,15 +50,11 @@ public class WebSocketLoginController {
         String redirectUrl = "";
         if (ret) {
             redirectUrl = contextPath + "/websocket/view";
-            if (!StringUtils.isEmpty(proxyContext)) {
-                redirectUrl = proxyContext + redirectUrl;
-            }
-
         } else {
             redirectUrl = contextPath + "/websocket/login";
-            if (!StringUtils.isEmpty(proxyContext)) {
-                redirectUrl = proxyContext + redirectUrl;
-            }
+        }
+        if (!StringUtils.isEmpty(proxyContext)) {
+            redirectUrl = proxyContext + redirectUrl;
         }
         logger.info("ws loginAction login result = " + ret);
         logger.info("sendRedirect url =" + redirectUrl);

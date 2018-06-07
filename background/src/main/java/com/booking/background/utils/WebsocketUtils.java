@@ -18,6 +18,9 @@ import java.io.IOException;
  */
 public class WebsocketUtils {
     private static final Logger logger = LoggerFactory.getLogger(WebsocketUtils.class);
+    public static final Integer WS_SUCCESS_CODE = 1;
+    public static final Integer WS_HANDLE_MESSAGE = 2;
+
 
     public static void sendHeartBeat(WebSocketSession webSocketSession, Integer code, Object o) throws IOException {
         WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
