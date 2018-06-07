@@ -1,4 +1,4 @@
-package com.booking.common.quartz.job;
+package com.booking.jobs.job;
 
 import com.booking.common.base.Constants;
 import com.booking.common.base.ICacheManager;

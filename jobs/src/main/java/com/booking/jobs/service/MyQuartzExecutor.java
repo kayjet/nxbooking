@@ -1,4 +1,4 @@
-package com.booking.common.quartz;
+package com.booking.jobs.service;
 
 import org.quartz.*;
 import org.quartz.core.jmx.JobDetailSupport;
@@ -17,8 +17,6 @@ public class MyQuartzExecutor {
     @Autowired
     private Scheduler scheduler;
     private static String TRIGGER_GROUP_NAME = "ddlibTrigger";
-    @Autowired
-    private ApplicationContext applicationContext;
 
     /**
      * 添加任务
@@ -76,9 +74,9 @@ public class MyQuartzExecutor {
         // 关闭任务调度
         try {
             JobKey jobKey = JobKey.jobKey(jobName, jobGorupName);
-            return scheduler.deleteJob(jobKey) == true ? 0 : 1;
+            return scheduler.deleteJob(jobKey) ? 0 : 1;
         } catch (SchedulerException e) {
-            // e.printStackTrace();
+             e.printStackTrace();
             return 2;
         }
     }
@@ -90,7 +88,6 @@ public class MyQuartzExecutor {
         try {
             scheduler.start();
         } catch (SchedulerException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

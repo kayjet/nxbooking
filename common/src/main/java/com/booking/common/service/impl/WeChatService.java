@@ -114,6 +114,9 @@ public class WeChatService {
 
     public boolean validateSign(WechatPayCallbackEntity wechatPayCallbackEntity) {
         logger.info("验证回调sign start");
+        if(wechatIsDebug){
+            return true;
+        }
         SortedMap<String, String> map = new TreeMap<String, String>();
         if (!StringUtils.isEmpty(wechatPayCallbackEntity.getAttach())) {
             map.put("attach", wechatPayCallbackEntity.getAttach());

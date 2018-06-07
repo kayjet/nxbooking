@@ -1,4 +1,4 @@
-package com.booking.common.quartz.job;
+package com.booking.jobs.job;
 
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;

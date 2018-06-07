@@ -75,7 +75,11 @@ public class MakeOrderCacadeService {
             makeOrderDto.setNonceStr(nonceStr);
             makeOrderDto.setPrepay_id("prepay_id=" + wechatPayResultDto.getPrepay_id());
             cacheManager.set(result.getOrderNo(), makeOrderDto, 60000 * 14);
-            quartzExecutorDelegate.addCloseOrderJob(result);
+            try {
+                quartzExecutorDelegate.addCloseOrderJob(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             logger.info("创建订单 CacadeService end");
             return makeOrderDto;
         } else {

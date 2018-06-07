@@ -47,7 +47,6 @@
     <!--</bean>-->
 
     <import resource="jdbc.xml"/>
-    <import resource="quartz.xml"/>
     <import resource="redis.xml"/>
 
     <!--<bean id="cacheManager"

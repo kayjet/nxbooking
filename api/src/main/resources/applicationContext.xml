@@ -90,8 +90,6 @@
     </bean>
 
     <bean class="com.booking.common.base.FastJSONConvert"/>
-    <!--<import resource="active-mq.xml"/>-->
-    <import resource="quartz.xml"/>
     <import resource="redis.xml"/>
 
 </beans>

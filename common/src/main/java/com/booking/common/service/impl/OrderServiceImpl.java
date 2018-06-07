@@ -13,6 +13,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -52,6 +53,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     ShopMapper shopMapper;
+
+    @Value("${wechat.isdebug}")
+    private boolean wechatIsDebug;
 
     @Override
     public List<OrderEntity> listAll() {
@@ -284,6 +288,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public boolean validateOrderPrice(String orderNo, Double price) {
+        if(wechatIsDebug){
+            return true;
+        }
         OrderEntity query = new OrderEntity();
         query.setOrderNo(orderNo);
         OrderEntity order = orderMapper.selectOne(query);
