@@ -21,7 +21,7 @@ public class CloseOrderJob extends AbstractJob{
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        logger.debug("---执行定时任务 关闭订单 开始---");
+        logger.info("---执行定时任务 关闭订单 开始---");
         ApplicationContext applicationContext = null;
         try {
             applicationContext = getApplicationContext(jobExecutionContext);
@@ -36,12 +36,12 @@ public class CloseOrderJob extends AbstractJob{
 
             ICacheManager cacheManager = applicationContext.getBean(ICacheManager.class);
             cacheManager.remove(orderEntity.getOrderNo());
-            logger.debug("---执行定时任务 关闭订单 成功---");
+            logger.info("---执行定时任务 关闭订单 成功---");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        logger.debug("---执行定时任务 关闭订单 结束---");
+        logger.info("---执行定时任务 关闭订单 结束---");
     }
 
 }
