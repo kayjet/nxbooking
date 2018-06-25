@@ -209,30 +209,34 @@ public class Sprint3ControllerTest extends AbstractTransactionalTestService {
 
     @Test
     public void payCallback() throws Exception {
-        String xml = "<xml>\n" +
-                "  <appid><![CDATA[wxaac0edff2d9fe351]]></appid>\n" +
-                "  <attach><![CDATA[20180502162036,20180502163536]]></attach>\n" +
-                "  <bank_type><![CDATA[CFT]]></bank_type>\n" +
-                "  <fee_type><![CDATA[CNY]]></fee_type>\n" +
-                "  <is_subscribe><![CDATA[Y]]></is_subscribe>\n" +
-                "  <mch_id><![CDATA[1499998882]]></mch_id>\n" +
-                "  <nonce_str><![CDATA[A45OFczOUxWxLyaU]]></nonce_str>\n" +
-                "  <openid><![CDATA[oCY6t4sqINgYL2JZ_VrRw-AwJzgU]]></openid>\n" +
-                "  <out_trade_no><![CDATA[WX1525249235957]]></out_trade_no>\n" +
-                "  <result_code><![CDATA[SUCCESS]]></result_code>\n" +
-                "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
-                "  <sign><![CDATA[C367BD208BDA5D848520780ACEC4627C]]></sign>\n" +
-                "  <time_end><![CDATA[20140903131540]]></time_end>\n" +
-                "  <total_fee>1</total_fee><coupon_fee><![CDATA[10]]></coupon_fee>\n" +
-                "<coupon_count><![CDATA[1]]></coupon_count>\n" +
-                "<coupon_type><![CDATA[CASH]]></coupon_type>\n" +
-                "<coupon_id><![CDATA[10000]]></coupon_id>\n" +
-                "<coupon_fee><![CDATA[100]]></coupon_fee>\n" +
-                "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
-                "  <transaction_id><![CDATA[4200000067201804190940781232]]></transaction_id>\n" +
-                "</xml>";
-        byte[] result = NetTool.POST_XML("http://localhost:8080/background/sp3/order/payCallback", xml);
-        System.out.println(new String(result,"UTF-8"));
+
+        for (int i = 0;i < 100;i++){
+            String xml = "<xml>\n" +
+                    "  <appid><![CDATA[wxaac0edff2d9fe351]]></appid>\n" +
+                    "  <attach><![CDATA[20180502162036,20180502163536]]></attach>\n" +
+                    "  <bank_type><![CDATA[CFT]]></bank_type>\n" +
+                    "  <fee_type><![CDATA[CNY]]></fee_type>\n" +
+                    "  <is_subscribe><![CDATA[Y]]></is_subscribe>\n" +
+                    "  <mch_id><![CDATA[1499998882]]></mch_id>\n" +
+                    "  <nonce_str><![CDATA[A45OFczOUxWxLyaU]]></nonce_str>\n" +
+                    "  <openid><![CDATA[oCY6t4sqINgYL2JZ_VrRw-AwJzgU]]></openid>\n" +
+                    "  <out_trade_no><![CDATA[WX1525249235957]]></out_trade_no>\n" +
+                    "  <result_code><![CDATA[SUCCESS]]></result_code>\n" +
+                    "  <return_code><![CDATA[SUCCESS]]></return_code>\n" +
+                    "  <sign><![CDATA[C367BD208BDA5D848520780ACEC4627C]]></sign>\n" +
+                    "  <time_end><![CDATA[20140903131540]]></time_end>\n" +
+                    "  <total_fee>1</total_fee><coupon_fee><![CDATA[10]]></coupon_fee>\n" +
+                    "<coupon_count><![CDATA[1]]></coupon_count>\n" +
+                    "<coupon_type><![CDATA[CASH]]></coupon_type>\n" +
+                    "<coupon_id><![CDATA[10000]]></coupon_id>\n" +
+                    "<coupon_fee><![CDATA[100]]></coupon_fee>\n" +
+                    "  <trade_type><![CDATA[JSAPI]]></trade_type>\n" +
+                    "  <transaction_id><![CDATA[4200000067201804190940781232]]></transaction_id>\n" +
+                    "</xml>";
+            byte[] result = NetTool.POST_XML("http://localhost:9090/background/sp3/order/payCallback", xml);
+            System.out.println(new String(result,"UTF-8"));
+        }
+
     }
 
     @Autowired
