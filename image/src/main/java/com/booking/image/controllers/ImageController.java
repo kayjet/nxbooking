@@ -6,14 +6,12 @@ import com.booking.common.service.impl.CommonService;
 import com.opdar.platform.annotations.Editor;
 import com.opdar.platform.annotations.ErrorHandler;
 import com.opdar.platform.annotations.Request;
-import com.opdar.platform.core.base.Context;
 import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
@@ -24,8 +22,8 @@ import java.io.IOException;
  */
 @Controller
 @ErrorHandler(ErrCodeHandler.class)
-public class CommonController {
-    Logger logger = LoggerFactory.getLogger(CommonController.class);
+public class ImageController {
+    Logger logger = LoggerFactory.getLogger(ImageController.class);
 
     @Autowired
     CommonService commonService;

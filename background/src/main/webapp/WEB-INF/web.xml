@@ -5,7 +5,7 @@
          version="3.1">
 
     <listener>
-        <listener-class>com.booking.background.MServletEventListener</listener-class>
+        <listener-class>com.booking.background.BackgroundWebappEventListener</listener-class>
     </listener>
 
     <filter>
