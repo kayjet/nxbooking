@@ -97,7 +97,7 @@
                                     </el-popover>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="所属门店" index="5" width="68">
+                            <#--<el-table-column label="所属门店" index="5" width="68">
                                 <template slot-scope="scope" >
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -111,7 +111,7 @@
                                             <el-tag size="medium" >查看</el-tag>
                                         </div>
                                     </el-popover>
-                                </template>
+                                </template>-->
                                <#-- <template slot-scope="scope">
                                     <span style="margin-left: 10px" v-if="scope.row.shopTagRelList.length > 0">{{  scope.row.shopTagRelList[0].shopName}}</span>
                                 </template>-->
@@ -161,7 +161,7 @@
                 <el-form-item label="备注">
                     <el-input v-model="form.remark">{{form.remark}}</el-input>
                 </el-form-item>
-                <el-form-item label="所属门店">
+               <#-- <el-form-item label="所属门店">
                     <template>
                         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
                         <div style="margin: 15px 0;"></div>
@@ -169,7 +169,7 @@
                             <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.name}}</el-checkbox>
                         </el-checkbox-group>
                     </template>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('insert')">立即创建</el-button>
                 </el-form-item>
@@ -201,7 +201,7 @@
                 <el-form-item label="备注">
                     <el-input v-model="form.remark">{{form.remark}}</el-input>
                 </el-form-item>
-                <el-form-item label="所属门店">
+                <#--<el-form-item label="所属门店">
                     <template>
                         <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
                         <div style="margin: 15px 0;"></div>
@@ -209,7 +209,7 @@
                             <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.name}}</el-checkbox>
                         </el-checkbox-group>
                     </template>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
                 </el-form-item>
@@ -276,7 +276,7 @@
                     totalPage: 0,
                     currentPage: 1,
                     checkedTag: [],
-                    tags:  [],
+//                    tags:  [],
                     requestAddShopList:[],
                     isIndeterminate: true,
                     checkAll:false
@@ -289,9 +289,9 @@
                     that.currentPage = response.data.pageNo;
                     that.totalPage = response.data.countSize;
                 });
-                window.service.listAllShop().then(function (response) {
+                /*window.service.listAllShop().then(function (response) {
                     that.tags = response.data.data;
-                })
+                })*/
             },
             mounted() {
                 const that = this;
@@ -372,7 +372,7 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
-                handleCheckAllChange(val) {
+              /*  handleCheckAllChange(val) {
                     this.checkedTag = val ? this.tags : [];
                     this.isIndeterminate = false;
                 },
@@ -382,7 +382,7 @@
                     let checkedCount = value.length;
                     this.checkAll = checkedCount === this.tags.length;
                     this.isIndeterminate = checkedCount > 0 && checkedCount < this.tags.length;
-                },
+                },*/
                 uploadSuccess(response, file, fileList){
                     console.log(response,file,fileList);
                     console.log(111);

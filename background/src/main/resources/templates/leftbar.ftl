@@ -13,13 +13,14 @@
         </el-menu-item>
         <el-submenu index="4">
             <span slot="title"> <i class="el-icon-menu"></i>门店管理</span>
-            <el-menu-item index="4-1"><a href="${proxyContext}${context}/shop/view">详情记录</a></el-menu-item>
+            <el-menu-item index="4-1"><a href="${proxyContext}${context}/shop/view">门店列表</a></el-menu-item>
+            <el-menu-item index="4-2"><a href="${proxyContext}${context}/productionAdditional/view">产品详情</a></el-menu-item>
         </el-submenu>
         <el-submenu index="5">
             <span slot="title"> <i class="el-icon-menu"></i>产品管理</span>
-            <el-menu-item index="5-1"><a href="${proxyContext}${context}/product/view">详情记录</a></el-menu-item>
-            <el-menu-item index="5-2"><a href="${proxyContext}${context}/tag/view">标签</a></el-menu-item>
-            <el-menu-item index="5-3"><a href="${proxyContext}${context}/productSpec/view">规格</a></el-menu-item>
+            <el-menu-item index="5-1"><a href="${proxyContext}${context}/product/view">产品列表</a></el-menu-item>
+            <el-menu-item index="5-2"><a href="${proxyContext}${context}/tag/view">产品分类</a></el-menu-item>
+            <el-menu-item index="5-3"><a href="${proxyContext}${context}/productSpec/view">产品规格</a></el-menu-item>
         </el-submenu>
 
         <el-submenu index="6">

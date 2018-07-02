@@ -145,6 +145,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private OrderProductSpecRelMapper orderProductSpecRelMapper;
 
+    @Autowired
+    private ProductAdditionalService productAdditionalService;
+
     @Override
     public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                  String orderTime, List<List<ProductEntity>> products) {
@@ -167,14 +170,18 @@ public class OrderServiceImpl implements IOrderService {
         orderEntity.setTotalPriceFromWeb(Double.valueOf(totalPrice));
         Double price = 0D;
         for (int parentIdx = 0; parentIdx < products.size(); parentIdx++) {
-
             List<ProductEntity> productEntities = products.get(parentIdx);
             for (int index = 0; index < productEntities.size(); index++) {
-                ProductEntity entity = productEntities.get(index);
-                ProductEntity p = productMapper.selectOne(new ProductEntity(entity.getId()));
-                price += p.getPrice();
-                String orderProductRelId = insertOrderProductRel(p.getId(), orderId);
-                List<ProductSpecDto> productSpecDtoList = entity.getRequestSpecList();
+                ProductEntity formProduct = productEntities.get(index);
+                ProductEntity dbProduct = productMapper.selectOne(new ProductEntity(formProduct.getId()));
+                Double spPrice = productAdditionalService.findProductSpPrice(shopId, formProduct.getId());
+                if (spPrice != null && !spPrice.equals(0D)) {
+                    price += spPrice;
+                } else {
+                    price += dbProduct.getPrice();
+                }
+                String orderProductRelId = insertOrderProductRel(dbProduct.getId(), orderId);
+                List<ProductSpecDto> productSpecDtoList = formProduct.getRequestSpecList();
                 if (!CollectionUtils.isEmpty(productSpecDtoList)) {
                     for (ProductSpecDto specDto : productSpecDtoList) {
                         List<ProductSpecEntity> productSpecList = specDto.getSpecList();
@@ -183,7 +190,7 @@ public class OrderServiceImpl implements IOrderService {
                                 if (specEntity.getPrice() != null) {
                                     price += specEntity.getPrice();
                                 }
-                                String pid = p.getId();
+                                String pid = dbProduct.getId();
                                 String specId = specEntity.getId();
                                 Timestamp ts = new Timestamp(System.currentTimeMillis());
                                 OrderProductSpecRelEntity specRelEntity = new OrderProductSpecRelEntity();
@@ -288,7 +295,7 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public boolean validateOrderPrice(String orderNo, Double price) {
-        if(wechatIsDebug){
+        if (wechatIsDebug) {
             return true;
         }
         OrderEntity query = new OrderEntity();

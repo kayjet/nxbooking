@@ -31,8 +31,8 @@
                                                   placeholder="title"></el-input>
                                     </el-form-item>
                                     <el-form-item label="销售状态">
-                                        <#--<el-input v-model="search.isOnSale"-->
-                                                  <#--placeholder="isOnSale"></el-input>-->
+                                    <#--<el-input v-model="search.isOnSale"-->
+                                    <#--placeholder="isOnSale"></el-input>-->
 
                                         <el-dropdown @command="handleIsOnSale">
                                                   <span class="el-dropdown-link"
@@ -94,7 +94,7 @@
                             <span style="font-size:12px; ">标签：</span>
                             <el-radio-group v-model="search.tagId" size="small" @change="changeTag">
                             <#list tagList as tag>
-                                <el-radio-button label="${tag.id}" >${tag.title}</el-radio-button>
+                                <el-radio-button label="${tag.id}">${tag.title}</el-radio-button>
                             </#list>
                             </el-radio-group>
                         </div>
@@ -143,7 +143,7 @@
                                     <span style="margin-left: 10px">{{  scope.row.isOnSale | saleStatus}}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="规格" index="8"  width="68">
+                            <el-table-column label="规格" index="8" width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -159,7 +159,7 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="标签" index="6"  width="68">
+                            <el-table-column label="标签" index="6" width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -238,12 +238,13 @@
 
                 <el-form-item label="选择规格" v-if="allSpecParentList">
                     <template>
-                        <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
-                            <#--全选-->
-                        <#--</el-checkbox>-->
+                    <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
+                    <#--全选-->
+                    <#--</el-checkbox>-->
                         <div style="margin: 15px 0;"></div>
                         <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
-                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}</el-checkbox>
+                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}
+                            </el-checkbox>
                         </el-checkbox-group>
                     </template>
                 </el-form-item>
@@ -318,7 +319,8 @@
                     <#--</el-checkbox>-->
                         <div style="margin: 15px 0;"></div>
                         <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
-                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}</el-checkbox>
+                            <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}
+                            </el-checkbox>
                         </el-checkbox-group>
                     </template>
                 </el-form-item>
@@ -390,6 +392,10 @@
         listAllShop: function () {
             return axios.get(window.ctxPath + '/shop/list');
         },
+        removeSpPrice: function () {
+            return axios.get(window.ctxPath + "/product/removeSpPrice");
+        }
+
     };
     window.onload = function () {
         window.vm = new Vue({
@@ -421,8 +427,9 @@
                     isIndeterminate2: false,
                     selectedShop: undefined,
                     shopList: [],
-                    allSpecParentList:[],
-                    tagList:[]
+                    allSpecParentList: [],
+                    tagList: [],
+                    shopId:''
                 }
             },
             created() {
@@ -534,6 +541,7 @@
                 onSelectShop(val) {
                     const that = this;
                     console.log(val);
+                    that.shopId = val
                     window.service.listAllTags(val).then(function (response) {
                         that.tags = response.data.data;
                     });
@@ -574,7 +582,7 @@
                 handleSaleStatusCommand(val) {
                     Vue.set(this.form, "isOnSale", val);
                 },
-                handleIsOnSale(val){
+                handleIsOnSale(val) {
                     Vue.set(this.search, "isOnSale", val);
                 },
                 handleCurrentChange(val) {
@@ -586,7 +594,7 @@
                         that.totalPage = response.data.countSize;
                     });
                 },
-                changeTag(){
+                changeTag() {
                     var that = this;
                     window.service.listPage(1, 10, that.search).then(function (response) {
                         that.tableData = response.data.data;

@@ -52,6 +52,16 @@ public class ProductEntity {
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private String tagId;
 
+    //用于前段数据请求
+    //每个门店的自定义价格
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private Double spPrice;
+
+    //用于前段数据请求
+    //每个门店id
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private String shopId;
+
     @Field(resultmap = false,insert = false,update = false,delete = false)
     @Where(value = " and create_time >= {}",plain = false)
     private Timestamp createTimeStart;
@@ -239,5 +249,21 @@ public class ProductEntity {
 
     public void setTagId(String tagId) {
         this.tagId = tagId;
+    }
+
+    public Double getSpPrice() {
+        return spPrice;
+    }
+
+    public void setSpPrice(Double spPrice) {
+        this.spPrice = spPrice;
+    }
+
+    public String getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(String shopId) {
+        this.shopId = shopId;
     }
 }

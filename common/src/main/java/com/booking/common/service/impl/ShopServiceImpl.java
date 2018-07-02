@@ -135,6 +135,9 @@ public class ShopServiceImpl implements IShopService {
     @Autowired
     ProductSpecRelMapper productSpecRelMapper;
 
+    @Autowired
+    ProductAdditionalService productAdditionalService;
+
     @Override
     public List<ShopTagRelForWebEntity> listProducts(String shopId) {
         ShopTagRelForWebEntity query = new ShopTagRelForWebEntity();
@@ -146,32 +149,33 @@ public class ShopServiceImpl implements IShopService {
             if (CollectionUtils.isEmpty(entity.getTagList().get(0).getProductList())) {
                 iterator.remove();
             } else {
-                Iterator<ProductEntity> productEntityIterator = entity.getTagList().get(0).getProductList().iterator();
-                while (productEntityIterator.hasNext()) {
-                    ProductEntity productEntity = productEntityIterator.next();
-                    if (productEntity.getIsOnSale() != null && productEntity.getIsOnSale().equals(Constants.ProductSaleStatus.ON_SALE)) {
-                        List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(productEntity.getId());
+                Iterator<ProductEntity> productIterator = entity.getTagList().get(0).getProductList().iterator();
+                while (productIterator.hasNext()) {
+                    ProductEntity product = productIterator.next();
+                    if (product.getIsOnSale() != null && product.getIsOnSale().equals(Constants.ProductSaleStatus.ON_SALE)) {
+                        List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(product.getId());
                         if (!CollectionUtils.isEmpty(specList)) {
-                            List<ProductSpecDto> productSpecDtos = new ArrayList<ProductSpecDto>();
-                            for (ProductSpecEntity specEntity : specList) {
-                                ProductSpecDto dto = new ProductSpecDto();
-                                dto.setParentCode(specEntity.getParentCode());
-                                dto.setParentName(specEntity.getParentName());
-                                if (productSpecDtos.contains(dto)) {
-                                    productSpecDtos.get(productSpecDtos.indexOf(dto)).getSpecList().add(specEntity);
+                            List<ProductSpecDto> resultProductSpecDtoList = new ArrayList<ProductSpecDto>();
+                            for (ProductSpecEntity productSpec : specList) {
+                                ProductSpecDto productSpecDto = new ProductSpecDto();
+                                productSpecDto.setParentCode(productSpec.getParentCode());
+                                productSpecDto.setParentName(productSpec.getParentName());
+                                if (resultProductSpecDtoList.contains(productSpecDto)) {
+                                    int index = resultProductSpecDtoList.indexOf(productSpecDto);
+                                    resultProductSpecDtoList.get(index).getSpecList().add(productSpec);
                                 } else {
-                                    dto.getSpecList().add(specEntity);
-                                    productSpecDtos.add(dto);
+                                    productSpecDto.getSpecList().add(productSpec);
+                                    resultProductSpecDtoList.add(productSpecDto);
                                 }
                             }
-                            productEntity.setRelSpecList(productSpecDtos);
+                            product.setRelSpecList(resultProductSpecDtoList);
                         }
+                        Double spPrice = productAdditionalService.findProductSpPrice(shopId, product.getId());
+                        product.setSpPrice(spPrice);
                     } else {
-                        productEntityIterator.remove();
+                        productIterator.remove();
                     }
-
                 }
-
             }
         }
         return result;

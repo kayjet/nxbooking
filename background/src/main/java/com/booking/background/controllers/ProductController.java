@@ -10,6 +10,7 @@ import com.booking.common.service.IProductService;
 import com.booking.common.service.IProductSpecRelService;
 import com.booking.common.service.ITagProductRelService;
 import com.booking.common.service.ITagService;
+import com.booking.common.service.impl.ProductAdditionalService;
 import com.opdar.platform.core.base.Context;
 import com.opdar.platform.annotations.*;
 import org.slf4j.Logger;
@@ -49,6 +50,9 @@ public class ProductController {
     @Autowired
     ITagService tagService;
 
+    @Autowired
+    ProductAdditionalService productAdditionalService;
+
     @Value("${proxy.context}")
     private String proxyContext;
 
@@ -56,10 +60,10 @@ public class ProductController {
     @Editor(ResultEditor.class)
     public String addProduct(@JSON ProductEntity product) {
         ProductEntity productRet = productService.addProduct(product);
-        if (!CollectionUtils.isEmpty(product.getRequestAddTagList())) {
+       /* if (!CollectionUtils.isEmpty(product.getRequestAddTagList())) {
             List<TagProductRelEntity> tagProductRelEntities = new ArrayList<TagProductRelEntity>();
             for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-                if(!StringUtils.isEmpty(tagEntity.getTagId())){
+                if (!StringUtils.isEmpty(tagEntity.getTagId())) {
                     TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
                     tagProductRelEntity.setPid(productRet.getId());
                     tagProductRelEntity.setTid(tagEntity.getTagId());
@@ -67,7 +71,7 @@ public class ProductController {
                 }
             }
             tagProductRelService.addTagProductRel(tagProductRelEntities);
-        }
+        }*/
         if (!CollectionUtils.isEmpty(product.getProductSpecList())) {
             List<ProductSpecRelEntity> productSpecRelEntities = new ArrayList<ProductSpecRelEntity>();
             for (ProductSpecEntity specEntity : product.getProductSpecList()) {
@@ -77,6 +81,9 @@ public class ProductController {
                 productSpecRelEntities.add(tagProductRelEntity);
             }
             productSpecRelService.addProductSpecRel(productSpecRelEntities);
+        }
+        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
+            productAdditionalService.addProductSpPrice(product.getShopId(), product.getSpPrice(), product.getId());
         }
         return productRet.getId();
     }
@@ -120,12 +127,24 @@ public class ProductController {
         } else if (CollectionUtils.isEmpty(specRelEntities) && !CollectionUtils.isEmpty(product.getProductSpecList())) {
             insertProductSpecRel(product);
         }
+        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
+            productAdditionalService.changeProductSpPrice(product.getShopId(), product.getSpPrice(), product.getId());
+        }
         return ret;
+    }
+
+    @Request(value = "/product/removeSpPrice")
+    @Editor(ResultEditor.class)
+    public int removeSpPrice(@JSON ProductEntity product) {
+        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
+            return productAdditionalService.removeSpPrice(product.getShopId(), product.getId());
+        }
+        return 0;
     }
 
     private void insertShopTagRel(@JSON ProductEntity product) {
         for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-            if(!StringUtils.isEmpty(tagEntity.getTagId())){
+            if (!StringUtils.isEmpty(tagEntity.getTagId())) {
                 TagProductRelEntity rel = new TagProductRelEntity();
                 rel.setPid(product.getId());
                 rel.setTid(tagEntity.getTagId());
