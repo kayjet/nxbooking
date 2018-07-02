@@ -49,6 +49,6 @@ public class Sprint2Controller {
     @Request(value = "/sp2/shop/listProducts")
     @Editor(ResultEditor.class)
     public List<ShopTagRelForWebEntity> listPage(String shopId) {
-        return shopService.listProducts(shopId);
+        return shopService.listProducts(shopId, true);
     }
 }

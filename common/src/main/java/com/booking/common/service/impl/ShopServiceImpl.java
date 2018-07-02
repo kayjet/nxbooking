@@ -139,15 +139,17 @@ public class ShopServiceImpl implements IShopService {
     ProductAdditionalService productAdditionalService;
 
     @Override
-    public List<ShopTagRelForWebEntity> listProducts(String shopId) {
+    public List<ShopTagRelForWebEntity> listProducts(String shopId, boolean isCleanEmpty) {
         ShopTagRelForWebEntity query = new ShopTagRelForWebEntity();
         query.setShopId(shopId);
-        List<ShopTagRelForWebEntity> result = shopTagRelWebMapper.selectList(query);
-        Iterator<ShopTagRelForWebEntity> iterator = result.iterator();
-        while (iterator.hasNext()) {
-            ShopTagRelForWebEntity entity = iterator.next();
+        List<ShopTagRelForWebEntity> shopTagRelResultList = shopTagRelWebMapper.selectList(query);
+        Iterator<ShopTagRelForWebEntity> shopTagRelResultIterator = shopTagRelResultList.iterator();
+        while (shopTagRelResultIterator.hasNext()) {
+            ShopTagRelForWebEntity entity = shopTagRelResultIterator.next();
             if (CollectionUtils.isEmpty(entity.getTagList().get(0).getProductList())) {
-                iterator.remove();
+                if (isCleanEmpty) {
+                    shopTagRelResultIterator.remove();
+                }
             } else {
                 Iterator<ProductEntity> productIterator = entity.getTagList().get(0).getProductList().iterator();
                 while (productIterator.hasNext()) {
@@ -178,6 +180,6 @@ public class ShopServiceImpl implements IShopService {
                 }
             }
         }
-        return result;
+        return shopTagRelResultList;
     }
 }

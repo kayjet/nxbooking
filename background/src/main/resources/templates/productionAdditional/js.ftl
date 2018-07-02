@@ -7,6 +7,39 @@
         listTagForAdding: function (shopId) {
             return axios.get(window.ctxPath + '/productionAdditional/listTagForAdding?shopId=' + shopId);
         },
+        listProductForShop: function (pageNo, pageSize, like) {
+            var paramString = "";
+            if (like != undefined) {
+                for (var x in like) {
+                    if (like.hasOwnProperty(x)) {
+                        paramString += "&" + x + "=" + encodeURI(like[x])
+                    }
+                }
+            }
+            return axios.get(window.ctxPath + '/productionAdditional/listProductForShop?pageNo=' + pageNo + '&pageSize=' + pageSize + paramString);
+        },
+        addTagForShop: function (tagIds, shopId) {
+            var data = {
+                tagIds: tagIds,
+                shopId: shopId
+            };
+            return axios.post(window.ctxPath + '/productionAdditional/addTagForShop', data);
+        },
+        addProductForShop: function (productIds, tagId, shopId) {
+            var data = {
+                productIds: productIds,
+                tagId: tagId,
+                shopId: shopId
+            };
+            return axios.post(window.ctxPath + '/productionAdditional/addProductForShop', data);
+        },
+        removeTagForShop: function (tagIds, shopId) {
+            var data = {
+                tagIds: tagIds,
+                shopId: shopId
+            };
+            return axios.post(window.ctxPath + '/productionAdditional/removeTagForShop', data);
+        },
     };
     window.onload = function () {
         window.vm = new Vue({
@@ -16,19 +49,19 @@
                 return {
                     tableData: [],
                     form: {},
-                    selectionChanges: [],
-                    defaultWarningButton: {
-                        confirmButtonText: '确定',
-                        cancelButtonText: '取消',
-                        type: 'warning'
-                    },
-                    search: {},
-                    totalPage: 0,
-                    currentPage: 1,
+                    addTagForm: {},
+                    productForm: {},
+                    productSearch: {},
+                    totalProductPage: 0,
+                    currentProductPage: 1,
                     shopId: '',
                     shopName: "",
-                    dialogFormVisible: false,
-                    tagList: []
+                    dialogAddTagVisible: false,
+                    dialogProductVisible: false,
+                    tagList: [],
+                    selectedTagIdsList: [],
+                    addProductIdsList: [],
+                    productList: [],
                 }
             },
             created() {
@@ -38,21 +71,128 @@
                 const that = this;
             },
             methods: {
-                onSelectTableData() {
+//                tag start
+                dialogAddTag() {
+                    const that = this;
+                    window.service.addTagForShop(that.selectedTagIdsList, that.shopId).then(function (response) {
+                        if (response.data.data) {
+                            that.dialogAddTagVisible = false;
+                            that.tagList = [];
+                            that.selectedTagIdsList = [];
+                            that.$message.success('添加成功');
+                            window.service.listTagForShop(that.shopId).then(function (response) {
+                                that.tableData = response.data.data;
+                            });
+                        }
+                    });
+                },
+                onSelectTagForAdding(eventData) {
+                    console.log("onSelectTagForAdding", eventData);
+                    this.selectedTagIdsList = [];
+                    var tagIds = [];
+                    for (var i = 0; i < eventData.length; i++) {
+                        tagIds.push(eventData[i].id);
+                    }
+                    this.selectedTagIdsList = tagIds;
+                },
+//                tag end
+//                product start
+                onInsertProduct() {
+                    const that = this;
+                    that.dialogProductVisible = true;
+                    that.currentProductPage = 1;
+                    that.listProductForShop();
+                },
+                onSelectAddProduct(products) {
+                    console.log("onSelectAddProduct", products);
+                    const that = this;
+                    that.addProductIdsList = [];
+                    var productIds = [];
+                    for (var i = 0; i < products.length; i++) {
+                        productIds.push(products[i].id);
+                    }
+                    that.addProductIdsList = productIds;
+                },
+                addProduct() {
+                    console.log(this.selectedTagIdsList);
+                    if (this.selectedTagIdsList.length == 0) {
+                        this.$message.error('请选择分类');
+                        return;
+                    }
+                    if (this.selectedTagIdsList.length > 1) {
+                        this.$message.error('请勿选中多个分类');
+                        return;
+                    }
+                },
+                searchProduct() {
+                    const that = this;
+                    that.dialogProductVisible = true;
+                    that.listProductForShop();
+                },
+                onDeleteProduct() {
 
+                },
+                onUpdateProduct() {
+
+                },
+                handleProductSizeChange() {
+
+                },
+                handleProductCurrentChange(val) {
+                    console.log('当前页: ' + this.arguments);
+                    const that = this;
+                    that.currentProductPage = val;
+                    that.listProductForShop();
+                },
+                listProductForShop(){
+                    const that = this;
+                    window.service.listProductForShop(that.currentProductPage, 10, that.productSearch).then(function (response) {
+                        that.productList = response.data.data;
+                        that.totalProductPage = response.data.countSize;
+                        that.currentProductPage = response.data.pageNo;
+                    });
+                },
+//                product end
+
+                onSelectTableData(eventData) {
+                    console.log("onSelectTableData", eventData);
+                    this.selectedTagIdsList = [];
+                    var tagIds = [];
+                    for (var i = 0; i < eventData.length; i++) {
+                        tagIds.push(eventData[i].id);
+                    }
+                    this.selectedTagIdsList = tagIds;
                 },
                 onInsertTag() {
                     const that = this;
-                    if(that.shopId == ''){
+                    if (that.shopId == '') {
                         that.$message.error('请先选择门店');
                         return;
                     }
-                    that.dialogFormVisible = true;
+                    that.dialogAddTagVisible = true;
                     window.service.listTagForAdding(that.shopId).then(function (response) {
                         that.tagList = response.data.data;
                     });
                 },
                 onDeleteTag() {
+                    const that = this;
+                    this.$confirm('此操作将删除分类下所有产品, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        window.service.removeTagForShop(that.selectedTagIdsList, that.shopId).then(function (response) {
+                            if (response.data.data) {
+                                that.tagList = [];
+                                that.selectedTagIdsList = [];
+                                that.$message.success('删除成功');
+                                window.service.listTagForShop(that.shopId).then(function (response) {
+                                    that.tableData = response.data.data;
+                                });
+                            }
+                        });
+                    }).catch(() => {
+                    });
 
                 },
                 onUpdateTag() {
@@ -75,7 +215,8 @@
                     window.service.listTagForShop(that.shopId).then(function (response) {
                         that.tableData = response.data.data;
                     });
-                }
+                },
+
             }
         })
     }

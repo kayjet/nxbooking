@@ -37,6 +37,6 @@ public interface IShopService {
 
     Page<List<ShopEntity>> listShopPage(ShopEntity shopEntity, Integer pageNo, Integer pageSize);
 
-    List<ShopTagRelForWebEntity> listProducts(String shopId);
+    List<ShopTagRelForWebEntity> listProducts(String shopId, boolean isCleanEmpty);
 
 }

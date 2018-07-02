@@ -40,7 +40,7 @@
 
                         <div class="grid-content bg-purple-dark" style="margin-top: 14px;">
                             <el-button type="primary" icon="el-icon-plus" @click="onInsertTag">新增分类</el-button>
-                            <el-button type="primary" icon="el-icon-delete" @click="onUpdateTag">删除分类</el-button>
+                            <el-button type="primary" icon="el-icon-delete" @click="onDeleteTag">删除分类</el-button>
                         </div>
                     </el-col>
                 </el-row>
@@ -53,11 +53,11 @@
                                 <template slot-scope="props">
                                     <el-form label-position="left" inline class="demo-table-expand">
                                         <div class="grid-content bg-purple-dark" style="margin-bottom: 14px;">
-                                            <el-button type="success" size="mini" circle icon="el-icon-plus">新增产品
+                                            <el-button type="info" size="mini" circle icon="el-icon-plus" @click="onInsertProduct">新增产品
                                             </el-button>
-                                            <el-button type="success" size="mini" circle icon="el-icon-edit">编辑产品
+                                            <el-button type="info" size="mini" circle icon="el-icon-edit" @click="onUpdateProduct">编辑产品
                                             </el-button>
-                                            <el-button type="success" size="mini" circle icon="el-icon-delete">删除产品
+                                            <el-button type="info" size="mini" circle icon="el-icon-delete" @click="onDeleteProduct">删除产品
                                             </el-button>
                                         </div>
                                         <el-table :data="props.row.productList" border="false" stripe="false">
@@ -136,6 +136,7 @@
 
 
                 <#include 'dialog-tag.ftl'/>
+                <#include 'dialog-product.ftl'/>
             </el-main>
         </el-container>
 
