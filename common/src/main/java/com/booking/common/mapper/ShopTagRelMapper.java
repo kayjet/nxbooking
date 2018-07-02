@@ -1,7 +1,9 @@
 package com.booking.common.mapper;
 
+import com.booking.common.entity.ProductEntity;
 import com.booking.common.entity.ShopTagRelEntity;
 import com.opdar.plugins.mybatis.core.IBaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,5 +18,7 @@ public interface ShopTagRelMapper extends IBaseMapper<ShopTagRelEntity> {
     List<ShopTagRelEntity> selectJoinShopList(ShopTagRelEntity shopTagRelEntity);
 
     List<ShopTagRelEntity> selectJoinTagList(ShopTagRelEntity shopTagRelEntity);
+
+    List<ProductEntity> selectProductByTag(ShopTagRelEntity shopTagRelEntity);
 
 }

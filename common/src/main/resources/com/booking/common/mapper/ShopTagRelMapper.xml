@@ -35,4 +35,34 @@
         </trim>
     </select>
 
+    <resultMap id="productResult" type="com.booking.common.entity.ProductEntity">
+        <result column="update_time" property="updateTime"/>
+        <result column="create_time" property="createTime"/>
+        <result column="price" property="price"/>
+        <result column="id" property="id"/>
+        <result column="pic" property="pic"/>
+        <result column="detail" property="detail"/>
+        <result column="title" property="title"/>
+        <result column="is_on_sale" property="isOnSale"/>
+    </resultMap>
+
+    <select id="selectProductByTag" parameterType="com.booking.common.entity.ShopTagRelEntity" resultMap="productResult">
+        SELECT
+          prd.*
+        FROM
+        (
+            SELECT
+            tag_product_rel.pid AS productId,
+            shop_tag_rel.tag_id AS tagId
+            FROM
+            `booking`.`t_shop_tag_rel` shop_tag_rel
+            RIGHT JOIN `booking`.t_tag_product_rel tag_product_rel ON shop_tag_rel.id = tag_product_rel.tid
+        ) T
+        LEFT JOIN t_product prd ON prd.id = T.productId
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="tagId != null">AND T.tagId = #{tagId}</if>
+        </trim>
+    </select>
+
+
 </mapper>

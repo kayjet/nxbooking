@@ -89,7 +89,7 @@
                             <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
                         </div>
                     </el-col>
-                    <el-col :span="24">
+                    <#--<el-col :span="24">
                         <div style="margin-top: 20px">
                             <span style="font-size:12px; ">标签：</span>
                             <el-radio-group v-model="search.tagId" size="small" @change="changeTag">
@@ -98,7 +98,7 @@
                             </#list>
                             </el-radio-group>
                         </div>
-                    </el-col>
+                    </el-col>-->
                 </el-row>
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
@@ -159,7 +159,7 @@
                                 </template>
                             </el-table-column>
 
-                            <el-table-column label="标签" index="6" width="68">
+                           <#-- <el-table-column label="标签" index="6" width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -173,7 +173,7 @@
                                         </div>
                                     </el-popover>
                                 </template>
-                            </el-table-column>
+                            </el-table-column>-->
 
                             <el-table-column label="创建时间" index="1">
                                 <template slot-scope="scope">
@@ -249,7 +249,7 @@
                     </template>
                 </el-form-item>
 
-                <el-form-item label="选择门店">
+                <#--<el-form-item label="选择门店">
                     <template>
                         <el-radio-group v-model="selectedShop" @change="onSelectShop">
                             <el-radio :label="item.id" v-for="item in shopList">{{item.name}}</el-radio>
@@ -266,7 +266,7 @@
                             <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.tagName}}</el-checkbox>
                         </el-checkbox-group>
                     </template>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('insert')">立即创建</el-button>
                 </el-form-item>
@@ -324,7 +324,7 @@
                         </el-checkbox-group>
                     </template>
                 </el-form-item>
-                <el-form-item label="选择门店">
+                <#--<el-form-item label="选择门店">
                     <template>
                         <el-radio-group v-model="selectedShop" @change="onSelectShop">
                             <el-radio :label="item.id" v-for="item in shopList">{{item.name}}</el-radio>
@@ -342,7 +342,7 @@
                             <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.tagName}}</el-checkbox>
                         </el-checkbox-group>
                     </template>
-                </el-form-item>
+                </el-form-item>-->
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
                 </el-form-item>

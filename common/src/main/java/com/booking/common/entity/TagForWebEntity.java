@@ -10,12 +10,12 @@ import java.sql.Timestamp;
 import java.util.List;
 
 /**
-* AuthorityEntity
-*
-* @author kai.liu
-* @date 2017/12/28
-*/
-@Namespace(value= TagForWebMapper.class,tableName = "tag")
+ * AuthorityEntity
+ *
+ * @author kai.liu
+ * @date 2017/12/28
+ */
+@Namespace(value = TagForWebMapper.class, tableName = "tag")
 public class TagForWebEntity {
     private String id;
     private String pic;
@@ -24,9 +24,9 @@ public class TagForWebEntity {
     private Timestamp createTime;
     private Timestamp updateTime;
 
-    @Field(insert = false,update = false,delete = false,select = true)
-    @Collection(mapper = TagProductRelMapper.class,select = "selectProductByTag",values = {
-            @Value(key = "tid",value = "id")
+    @Field(insert = false, update = false, delete = false, select = true)
+    @Collection(mapper = ShopTagRelMapper.class, select = "selectProductByTag", values = {
+            @Value(key = "tagId", value = "id")
     })
     private List<ProductEntity> productList;
 
@@ -86,7 +86,6 @@ public class TagForWebEntity {
     public void setTitle(String title) {
         this.title = title;
     }
-
 
 
 }

@@ -9,16 +9,16 @@ import java.util.List;
  * @date 2018/07/02
  */
 public class AddProductForShopDto {
-    private List<String> productId;
+    private List<String> productIds;
     private String shopId;
     private String tagId;
 
-    public List<String> getProductId() {
-        return productId;
+    public List<String> getProductIds() {
+        return productIds;
     }
 
-    public void setProductId(List<String> productId) {
-        this.productId = productId;
+    public void setProductIds(List<String> productIds) {
+        this.productIds = productIds;
     }
 
     public String getShopId() {

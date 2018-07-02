@@ -8,6 +8,7 @@ import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.mapper.ShopTagRelMapper;
+import com.booking.common.mapper.TagProductRelMapper;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.*;
@@ -62,11 +63,13 @@ public class ProductionAdditionalController {
     @Autowired
     private ShopTagRelMapper shopTagRelMapper;
 
+    @Autowired
+    private TagProductRelMapper tagProductRelMapper;
 
     @Request(value = "/productionAdditional/listProductForShop")
     @Editor(ResultEditor.class)
     public Page<List<ProductEntity>> listProductForShop(ProductEntity query, Integer pageNo, Integer pageSize) {
-        if(query == null){
+        if (query == null) {
             query = new ProductEntity();
         }
         query.setIsOnSale(Constants.ProductSaleStatus.ON_SALE);
@@ -76,11 +79,6 @@ public class ProductionAdditionalController {
     @Request(value = "/productionAdditional/listShopTags")
     @Editor(ResultEditor.class)
     public List<TagForWebEntity> listShopTags(String shopId) {
-        List<TagForWebEntity> result = getTagForWebEntities(shopId);
-        return result;
-    }
-
-    private List<TagForWebEntity> getTagForWebEntities(String shopId) {
         List<TagForWebEntity> result = new ArrayList<TagForWebEntity>();
         List<ShopTagRelForWebEntity> relForWebEntities = shopService.listProducts(shopId, false);
         for (ShopTagRelForWebEntity webEntity : relForWebEntities) {
@@ -128,9 +126,24 @@ public class ProductionAdditionalController {
 
     @Request(value = "/productionAdditional/addProductForShop")
     @Editor(ResultEditor.class)
-    public Boolean addProductForShop(@JSON AddProductForShopDto addTagForShopDto) {
-
-        return shopTagRelService.addShopTagRel(ret) > 0;
+    public Boolean addProductForShop(@JSON AddProductForShopDto addProductForShopDto) {
+        String shopId = addProductForShopDto.getShopId();
+        String tagId = addProductForShopDto.getTagId();
+        List<TagProductRelEntity> resultList = new ArrayList<TagProductRelEntity>();
+        for (String productId : addProductForShopDto.getProductIds()) {
+            ShopTagRelEntity query = new ShopTagRelEntity();
+            query.setShopId(shopId);
+            query.setTagId(tagId);
+            query = shopTagRelMapper.selectOne(query);
+            if (query != null) {
+                String id = query.getId();
+                TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
+                tagProductRelEntity.setPid(productId);
+                tagProductRelEntity.setTid(id);
+                resultList.add(tagProductRelEntity);
+            }
+        }
+        return tagProductRelService.addTagProductRel(resultList) > 0;
     }
 
     @Request(value = "/productionAdditional/removeTagForShop")
@@ -143,7 +156,13 @@ public class ProductionAdditionalController {
             shopTagRelEntity.setShopId(shopId);
             shopTagRelEntity.setTagId(tagId);
             ShopTagRelEntity ret = shopTagRelMapper.selectOne(shopTagRelEntity);
-//            todo:删除品类下的产品
+            if (ret != null) {
+                String id = ret.getId();
+                TagProductRelEntity delete = new TagProductRelEntity();
+                delete.setTid(id);
+                tagProductRelMapper.delete(delete);
+            }
+            result += shopTagRelMapper.delete(shopTagRelEntity);
         }
 
         return result > 0;

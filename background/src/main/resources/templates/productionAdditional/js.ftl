@@ -123,6 +123,15 @@
                         this.$message.error('请勿选中多个分类');
                         return;
                     }
+                    const that = this;
+                    var tagId = this.selectedTagIdsList[0];
+                    window.service.addProductForShop(that.addProductIdsList, tagId, that.shopId).then(function (response) {
+                        if(response.data.data){
+                            that.$message.success('添加成功');
+                            that.addProductIdsList = [];
+                            that.listProductForShop();
+                        }
+                    })
                 },
                 searchProduct() {
                     const that = this;
@@ -139,12 +148,12 @@
 
                 },
                 handleProductCurrentChange(val) {
-                    console.log('当前页: ' + this.arguments);
+                    console.log('当前页: ' + val);
                     const that = this;
                     that.currentProductPage = val;
                     that.listProductForShop();
                 },
-                listProductForShop(){
+                listProductForShop() {
                     const that = this;
                     window.service.listProductForShop(that.currentProductPage, 10, that.productSearch).then(function (response) {
                         that.productList = response.data.data;
@@ -153,7 +162,6 @@
                     });
                 },
 //                product end
-
                 onSelectTableData(eventData) {
                     console.log("onSelectTableData", eventData);
                     this.selectedTagIdsList = [];
