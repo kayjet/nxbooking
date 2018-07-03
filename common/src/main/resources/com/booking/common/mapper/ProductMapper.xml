@@ -10,4 +10,50 @@
         WHERE rel.tid = #{tagId}
     </select>
 
+
+    <select id="selectListForAddProduct" parameterType="com.booking.common.dto.AddProductForShopQueryDto"
+            resultMap="productResult">
+        SELECT
+          prd.*
+        FROM
+          t_product prd
+        <include refid="queryForAddProduct"/>
+    </select>
+
+    <sql id="queryForAddProduct">
+        <trim prefix="WHERE" prefixOverrides="AND |OR ">
+            <if test="shopId!=null and shopId != '' and tagId != null and tagId != '' ">
+                prd.id NOT IN (
+                    SELECT
+                    tag_product_rel.pid AS productId
+                    FROM
+                    t_tag_product_rel tag_product_rel
+                    WHERE
+                    tag_product_rel.tid IN (
+                        SELECT
+                        shop_tag_rel.id
+                        FROM
+                        t_shop_tag_rel shop_tag_rel
+                        WHERE
+                        shop_tag_rel.shop_id = #{shopId}
+                        AND shop_tag_rel.tag_id = #{tagId}
+                    )
+                )
+            </if>
+            <if test="title != null and title != '' ">
+                AND prd.title LIKE '%${title}%'
+            </if>
+            AND prd.is_on_sale = 1
+        </trim>
+
+    </sql>
+
+    <select id="countListForAddProduct" parameterType="com.booking.common.dto.AddProductForShopQueryDto" resultType="java.lang.Integer">
+        SELECT
+          COUNT(*)
+        FROM
+          t_product prd
+        <include refid="queryForAddProduct"/>
+    </select>
+
 </mapper>

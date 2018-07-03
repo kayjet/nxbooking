@@ -1,5 +1,6 @@
 package com.booking.common.service;
 
+import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.resp.Page;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,8 @@ public interface IProductService {
     List<ProductEntity> listProduct(ProductEntity product);
 
     Page<List<ProductEntity>> listProductPage(ProductEntity product, Integer pageNo, Integer pageSize);
+
+    Page<List<ProductEntity>> listProductPageForAdd(AddProductForShopQueryDto queryDto, Integer pageNo, Integer pageSize);
 
     ProductEntity getProduct(String id);
 

@@ -1,5 +1,6 @@
 package com.booking.common.mapper;
 
+import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.entity.ProductEntity;
 import com.opdar.plugins.mybatis.core.IBaseMapper;
 import org.apache.ibatis.annotations.Param;
@@ -15,5 +16,9 @@ import java.util.List;
 public interface ProductMapper extends IBaseMapper<ProductEntity> {
 
     List<ProductEntity> selectListByTagId(@Param("tagId") String tagId);
+
+    List<ProductEntity> selectListForAddProduct(AddProductForShopQueryDto addProductForShopQueryDto);
+
+    Integer countListForAddProduct(AddProductForShopQueryDto addProductForShopQueryDto);
 
 }

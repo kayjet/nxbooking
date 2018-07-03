@@ -1,5 +1,6 @@
 package com.booking.common.service.impl;
 
+import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.entity.ProductSpecRelEntity;
@@ -64,6 +65,29 @@ public class ProductServiceImpl implements IProductService {
         } else {
             result = productMapper.selectLikeList(productEntity);
         }
+        selectSpec(result);
+        page.setResult(result);
+        return page;
+    }
+
+    @Override
+    public Page<List<ProductEntity>> listProductPageForAdd(AddProductForShopQueryDto queryDto, Integer pageNo, Integer pageSize) {
+        if (pageNo == null) {
+            pageNo = 1;
+        }
+        if (pageSize == null) {
+            pageSize = 10;
+        }
+        Integer countSize = productMapper.countListForAddProduct(queryDto);
+        Page<List<ProductEntity>> page = new Page<List<ProductEntity>>(pageSize, pageNo, countSize);
+        PageInterceptor.setPage(pageNo, pageSize);
+        List<ProductEntity> result = productMapper.selectListForAddProduct(queryDto);
+        selectSpec(result);
+        page.setResult(result);
+        return page;
+    }
+
+    private void selectSpec(List<ProductEntity> result) {
         if (!CollectionUtils.isEmpty(result)) {
             for (ProductEntity product : result) {
                 List<ProductSpecEntity> productSpecEntities = productSpecRelMapper.selectProductRelSpecList(product.getId());
@@ -72,8 +96,6 @@ public class ProductServiceImpl implements IProductService {
                 }
             }
         }
-        page.setResult(result);
-        return page;
     }
 
     @Override

@@ -98,6 +98,9 @@
 //                tag end
 //                product start
                 onInsertProduct() {
+                    if (!this.isTagIdsSelected()) {
+                        return;
+                    }
                     const that = this;
                     that.dialogProductVisible = true;
                     that.currentProductPage = 1;
@@ -113,23 +116,32 @@
                     }
                     that.addProductIdsList = productIds;
                 },
-                addProduct() {
-                    console.log(this.selectedTagIdsList);
+                isTagIdsSelected() {
                     if (this.selectedTagIdsList.length == 0) {
                         this.$message.error('请选择分类');
-                        return;
+                        return false;
                     }
                     if (this.selectedTagIdsList.length > 1) {
                         this.$message.error('请勿选中多个分类');
+                        return false;
+                    }
+                    return true;
+                },
+                addProduct() {
+                    console.log(this.selectedTagIdsList);
+                    if (!this.isTagIdsSelected()) {
                         return;
                     }
                     const that = this;
                     var tagId = this.selectedTagIdsList[0];
                     window.service.addProductForShop(that.addProductIdsList, tagId, that.shopId).then(function (response) {
-                        if(response.data.data){
+                        if (response.data.data) {
                             that.$message.success('添加成功');
+                            that.dialogProductVisible = false;
                             that.addProductIdsList = [];
-                            that.listProductForShop();
+                            window.service.listTagForShop(that.shopId).then(function (response) {
+                                that.tableData = response.data.data;
+                            });
                         }
                     })
                 },
@@ -155,6 +167,9 @@
                 },
                 listProductForShop() {
                     const that = this;
+                    console.log(" that.selectedTagIdsList", that.selectedTagIdsList);
+                    that.productSearch.shopId = that.shopId;
+                    that.productSearch.tagId = that.selectedTagIdsList[0];
                     window.service.listProductForShop(that.currentProductPage, 10, that.productSearch).then(function (response) {
                         that.productList = response.data.data;
                         that.totalProductPage = response.data.countSize;

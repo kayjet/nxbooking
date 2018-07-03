@@ -3,6 +3,7 @@ package com.booking.background.controllers;
 import com.booking.background.interceptor.LoginSessionInterceptor;
 import com.booking.common.base.Constants;
 import com.booking.common.dto.AddProductForShopDto;
+import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.dto.AddTagForShopDto;
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
@@ -68,12 +69,11 @@ public class ProductionAdditionalController {
 
     @Request(value = "/productionAdditional/listProductForShop")
     @Editor(ResultEditor.class)
-    public Page<List<ProductEntity>> listProductForShop(ProductEntity query, Integer pageNo, Integer pageSize) {
+    public Page<List<ProductEntity>> listProductForShop(AddProductForShopQueryDto query, Integer pageNo, Integer pageSize, String tagId) {
         if (query == null) {
-            query = new ProductEntity();
+            query = new AddProductForShopQueryDto();
         }
-        query.setIsOnSale(Constants.ProductSaleStatus.ON_SALE);
-        return productService.listProductPage(query, pageNo, pageSize);
+        return productService.listProductPageForAdd(query, pageNo, pageSize);
     }
 
     @Request(value = "/productionAdditional/listShopTags")
