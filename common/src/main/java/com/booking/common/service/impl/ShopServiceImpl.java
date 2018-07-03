@@ -175,7 +175,13 @@ public class ShopServiceImpl implements IShopService {
                             product.setRelSpecList(resultProductSpecDtoList);
                         }
                         Double spPrice = productAdditionalService.findProductSpPrice(shopId, product.getId(), shopTagRel.getTagId());
-                        product.setSpPrice(spPrice);
+
+                        if (spPrice != null && !spPrice.equals(0D)) {
+                            product.setSpPrice(spPrice);
+                            product.setFinalPrice(spPrice);
+                        } else {
+                            product.setFinalPrice(product.getPrice());
+                        }
                     } else {
                         productIterator.remove();
                     }

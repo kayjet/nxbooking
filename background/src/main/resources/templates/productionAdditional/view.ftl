@@ -97,11 +97,11 @@
                                                 </template>
                                             </el-table-column>
 
-                                            <el-table-column label="是否有货">
+                                            <#--<el-table-column label="是否有货">
                                                 <template slot-scope="scope">
                                                     有
                                                 </template>
-                                            </el-table-column>
+                                            </el-table-column>-->
 
                                         </el-table>
                                     </el-form>
