@@ -25,12 +25,6 @@ public class ProductEntity {
     private Integer isOnSale;
     private Timestamp updateTime;
     private Timestamp createTime;
-    @Field(insert = false,update = false,delete = false,select = true)
-    @Collection(mapper = TagProductRelMapper.class,select = "selectJoinTagList",values = {
-            @Value(key = "pid",value = "id")
-    })
-    private List<TagProductRelEntity> tagProductRelList;
-
 
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private List<ShopTagRelEntity> requestAddTagList;
@@ -56,6 +50,16 @@ public class ProductEntity {
     //每个门店的自定义价格
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
     private Double spPrice;
+
+    //用于前段数据请求
+    //仅给予微信页面做计算使用的值
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private Double finalPrice;
+
+    //用于前段数据请求
+    //仅仅用于后台修改数据时，使用的参数
+    @Field(resultmap = false,insert = false,update = false,delete = false,select = false)
+    private Boolean selected = false;
 
     //用于前段数据请求
     //每个门店id
@@ -104,14 +108,6 @@ public class ProductEntity {
 
     public ProductEntity(String id) {
         this.id = id;
-    }
-
-    public List<TagProductRelEntity> getTagProductRelList() {
-        return tagProductRelList;
-    }
-
-    public void setTagProductRelList(List<TagProductRelEntity> tagProductRelList) {
-        this.tagProductRelList = tagProductRelList;
     }
 
     public List<ShopTagRelEntity> getRequestAddTagList() {
@@ -265,5 +261,21 @@ public class ProductEntity {
 
     public void setShopId(String shopId) {
         this.shopId = shopId;
+    }
+
+    public Boolean getSelected() {
+        return selected;
+    }
+
+    public void setSelected(Boolean selected) {
+        this.selected = selected;
+    }
+
+    public Double getFinalPrice() {
+        return finalPrice;
+    }
+
+    public void setFinalPrice(Double finalPrice) {
+        this.finalPrice = finalPrice;
     }
 }

@@ -60,7 +60,7 @@
         ) T
         LEFT JOIN t_product prd ON prd.id = T.productId
         <trim prefix="WHERE" prefixOverrides="AND |OR">
-            <if test="tagId != null">AND T.tagId = #{tagId}</if>
+            <if test="tagId != null and tagId != '' ">AND T.tagId = #{tagId}</if>
         </trim>
     </select>
 

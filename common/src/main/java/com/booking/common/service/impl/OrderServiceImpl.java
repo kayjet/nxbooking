@@ -174,7 +174,7 @@ public class OrderServiceImpl implements IOrderService {
             for (int index = 0; index < productEntities.size(); index++) {
                 ProductEntity formProduct = productEntities.get(index);
                 ProductEntity dbProduct = productMapper.selectOne(new ProductEntity(formProduct.getId()));
-                Double spPrice = productAdditionalService.findProductSpPrice(shopId, formProduct.getId());
+                Double spPrice = productAdditionalService.findProductSpPrice(shopId, formProduct.getId(),formProduct.getTagId());
                 if (spPrice != null && !spPrice.equals(0D)) {
                     price += spPrice;
                 } else {

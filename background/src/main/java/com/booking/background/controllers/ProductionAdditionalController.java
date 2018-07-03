@@ -1,11 +1,7 @@
 package com.booking.background.controllers;
 
 import com.booking.background.interceptor.LoginSessionInterceptor;
-import com.booking.common.base.Constants;
-import com.booking.common.dto.AddProductForShopDto;
-import com.booking.common.dto.AddProductForShopQueryDto;
-import com.booking.common.dto.AddTagForShopDto;
-import com.booking.common.dto.RemoveProductForShopDto;
+import com.booking.common.dto.*;
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.interceptor.TimeQueryInterceptor;
@@ -23,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -125,6 +120,14 @@ public class ProductionAdditionalController {
         return shopTagRelService.addShopTagRel(ret) > 0;
     }
 
+
+    @Request(value = "/productionAdditional/saveOrUpdateProductSpPrice")
+    @Editor(ResultEditor.class)
+    public Boolean saveOrUpdateProductSpPrice(@JSON SaveOrUpdateProductSpPriceDto saveOrUpdateProductSpPriceDto) {
+        return productAdditionalService.saveOrUpdateProductSpPrice(saveOrUpdateProductSpPriceDto) > 0;
+    }
+
+
     @Request(value = "/productionAdditional/addProductForShop")
     @Editor(ResultEditor.class)
     public Boolean addProductForShop(@JSON AddProductForShopDto addProductForShopDto) {
@@ -159,11 +162,13 @@ public class ProductionAdditionalController {
             query.setTagId(tagId);
             query = shopTagRelMapper.selectOne(query);
             if (query != null) {
-                String id = query.getId();
+                String shopTagReId = query.getId();
                 TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
                 tagProductRelEntity.setPid(productId);
-                tagProductRelEntity.setTid(id);
+                tagProductRelEntity.setTid(shopTagReId);
                 result += tagProductRelMapper.delete(tagProductRelEntity);
+
+                productAdditionalService.removeSpPrice(productId, shopTagReId);
             }
         }
         return result > 0;
@@ -180,10 +185,11 @@ public class ProductionAdditionalController {
             shopTagRelEntity.setTagId(tagId);
             ShopTagRelEntity ret = shopTagRelMapper.selectOne(shopTagRelEntity);
             if (ret != null) {
-                String id = ret.getId();
+                String shopTagRelId = ret.getId();
                 TagProductRelEntity delete = new TagProductRelEntity();
-                delete.setTid(id);
+                delete.setTid(shopTagRelId);
                 tagProductRelMapper.delete(delete);
+                productAdditionalService.removeSpPrice(null, shopTagRelId);
             }
             result += shopTagRelMapper.delete(shopTagRelEntity);
         }

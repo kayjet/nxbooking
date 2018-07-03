@@ -18,8 +18,15 @@ public class ProductPriceShopRelEntity  implements Serializable {
     private Timestamp createTime;
     private Timestamp updateTime;
     private Double spPrice;
-    private String shopId;
+    private String shopTagRelId;
     private String productId;
+
+    public ProductPriceShopRelEntity() {
+    }
+
+    public ProductPriceShopRelEntity(String id) {
+        this.id = id;
+    }
 
     public String getId() {
         return id;
@@ -45,14 +52,6 @@ public class ProductPriceShopRelEntity  implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(String shopId) {
-        this.shopId = shopId;
-    }
-
     public String getProductId() {
         return productId;
     }
@@ -67,5 +66,13 @@ public class ProductPriceShopRelEntity  implements Serializable {
 
     public void setSpPrice(Double spPrice) {
         this.spPrice = spPrice;
+    }
+
+    public String getShopTagRelId() {
+        return shopTagRelId;
+    }
+
+    public void setShopTagRelId(String shopTagRelId) {
+        this.shopTagRelId = shopTagRelId;
     }
 }

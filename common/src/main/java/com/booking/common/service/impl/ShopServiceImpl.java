@@ -145,15 +145,17 @@ public class ShopServiceImpl implements IShopService {
         List<ShopTagRelForWebEntity> shopTagRelResultList = shopTagRelWebMapper.selectList(query);
         Iterator<ShopTagRelForWebEntity> shopTagRelResultIterator = shopTagRelResultList.iterator();
         while (shopTagRelResultIterator.hasNext()) {
-            ShopTagRelForWebEntity entity = shopTagRelResultIterator.next();
-            if (CollectionUtils.isEmpty(entity.getTagList().get(0).getProductList())) {
+            ShopTagRelForWebEntity shopTagRel = shopTagRelResultIterator.next();
+            if (CollectionUtils.isEmpty(shopTagRel.getTagList().get(0).getProductList())) {
                 if (isCleanEmpty) {
                     shopTagRelResultIterator.remove();
                 }
             } else {
-                Iterator<ProductEntity> productIterator = entity.getTagList().get(0).getProductList().iterator();
+                Iterator<ProductEntity> productIterator = shopTagRel.getTagList().get(0).getProductList().iterator();
                 while (productIterator.hasNext()) {
                     ProductEntity product = productIterator.next();
+                    product.setTagId(shopTagRel.getTagId());
+                    product.setShopId(shopTagRel.getShopId());
                     if (product.getIsOnSale() != null && product.getIsOnSale().equals(Constants.ProductSaleStatus.ON_SALE)) {
                         List<ProductSpecEntity> specList = productSpecRelMapper.selectSpecList(product.getId());
                         if (!CollectionUtils.isEmpty(specList)) {
@@ -172,7 +174,7 @@ public class ShopServiceImpl implements IShopService {
                             }
                             product.setRelSpecList(resultProductSpecDtoList);
                         }
-                        Double spPrice = productAdditionalService.findProductSpPrice(shopId, product.getId());
+                        Double spPrice = productAdditionalService.findProductSpPrice(shopId, product.getId(), shopTagRel.getTagId());
                         product.setSpPrice(spPrice);
                     } else {
                         productIterator.remove();

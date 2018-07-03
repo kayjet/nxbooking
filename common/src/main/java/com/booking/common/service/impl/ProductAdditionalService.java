@@ -1,11 +1,15 @@
 package com.booking.common.service.impl;
 
+import com.booking.common.dto.SaveOrUpdateProductSpPriceDto;
 import com.booking.common.entity.ProductPriceShopRelEntity;
+import com.booking.common.entity.ShopTagRelEntity;
 import com.booking.common.mapper.ProductPriceShopRelMapper;
+import com.booking.common.mapper.ShopTagRelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -26,43 +30,89 @@ public class ProductAdditionalService {
     @Autowired
     private ProductPriceShopRelMapper productPriceShopRelMapper;
 
-    public int addProductSpPrice(String shopId, Double spPrice, String productId) {
-        String uuid = UUID.randomUUID().toString();
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        ProductPriceShopRelEntity priceShopRelEntity = new ProductPriceShopRelEntity();
-        priceShopRelEntity.setId(uuid);
-        priceShopRelEntity.setShopId(shopId);
-        priceShopRelEntity.setSpPrice(spPrice);
-        priceShopRelEntity.setProductId(productId);
-        priceShopRelEntity.setCreateTime(timestamp);
-        priceShopRelEntity.setUpdateTime(timestamp);
-        return productPriceShopRelMapper.insert(priceShopRelEntity);
-    }
+    @Autowired
+    private ShopTagRelMapper shopTagRelMapper;
 
-    public int changeProductSpPrice(String shopId, Double newSpPrice, String productId) {
-        ProductPriceShopRelEntity priceShopRelEntity = new ProductPriceShopRelEntity();
-        priceShopRelEntity.setProductId(productId);
-        priceShopRelEntity.setShopId(shopId);
-        ProductPriceShopRelEntity ret = productPriceShopRelMapper.selectOne(priceShopRelEntity);
-        if (!ret.getSpPrice().equals(newSpPrice) && newSpPrice != null) {
-            ret.setUpdateTime(new Timestamp(System.currentTimeMillis()));
-            ret.setSpPrice(newSpPrice);
-            return productPriceShopRelMapper.update(ret, priceShopRelEntity);
+    public int saveOrUpdateProductSpPrice(SaveOrUpdateProductSpPriceDto saveOrUpdateProductSpPriceDto) {
+        String shopTagRelId = null;
+        ShopTagRelEntity query = new ShopTagRelEntity();
+        String tagId = saveOrUpdateProductSpPriceDto.getTagId();
+        String shopId = saveOrUpdateProductSpPriceDto.getShopId();
+        query.setTagId(tagId);
+        query.setShopId(shopId);
+        query = shopTagRelMapper.selectOne(query);
+        if (query != null) {
+            shopTagRelId = query.getId();
         }
-        return 0;
+
+        if (StringUtils.isEmpty(shopTagRelId)) {
+            return 0;
+        }
+
+        int result = 0;
+        for (SaveOrUpdateProductSpPriceDto.SaveOrUpdateProductSpPriceDtoItem item : saveOrUpdateProductSpPriceDto.getPrices()) {
+            ProductPriceShopRelEntity priceShopRelEntity = new ProductPriceShopRelEntity();
+            priceShopRelEntity.setShopTagRelId(shopTagRelId);
+            String productId = item.getProductId();
+            Double spPrice = item.getSpPrice();
+            priceShopRelEntity.setProductId(productId);
+            priceShopRelEntity = productPriceShopRelMapper.selectOne(priceShopRelEntity);
+            if (priceShopRelEntity != null && !priceShopRelEntity.equals(spPrice)) {
+                priceShopRelEntity.setSpPrice(spPrice);
+                result += productPriceShopRelMapper.update(priceShopRelEntity, new ProductPriceShopRelEntity(priceShopRelEntity.getId()));
+            } else if (priceShopRelEntity == null) {
+                String uuid = UUID.randomUUID().toString();
+                Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+                priceShopRelEntity = new ProductPriceShopRelEntity();
+                priceShopRelEntity.setId(uuid);
+                priceShopRelEntity.setShopTagRelId(shopTagRelId);
+                priceShopRelEntity.setSpPrice(spPrice);
+                priceShopRelEntity.setProductId(productId);
+                priceShopRelEntity.setCreateTime(timestamp);
+                priceShopRelEntity.setUpdateTime(timestamp);
+                result += productPriceShopRelMapper.insert(priceShopRelEntity);
+            }
+        }
+        return result;
     }
 
-    public int removeSpPrice(String shopId, String productId) {
-        ProductPriceShopRelEntity priceShopRelEntity = new ProductPriceShopRelEntity();
-        priceShopRelEntity.setProductId(productId);
-        priceShopRelEntity.setShopId(shopId);
-        return productPriceShopRelMapper.delete(priceShopRelEntity);
+    public int removeSpPrice(String shopId, String productId, String tagId) {
+        String shopTagRelId = null;
+        ShopTagRelEntity query = new ShopTagRelEntity();
+        query.setTagId(tagId);
+        query.setShopId(shopId);
+        query = shopTagRelMapper.selectOne(query);
+        if (query != null) {
+            shopTagRelId = query.getId();
+        }
+        if (StringUtils.isEmpty(shopTagRelId)) {
+            return 0;
+        }
+        return this.removeSpPrice(productId,shopTagRelId);
     }
 
-    public Double findProductSpPrice(String shopId, String productId) {
+    public int removeSpPrice(String productId, String shopTagReId) {
+        ProductPriceShopRelEntity delete = new ProductPriceShopRelEntity();
+        delete.setProductId(productId);
+        delete.setShopTagRelId(shopTagReId);
+        return productPriceShopRelMapper.delete(delete);
+    }
+
+    public Double findProductSpPrice(String shopId, String productId, String tagId) {
+        String shopTagRelId = null;
+        ShopTagRelEntity query = new ShopTagRelEntity();
+        query.setTagId(tagId);
+        query.setShopId(shopId);
+        query = shopTagRelMapper.selectOne(query);
+        if (query != null) {
+            shopTagRelId = query.getId();
+        }
+        if (StringUtils.isEmpty(shopTagRelId)) {
+            return 0D;
+        }
         ProductPriceShopRelEntity priceShopRelEntity = new ProductPriceShopRelEntity();
         priceShopRelEntity.setProductId(productId);
-        priceShopRelEntity.setShopId(shopId);
+        priceShopRelEntity.setShopTagRelId(shopTagRelId);
         ProductPriceShopRelEntity ret = productPriceShopRelMapper.selectOne(priceShopRelEntity);
         if (ret != null) {
             return ret.getSpPrice();

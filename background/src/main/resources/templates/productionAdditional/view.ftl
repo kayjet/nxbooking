@@ -7,6 +7,9 @@
     .el-table .success-row {
         background: #f0f9eb;
     }
+    .el-input.is-disabled .el-input__inner{
+        color:  #333333 !important;
+    }
 </style>
 </head>
 
@@ -55,12 +58,20 @@
                                         <div class="grid-content bg-purple-dark" style="margin-bottom: 14px;">
                                             <el-button type="info" size="mini" circle icon="el-icon-plus" @click="onInsertProduct">新增产品
                                             </el-button>
-                                            <el-button type="info" size="mini" circle icon="el-icon-edit" @click="onUpdateProduct">编辑产品
-                                            </el-button>
                                             <el-button type="info" size="mini" circle icon="el-icon-delete" @click="onDeleteProduct">删除产品
                                             </el-button>
+
+                                            <el-button type="info" size="mini" circle icon="el-icon-edit" @click="onUpdateProduct">修改产品
+                                            </el-button>
+                                            <template v-if="isUpdating">
+                                                <el-button
+                                                        type="success" circle size="mini" @click="onUpdateProductPrice">确认修改</el-button>
+                                                <el-button
+                                                        type="danger"  circle size="mini"  @click="onCancelUpdateProductPrice">取消修改</el-button>
+                                            </template>
+
                                         </div>
-                                        <el-table :data="props.row.productList" border="false" stripe="false" @selection-change="onSelectAddProduct">
+                                        <el-table :data="props.row.productList" border="false" stripe="false" @select="onSelectProductRow" @selection-change="onSelectAddProduct">
 
                                             <el-table-column
                                                     type="selection"
@@ -81,8 +92,8 @@
 
                                             <el-table-column label="门店价格（元）">
                                                 <template slot-scope="scope">
-                                                    <span v-if="scope.row.spPrice != 0">{{ scope.row.spPrice }}</span>
-                                                    <span v-if="scope.row.spPrice == 0">暂无设置</span>
+                                                    <el-input-number v-model="scope.row.spPrice" :disabled="!scope.row.selected"
+                                                                     :precision="2" :step="1.0" :min="0" size="mini"></el-input-number>
                                                 </template>
                                             </el-table-column>
 

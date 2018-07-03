@@ -82,9 +82,6 @@ public class ProductController {
             }
             productSpecRelService.addProductSpecRel(productSpecRelEntities);
         }
-        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
-            productAdditionalService.addProductSpPrice(product.getShopId(), product.getSpPrice(), product.getId());
-        }
         return productRet.getId();
     }
 
@@ -127,19 +124,7 @@ public class ProductController {
         } else if (CollectionUtils.isEmpty(specRelEntities) && !CollectionUtils.isEmpty(product.getProductSpecList())) {
             insertProductSpecRel(product);
         }
-        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
-            productAdditionalService.changeProductSpPrice(product.getShopId(), product.getSpPrice(), product.getId());
-        }
         return ret;
-    }
-
-    @Request(value = "/product/removeSpPrice")
-    @Editor(ResultEditor.class)
-    public int removeSpPrice(@JSON ProductEntity product) {
-        if (!StringUtils.isEmpty(product.getShopId()) && product.getSpPrice() != null) {
-            return productAdditionalService.removeSpPrice(product.getShopId(), product.getId());
-        }
-        return 0;
     }
 
     private void insertShopTagRel(@JSON ProductEntity product) {

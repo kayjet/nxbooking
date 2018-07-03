@@ -30,7 +30,6 @@ public class TagForWebEntity {
     })
     private List<ProductEntity> productList;
 
-
     public String getRemark() {
         return remark;
     }
