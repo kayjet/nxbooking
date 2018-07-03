@@ -5,6 +5,7 @@ import com.booking.common.base.Constants;
 import com.booking.common.dto.AddProductForShopDto;
 import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.dto.AddTagForShopDto;
+import com.booking.common.dto.RemoveProductForShopDto;
 import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.interceptor.TimeQueryInterceptor;
@@ -144,6 +145,28 @@ public class ProductionAdditionalController {
             }
         }
         return tagProductRelService.addTagProductRel(resultList) > 0;
+    }
+
+    @Request(value = "/productionAdditional/removeProductForShop")
+    @Editor(ResultEditor.class)
+    public Boolean removeProductForShop(@JSON RemoveProductForShopDto removeProductForShopDto) {
+        String shopId = removeProductForShopDto.getShopId();
+        String tagId = removeProductForShopDto.getTagId();
+        int result = 0;
+        for (String productId : removeProductForShopDto.getProductIds()) {
+            ShopTagRelEntity query = new ShopTagRelEntity();
+            query.setShopId(shopId);
+            query.setTagId(tagId);
+            query = shopTagRelMapper.selectOne(query);
+            if (query != null) {
+                String id = query.getId();
+                TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
+                tagProductRelEntity.setPid(productId);
+                tagProductRelEntity.setTid(id);
+                result += tagProductRelMapper.delete(tagProductRelEntity);
+            }
+        }
+        return result > 0;
     }
 
     @Request(value = "/productionAdditional/removeTagForShop")

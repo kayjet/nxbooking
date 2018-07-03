@@ -33,6 +33,14 @@
             };
             return axios.post(window.ctxPath + '/productionAdditional/addProductForShop', data);
         },
+        removeProductForShop: function (productIds, tagId, shopId) {
+            var data = {
+                productIds: productIds,
+                tagId: tagId,
+                shopId: shopId
+            };
+            return axios.post(window.ctxPath + '/productionAdditional/removeProductForShop', data);
+        },
         removeTagForShop: function (tagIds, shopId) {
             var data = {
                 tagIds: tagIds,
@@ -151,7 +159,20 @@
                     that.listProductForShop();
                 },
                 onDeleteProduct() {
-
+                    const that = this;
+                    if (!this.isTagIdsSelected()) {
+                        return;
+                    }
+                    window.service.removeProductForShop(that.addProductIdsList, that.selectedTagIdsList[0], that.shopId).then(function (response) {
+                        if (response.data.data) {
+                            that.$message.success('删除成功');
+                            that.dialogProductVisible = false;
+                            that.addProductIdsList = [];
+                            window.service.listTagForShop(that.shopId).then(function (response) {
+                                that.tableData = response.data.data;
+                            });
+                        }
+                    });
                 },
                 onUpdateProduct() {
 

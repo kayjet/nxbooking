@@ -60,7 +60,7 @@
                                             <el-button type="info" size="mini" circle icon="el-icon-delete" @click="onDeleteProduct">删除产品
                                             </el-button>
                                         </div>
-                                        <el-table :data="props.row.productList" border="false" stripe="false">
+                                        <el-table :data="props.row.productList" border="false" stripe="false" @selection-change="onSelectAddProduct">
 
                                             <el-table-column
                                                     type="selection"
