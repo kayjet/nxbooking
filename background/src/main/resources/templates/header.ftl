@@ -124,8 +124,8 @@
             template: "<el-row>\n" +
             "  <el-button type='small' @click='innerVisible = true'>从图库选择</el-button>" +
             "  <el-dialog\n" +
-            "      width=\"640px\"\n" +
-            "      title=\"内层 Dialog\"\n" +
+            "      width=\"800px\"\n" +
+            "      title=\"图片库\"\n" +
             "      :visible.sync=\"innerVisible\"\n" +
             "      append-to-body>\n" +
                 "<el-row><el-col :span=\"6\" v-for=\"o in images\" style='padding: 6px;' >\n" +
