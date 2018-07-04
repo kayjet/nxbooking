@@ -109,7 +109,7 @@
                     });
                 },
                 onSelectTagForAdding(eventData) {
-                    console.log("onSelectTagForAdding", eventData);
+//                    console.log("onSelectTagForAdding", eventData);
                     this.selectedTagIdsList = [];
                     var tagIds = [];
                     for (var i = 0; i < eventData.length; i++) {
@@ -120,7 +120,7 @@
 //                tag end
 //                product start
                 onSelectProductRow(selection, row) {
-                    console.log("onSelectProductRow", selection, row);
+//                    console.log("onSelectProductRow", selection, row);
 
                 },
                 onInsertProduct() {
@@ -154,11 +154,13 @@
                             that.selectedTagIdsList = [];
                             that.addProductList = [];
                             that.$message.success('修改成功');
+                            that.$refs.productTable.clearSelection();
+                            that.$refs.parentTable.clearSelection();
                         }
                     });
                 },
                 onSelectAddProduct(products) {
-                    console.log("onSelectAddProduct", products);
+//                    console.log("onSelectAddProduct", products);
                     const that = this;
                     if (that.addProductList.length != 0) {
                         for (var i = 0; i < that.addProductList.length; i++) {
@@ -185,7 +187,7 @@
                     return true;
                 },
                 addProduct() {
-                    console.log(this.selectedTagIdsList);
+//                    console.log(this.selectedTagIdsList);
                     if (!this.isTagIdsSelected()) {
                         return;
                     }
@@ -253,14 +255,14 @@
 
                 },
                 handleProductCurrentChange(val) {
-                    console.log('当前页: ' + val);
+//                    console.log('当前页: ' + val);
                     const that = this;
                     that.currentProductPage = val;
                     that.listProductForShop();
                 },
                 listProductForShop() {
                     const that = this;
-                    console.log(" that.selectedTagIdsList", that.selectedTagIdsList);
+//                    console.log(" that.selectedTagIdsList", that.selectedTagIdsList);
                     that.productSearch.shopId = that.shopId;
                     that.productSearch.tagId = that.selectedTagIdsList[0];
                     window.service.listProductForShop(that.currentProductPage, 10, that.productSearch).then(function (response) {
@@ -271,7 +273,7 @@
                 },
 //                product end
                 onSelectTableData(eventData) {
-                    console.log("onSelectTableData", eventData);
+//                    console.log("onSelectTableData", eventData);
                     this.selectedTagIdsList = [];
                     var tagIds = [];
                     for (var i = 0; i < eventData.length; i++) {

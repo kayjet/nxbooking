@@ -4,6 +4,7 @@ import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
+import com.booking.common.base.Constants;
 import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.dto.ImportExcelProductDto;
 import com.booking.common.entity.OrderEntity;
@@ -193,6 +194,7 @@ public class ProductServiceImpl implements IProductService {
                     productEntity.setTitle(excelProductDto.getTitle().trim());
                     productEntity.setDetail(excelProductDto.getDetail().trim());
                     productEntity.setPrice(excelProductDto.getPrice());
+                    productEntity.setIsOnSale(Constants.ProductSaleStatus.ON_SALE);
                     this.addProduct(productEntity);
                 }
             }

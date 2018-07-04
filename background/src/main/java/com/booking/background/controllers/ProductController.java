@@ -64,18 +64,6 @@ public class ProductController {
     @Editor(ResultEditor.class)
     public String addProduct(@JSON ProductEntity product) {
         ProductEntity productRet = productService.addProduct(product);
-       /* if (!CollectionUtils.isEmpty(product.getRequestAddTagList())) {
-            List<TagProductRelEntity> tagProductRelEntities = new ArrayList<TagProductRelEntity>();
-            for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-                if (!StringUtils.isEmpty(tagEntity.getTagId())) {
-                    TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
-                    tagProductRelEntity.setPid(productRet.getId());
-                    tagProductRelEntity.setTid(tagEntity.getTagId());
-                    tagProductRelEntities.add(tagProductRelEntity);
-                }
-            }
-            tagProductRelService.addTagProductRel(tagProductRelEntities);
-        }*/
         if (!CollectionUtils.isEmpty(product.getProductSpecList())) {
             List<ProductSpecRelEntity> productSpecRelEntities = new ArrayList<ProductSpecRelEntity>();
             for (ProductSpecEntity specEntity : product.getProductSpecList()) {
@@ -190,14 +178,17 @@ public class ProductController {
     }
 
     @Request(value = "/product/importExcel", format = Request.Format.JSON)
-    public void importExcel(FileItem[] file) {
+    @Editor(ResultEditor.class)
+    public Boolean importExcel(FileItem[] file) {
+        Boolean result = false;
         try {
-            productService.importExcel(file);
+            result = productService.importExcel(file);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return result;
     }
 
     @Request(value = "/product/view", format = Request.Format.VIEW)

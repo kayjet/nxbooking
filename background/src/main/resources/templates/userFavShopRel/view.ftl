@@ -70,11 +70,11 @@
                                     type="selection"
                                     width="55">
                             </el-table-column>
-                            <el-table-column label="id" index="2">
+                          <#--  <el-table-column label="id" index="2">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.id }}</span>
                                 </template>
-                            </el-table-column>
+                            </el-table-column>-->
                            <#-- <el-table-column label="用户id" index="4">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.fkUserId }}</span>

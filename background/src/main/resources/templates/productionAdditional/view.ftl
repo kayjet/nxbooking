@@ -50,7 +50,7 @@
 
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
-                        <el-table :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
+                        <el-table ref="parentTable" :data="tableData" border="true" stripe="true" @selection-change="onSelectTableData">
 
                             <el-table-column type="expand">
                                 <template slot-scope="props">
@@ -71,7 +71,8 @@
                                             </template>
 
                                         </div>
-                                        <el-table :data="props.row.productList" border="false" stripe="false" @select="onSelectProductRow" @selection-change="onSelectAddProduct">
+                                        <el-table ref="productTable"
+                                                  :data="props.row.productList" border="false" stripe="false" @select="onSelectProductRow" @selection-change="onSelectAddProduct">
 
                                             <el-table-column
                                                     type="selection"

@@ -9,7 +9,7 @@
         </el-col>
     </el-row>
     <el-form :model="addTagForm">
-        <el-table :data="tagList" border="false" stripe="false" @selection-change="onSelectTagForAdding">
+        <el-table   :data="tagList" border="false" stripe="false" @selection-change="onSelectTagForAdding">
             <el-table-column
                     type="selection"
                     width="55">
