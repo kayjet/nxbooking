@@ -1,7 +1,7 @@
 <div style="border: 1px solid #eee; border-radius: 4px;padding: 14px;">
     <el-upload
             class="upload-demo"
-            action="${proxyContext}/image/image/uploadAvatar"
+            action="${proxyContext}${context}/image/uploadAvatar"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :file-list="fileList2"

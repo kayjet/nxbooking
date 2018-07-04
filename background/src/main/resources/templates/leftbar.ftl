@@ -31,9 +31,10 @@
             <i class="el-icon-menu"></i>
             <span slot="title"><a href="${proxyContext}${context}/advertisement/view">广告走马灯</a></span>
         </el-menu-item>
-       <#-- <el-menu-item index="8">
-            <i class="el-icon-menu"></i>
-            <span slot="title"><a href="${proxyContext}${context}/websocket/view">即时订单</a></span>
-        </el-menu-item>-->
+        <el-submenu index="8">
+            <span slot="title"> <i class="el-icon-menu"></i>图片管理</span>
+            <el-menu-item index="8-1"><a href="${proxyContext}${context}/image/uploadView">批量上传</a></el-menu-item>
+            <el-menu-item index="8-2"><a href="${proxyContext}${context}/image/seeImg">图片查看</a></el-menu-item>
+        </el-submenu>
     </el-menu>
 </el-aside>

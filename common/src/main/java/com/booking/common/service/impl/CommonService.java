@@ -30,10 +30,9 @@ public class CommonService {
         return this.uploadAvatar(null, file);
     }
 
-    public String uploadAvatar(String userId, FileItem[] file) throws IOException {
+    public String uploadAvatar(String userId, FileItem[] files) throws IOException {
         String avatarName = "";
-        if (file.length > 0) {
-            FileItem item = file[0];
+        for (FileItem item : files) {
             String avatarPath = ServiceUtil.getAvatarPath();
             avatarName = (UUID.randomUUID().toString().replaceAll("-", "")) + item.getName();
             FileCopyUtils.copy(item.getInputStream(), new FileOutputStream(new File(avatarPath + avatarName)));
@@ -55,12 +54,20 @@ public class CommonService {
         File avatars = new File(avatarPath);
         File[] files = avatars.listFiles();
         Set<String> names = new HashSet<String>();
-        for (File f : files){
+        for (File f : files) {
             names.add(f.getName());
         }
         return names;
     }
 
+    public Boolean deleteImage(String imageName) throws IOException {
+        String avatarPath = ServiceUtil.getAvatarPath();
+        File avatars = new File(avatarPath + imageName);
+        if (avatars.exists() && avatars.isFile()) {
+            return avatars.delete();
+        }
+        return false;
+    }
 
 
 //    public void deleteValidateCode(Phone phone, String businessCode) {

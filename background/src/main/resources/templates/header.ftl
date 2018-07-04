@@ -36,7 +36,7 @@
         });
         Vue.filter('avatar', function (avatar) {
             if (avatar != '' || avatar != undefined) {
-                return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;
+                return "${proxyContext}${context}/image/getAvatar?avatarName=" + avatar;
 //                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
             }
             return '';
@@ -153,7 +153,7 @@
             },
             beforeCreate(){
                var that = this;
-                axios.get('/image/image/listAllAvatarNames').then(function(response){
+                axios.get('${proxyContext}${context}/image/listAllAvatarNames').then(function(response){
                     that.images = response.data.data;
                 });
             },
