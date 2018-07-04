@@ -93,4 +93,29 @@
 
     </select>
 
+    <select id="likeCount" parameterType="com.booking.common.entity.OrderEntity" resultType="int">
+        SELECT COUNT(*) FROM `booking`.`t_order` RIGHT JOIN t_order_shop_rel  ON t_order_shop_rel.order_id = t_order.id
+        <trim prefix="WHERE" prefixOverrides="AND |OR">
+            <if test="id != null">AND t_order.`id` like '%${id}%'</if>
+            <if test="orderNo != null">AND t_order.`order_no` like '%${orderNo}%'</if>
+            <if test="orderStatus != null">AND t_order.`order_status` like '%${orderStatus}%'</if>
+            <if test="totalPrice != null">AND t_order.`total_price` = #{totalPrice}</if>
+            <if test="totalPriceFromWeb != null">AND t_order.`total_price_from_web` = #{totalPriceFromWeb}</if>
+            <if test="orderTime != null">AND t_order.`order_time` like '%${orderTime}%'</if>
+            <if test="orderType != null">AND t_order.`order_type` like '%${orderType}%'</if>
+            <if test="concatPhone != null">AND t_order.`concat_phone` like '%${concatPhone}%'</if>
+            <if test="transactionId != null">AND t_order.`transaction_id` like '%${transactionId}%'</if>
+            <if test="lockVersion != null">AND t_order.`lock_version` = #{lockVersion}</if>
+            <if test="createTime != null">AND t_order.`create_time` = #{createTime}</if>
+            <if test="updateTime != null">AND t_order.`update_time` = #{updateTime}</if>
+            <if test="isPushed != null">AND t_order.`is_pushed` = #{isPushed}</if>
+            <if test="isHandler != null">AND t_order.`is_handler` = #{isHandler}</if>
+            <if test="createTimeStart != null">  and t_order.create_time &gt;=  #{createTimeStart}</if>
+            <if test="createTimeEnd != null">  and t_order.create_time &lt;=  #{createTimeEnd}</if>
+            <if test="updateTimeStart != null">  and t_order.update_time &gt;=  #{updateTimeStart}</if>
+            <if test="updateTimeEnd != null">  and t_order.update_time &lt;=  #{updateTimeEnd}</if>
+            <if test="shopId != null and shopId != '' ">  and t_order_shop_rel.shop_id=  #{shopId}</if>
+        </trim>
+    </select>
+
 </mapper>
