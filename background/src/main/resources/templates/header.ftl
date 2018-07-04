@@ -36,8 +36,8 @@
         });
         Vue.filter('avatar', function (avatar) {
             if (avatar != '' || avatar != undefined) {
-                <#--return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;-->
-                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
+                return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;
+//                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
             }
             return '';
         });
@@ -128,17 +128,17 @@
             "      title=\"图片库\"\n" +
             "      :visible.sync=\"innerVisible\"\n" +
             "      append-to-body>\n" +
-                "<el-row><el-col :span=\"6\" v-for=\"o in images\" style='padding: 6px;' >\n" +
-                "    <el-card :body-style=\"{ padding: '0px' }\">\n" +
+                "    <el-card shadow=\"hover\" v-for=\"o in images\" " +
+            "style='width:23%;display: inline-block;vertical-align: top;margin-bottom: 10px;margin-right: 1%;' :body-style=\"{ padding: '0px' }\">\n" +
                 "      <img :src=\"o|avatar\" class=\"image\">\n" +
                 "      <div style=\"padding: 14px;\">\n" +
                 "        <span>{{o}}</span>\n" +
-                "        <div class=\"bottom clearfix\">\n" +
-                "          <el-button type=\"text\" class=\"button\" style='padding: 0;' @click='addImage'>添加</el-button>\n" +
+                "        <div class=\"bottom clearfix\" style='text-align:left;'>\n" +
+                "          <el-button type=\"text\" class=\"button\" style='padding: 0;' @click='addImage(o)'>添加</el-button>\n" +
                 "        </div>\n" +
                 "      </div>\n" +
                 "    </el-card>\n" +
-                "  </el-col><el-row>" +
+                " " +
             "    </el-dialog>" +
             "</el-row>",
             props: {
@@ -158,8 +158,9 @@
                 });
             },
             methods: {
-                addImage: function (evt) {
-                    console.log('addImage',evt);
+                addImage: function (img) {
+                    console.log('addImage',img);
+                    this.$emit('choose-image',img);
                 }
             }
         });

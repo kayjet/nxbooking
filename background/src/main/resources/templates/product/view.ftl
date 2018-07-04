@@ -90,10 +90,12 @@
                             <el-button type="primary"  @click="exportExcel" style="margin-right: 8px;">导出Excel模板</el-button>
                             <el-upload
                                     style="display: inline-block;"
-                                    multiple="false"
+                                    :multiple="false"
+                                    :show-file-list="false"
                                     class="upload-demo"
                                     action="${proxyContext}${context}/product/importExcel"
                                     :on-change="handleChangeFile"
+                                    :on-success="onUploadExcelSuccess"
                                     :file-list="fileExcels">
                                 <el-button type="primary">导入Excel数据</el-button>
                             </el-upload>
@@ -301,7 +303,7 @@
                 <#--<el-input v-model="form.pic">{{form.pic}}</el-input>-->
                     <div>原图</div>
                     <div>
-                        <img :src="form.pic | avatar" width="100%" alt="">
+                        <img :src="form.pic | avatar" width="400px" alt="">
                     </div>
                 <#include "../upload.ftl"/>
                 </el-form-item>
@@ -445,14 +447,8 @@
             },
             created() {
                 const that = this;
-                window.service.listPage(1, 10, that.search).then(function (response) {
-                    that.tableData = response.data.data;
-                    that.currentPage = response.data.pageNo;
-                    that.totalPage = response.data.countSize;
-                });
-                window.service.listAllShop().then(function (reponse) {
-                    that.shopList = reponse.data.data;
-                });
+                that.currentPage = 1;
+                that.loadPageData();
                 window.service.listAllSpecParent().then(function (reponse) {
                     that.allSpecParentList = reponse.data.data;
                 });
@@ -472,6 +468,24 @@
                 const that = this;
             },
             methods: {
+                chooseImage(img){
+                    this.form.pic = img;
+                    this.$message.success('选择成功');
+                },
+                loadPageData(){
+                    const that = this;
+                    window.service.listPage(that.currentPage, 10, that.search).then(function (response) {
+                        that.tableData = response.data.data;
+                        that.currentPage = response.data.pageNo;
+                        that.totalPage = response.data.countSize;
+                    });
+                },
+                onUploadExcelSuccess(response, file, fileList){
+                    console.log("onUploadExcelSuccess",response);
+                    if(response.data){
+                        this.onRefreshWindow('上传成功');
+                    }
+                },
                 exportExcel(){
                     window.open(window.ctxPath + '/product/exportExcelTemplate');
                 },
@@ -558,7 +572,7 @@
                 onSelectShop(val) {
                     const that = this;
                     console.log(val);
-                    that.shopId = val
+                    that.shopId = val;
                     window.service.listAllTags(val).then(function (response) {
                         that.tags = response.data.data;
                     });

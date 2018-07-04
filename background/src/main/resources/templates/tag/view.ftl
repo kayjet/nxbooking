@@ -190,7 +190,7 @@
                 <#--<el-input v-model="form.pic">{{form.pic}}</el-input>-->
                     <div>原图</div>
                     <div>
-                        <img :src="form.pic | avatar" width="100%" alt="">
+                        <img :src="form.pic | avatar" width="400px" alt="">
                     </div>
                     <#include "../upload.ftl"/>
                 </el-form-item>
@@ -297,6 +297,11 @@
                 const that = this;
             },
             methods: {
+                chooseImage(img){
+                    console.log("chooseImage",img);
+                    this.form.pic = img;
+                    this.$message.success('选择成功');
+                },
                 onInsert() {
                     var that = this;
                     that.form = {};

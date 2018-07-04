@@ -14,5 +14,5 @@
     </el-upload>
 </div>
 <div style="text-align: left;border: 1px solid #eee; border-radius: 4px; margin-top: 14px;padding: 14px;">
-    <imagecenter></imagecenter>
+    <imagecenter @choose-image="chooseImage"></imagecenter>
 </div>

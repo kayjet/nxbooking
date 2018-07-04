@@ -75,11 +75,11 @@
                                             width="55">
                                     </el-table-column>
 
-                                    <el-table-column label="id" index="5" >
+                                   <#-- <el-table-column label="id" index="5" >
                                         <template slot-scope="scope">
                                             <span style="margin-left: 10px">{{  scope.row.id }}</span>
                                         </template>
-                                    </el-table-column>
+                                    </el-table-column>-->
 
                                     <el-table-column label="地址" index="1" >
                                         <template slot-scope="scope">

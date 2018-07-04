@@ -68,11 +68,11 @@
                                     width="55">
                             </el-table-column>
 
-                            <el-table-column label="id" index="1">
+                            <#--<el-table-column label="id" index="1">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.id }}</span>
                                 </template>
-                            </el-table-column>
+                            </el-table-column>-->
 
                             <el-table-column label="图片" index="2">
                                 <template slot-scope="scope">
@@ -233,6 +233,10 @@
                 const that = this;
             },
             methods: {
+                chooseImage(img){
+                    this.form.pic = img;
+                    this.$message.success('选择成功');
+                },
                 onInsert() {
                     var that = this;
                     that.form = {};
