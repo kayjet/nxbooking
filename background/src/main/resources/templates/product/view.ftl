@@ -87,6 +87,16 @@
                             <el-button type="primary" icon="el-icon-plus" @click="onInsert">新增</el-button>
                             <el-button type="primary" icon="el-icon-edit" @click="onUpdate">编辑</el-button>
                             <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
+                            <el-button type="primary"  @click="exportExcel" style="margin-right: 8px;">导出Excel模板</el-button>
+                            <el-upload
+                                    style="display: inline-block;"
+                                    multiple="false"
+                                    class="upload-demo"
+                                    action="${proxyContext}${context}/product/importExcel"
+                                    :on-change="handleChangeFile"
+                                    :file-list="fileExcels">
+                                <el-button type="primary">导入Excel数据</el-button>
+                            </el-upload>
                         </div>
                     </el-col>
                     <#--<el-col :span="24">
@@ -429,7 +439,8 @@
                     shopList: [],
                     allSpecParentList: [],
                     tagList: [],
-                    shopId:''
+                    shopId:'',
+                    fileExcels:[]
                 }
             },
             created() {
@@ -461,6 +472,12 @@
                 const that = this;
             },
             methods: {
+                exportExcel(){
+                    window.open(window.ctxPath + '/product/exportExcelTemplate');
+                },
+                handleChangeFile(file, fileList){
+//                    this.excelFiles.push;
+                },
                 onInsert() {
                     var that = this;
                     that.form = {};

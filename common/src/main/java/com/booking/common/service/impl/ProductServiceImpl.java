@@ -1,6 +1,12 @@
 package com.booking.common.service.impl;
 
+import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
+import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.booking.common.dto.AddProductForShopQueryDto;
+import com.booking.common.dto.ImportExcelProductDto;
+import com.booking.common.entity.OrderEntity;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.entity.ProductSpecEntity;
 import com.booking.common.entity.ProductSpecRelEntity;
@@ -9,17 +15,21 @@ import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.service.IProductService;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.PageInterceptor;
+import com.booking.common.utils.NetTool;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 
 
+import java.io.*;
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 /**
@@ -166,4 +176,38 @@ public class ProductServiceImpl implements IProductService {
         productEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
         return productMapper.update(productEntity, where);
     }
+
+    @Override
+    public boolean importExcel(FileItem[] file) throws Exception {
+        if (file.length > 0) {
+            FileItem item = file[0];
+            InputStream inputStream = item.getInputStream();
+            ImportParams params = new ImportParams();
+            List<ImportExcelProductDto> list = ExcelImportUtil.importExcel(inputStream, ImportExcelProductDto.class, params);
+            for (ImportExcelProductDto excelProductDto : list) {
+                ProductEntity productEntity = new ProductEntity();
+                productEntity.setTitle(excelProductDto.getTitle().trim());
+                productEntity = productMapper.selectOne(productEntity);
+                if(productEntity==null){
+                    productEntity = new ProductEntity();
+                    productEntity.setTitle(excelProductDto.getTitle().trim());
+                    productEntity.setDetail(excelProductDto.getDetail().trim());
+                    productEntity.setPrice(excelProductDto.getPrice());
+                    this.addProduct(productEntity);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Workbook exportExcelTemplate() throws Exception {
+        List<ImportExcelProductDto> list = new ArrayList<ImportExcelProductDto>();
+        list.add(new ImportExcelProductDto(1.0D, "测试介绍", "标题而已"));
+        Workbook workbook = ExcelExportUtil.exportExcel(new ExportParams(),
+                ImportExcelProductDto.class, list);
+        return workbook;
+    }
+
 }

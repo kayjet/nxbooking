@@ -3,8 +3,11 @@ package com.booking.common.service;
 import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.entity.ProductEntity;
 import com.booking.common.resp.Page;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -39,4 +42,8 @@ public interface IProductService {
     int updateById(ProductEntity productEntity, String id);
 
     int update(ProductEntity productEntity, ProductEntity where);
+
+    boolean importExcel(FileItem[] file) throws Exception;
+
+    Workbook exportExcelTemplate() throws Exception;
 }

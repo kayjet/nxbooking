@@ -13,6 +13,8 @@ import com.booking.common.service.ITagService;
 import com.booking.common.service.impl.ProductAdditionalService;
 import com.opdar.platform.core.base.Context;
 import com.opdar.platform.annotations.*;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -163,6 +167,37 @@ public class ProductController {
     @Editor(ResultEditor.class)
     public Page<List<ProductEntity>> listProductPage(ProductEntity productEntity, Integer pageNo, Integer pageSize) {
         return productService.listProductPage(productEntity, pageNo, pageSize);
+    }
+
+    @Request(value = "/product/exportExcelTemplate", format = Request.Format.JSON)
+    public void exportExcelTemplate() {
+        try {
+            OutputStream outputStream = Context.getResponse().getOutputStream();
+            Workbook workbook = productService.exportExcelTemplate();
+            if (workbook != null) {
+                workbook.write(outputStream);
+                Context.getResponse().setContentType("application/vnd.ms-excel");
+                String xlsName = "导入产品模板" + System.currentTimeMillis();
+                Context.getResponse().addHeader("Content-Disposition", "attachment; filename=" + xlsName + ".xls");
+                outputStream.flush();
+                outputStream.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Request(value = "/product/importExcel", format = Request.Format.JSON)
+    public void importExcel(FileItem[] file) {
+        try {
+            productService.importExcel(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Request(value = "/product/view", format = Request.Format.VIEW)
