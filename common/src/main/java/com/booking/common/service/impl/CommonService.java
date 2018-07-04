@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * CommonService
@@ -49,6 +49,19 @@ public class CommonService {
         }
         return null;
     }
+
+    public Set<String> listAllAvatarNames() throws IOException {
+        String avatarPath = ServiceUtil.getAvatarPath();
+        File avatars = new File(avatarPath);
+        File[] files = avatars.listFiles();
+        Set<String> names = new HashSet<String>();
+        for (File f : files){
+            names.add(f.getName());
+        }
+        return names;
+    }
+
+
 
 //    public void deleteValidateCode(Phone phone, String businessCode) {
 //        String sKey = ServiceUtil.getValidateCodeKey(businessCode, phone);

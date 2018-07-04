@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * CommonController
@@ -48,4 +49,16 @@ public class ImageController {
         }
         return result;
     }
+
+    @Request(value = "/image/listAllAvatarNames", format = Request.Format.JSON)
+    @Editor(ResultEditor.class)
+    public Set<String> listAllAvatarNames() {
+        try {
+            return commonService.listAllAvatarNames();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

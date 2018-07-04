@@ -36,8 +36,8 @@
         });
         Vue.filter('avatar', function (avatar) {
             if (avatar != '' || avatar != undefined) {
-                return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;
-//                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
+                <#--return "${proxyContext}/image/image/getAvatar?avatarName=" + avatar;-->
+                return "http://localhost:8080/image/image/getAvatar?avatarName=" + avatar;
             }
             return '';
         });
@@ -120,9 +120,52 @@
                 }
             }
         });
+        var imageCenter = Vue.extend({
+            template: "<el-row>\n" +
+            "  <el-button type='small' @click='innerVisible = true'>从图库选择</el-button>" +
+            "  <el-dialog\n" +
+            "      width=\"640px\"\n" +
+            "      title=\"内层 Dialog\"\n" +
+            "      :visible.sync=\"innerVisible\"\n" +
+            "      append-to-body>\n" +
+                "<el-row><el-col :span=\"6\" v-for=\"o in images\" style='padding: 6px;' >\n" +
+                "    <el-card :body-style=\"{ padding: '0px' }\">\n" +
+                "      <img :src=\"o|avatar\" class=\"image\">\n" +
+                "      <div style=\"padding: 14px;\">\n" +
+                "        <span>{{o}}</span>\n" +
+                "        <div class=\"bottom clearfix\">\n" +
+                "          <el-button type=\"text\" class=\"button\" style='padding: 0;' @click='addImage'>添加</el-button>\n" +
+                "        </div>\n" +
+                "      </div>\n" +
+                "    </el-card>\n" +
+                "  </el-col><el-row>" +
+            "    </el-dialog>" +
+            "</el-row>",
+            props: {
+                images:{
+                    type: Array,
+                    default: []
+                },
+                innerVisible: {
+                    type: Boolean,
+                    default: false
+                }
+            },
+            beforeCreate(){
+               var that = this;
+                axios.get('/image/image/listAllAvatarNames').then(function(response){
+                    that.images = response.data.data;
+                });
+            },
+            methods: {
+                addImage: function (evt) {
+                    console.log('addImage',evt);
+                }
+            }
+        });
         Vue.component('logout', logout);
         Vue.component('wslogout', wslogout);
-        //            window.wsAddress = "ws://www.opdar.com/booking/background/springws/websocket.ws";
+        Vue.component('imagecenter', imageCenter);
     </script>
     <style>
         html, body {
@@ -205,6 +248,31 @@
 
         .el-form-item__label {
             font-weight: bold;
+        }
+        .time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .bottom {
+            margin-top: 13px;
+            line-height: 12px;
+        }
+
+
+        .image {
+            width: 100%;
+            display: block;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+
+        .clearfix:after {
+            clear: both
         }
     </style>
     <title>
