@@ -217,6 +217,10 @@
                     that.dialogProductVisible = true;
                     that.listProductForShop();
                 },
+                refreshSearchProduct(){
+                    this.productSearch = {};
+                    this.listProductForShop();
+                },
                 onDeleteProduct() {
                     const that = this;
                     if (!this.isTagIdsSelected()) {

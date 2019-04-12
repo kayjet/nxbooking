@@ -9,6 +9,8 @@
             <el-form-item style="margin-bottom: 0px;">
                 <el-button style="float: left;" icon="el-icon-search" size="mini" type="primary" circle
                            @click="searchProduct"></el-button>
+
+                <el-button  style="float: left;"  icon="el-icon-refresh" size="mini" type="primary" circle @click="refreshSearchProduct"></el-button>
             </el-form-item>
 
         </el-form>
