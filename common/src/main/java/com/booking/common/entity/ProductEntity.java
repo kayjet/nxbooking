@@ -2,7 +2,6 @@ package com.booking.common.entity;
 
 import com.booking.common.dto.ProductSpecDto;
 import com.booking.common.mapper.ProductMapper;
-import com.booking.common.mapper.TagProductRelMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;

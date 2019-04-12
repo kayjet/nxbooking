@@ -15,6 +15,5 @@ import java.util.List;
 */
 public interface TagProductRelMapper extends IBaseMapper<TagProductRelEntity> {
 
-    List<ProductEntity> selectProductByTag(@Param("tid") String tagId);
 
 }
