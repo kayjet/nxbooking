@@ -18,6 +18,7 @@ public class ShopTagRelForWebEntity {
     private String shopId;
     private String tagId;
 
+    //查出该tag下的所有产品
     @Collection(mapper = TagForWebMapper.class,select = "selectList",values = {
             @Value(key = "id",value = "tagId")
     })

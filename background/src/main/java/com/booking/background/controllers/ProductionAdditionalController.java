@@ -6,7 +6,6 @@ import com.booking.common.entity.*;
 import com.booking.common.exceptions.ErrCodeHandler;
 import com.booking.common.interceptor.TimeQueryInterceptor;
 import com.booking.common.mapper.ShopTagRelMapper;
-import com.booking.common.mapper.TagProductRelMapper;
 import com.booking.common.resp.Page;
 import com.booking.common.resp.ResultEditor;
 import com.booking.common.service.*;
@@ -60,8 +59,6 @@ public class ProductionAdditionalController {
     @Autowired
     private ShopTagRelMapper shopTagRelMapper;
 
-    @Autowired
-    private TagProductRelMapper tagProductRelMapper;
 
     @Request(value = "/productionAdditional/listProductForShop")
     @Editor(ResultEditor.class)
@@ -166,7 +163,7 @@ public class ProductionAdditionalController {
                 TagProductRelEntity tagProductRelEntity = new TagProductRelEntity();
                 tagProductRelEntity.setPid(productId);
                 tagProductRelEntity.setTid(shopTagReId);
-                result += tagProductRelMapper.delete(tagProductRelEntity);
+                result += tagProductRelService.delete(tagProductRelEntity);
 
                 productAdditionalService.removeSpPrice(productId, shopTagReId);
             }
@@ -188,7 +185,7 @@ public class ProductionAdditionalController {
                 String shopTagRelId = ret.getId();
                 TagProductRelEntity delete = new TagProductRelEntity();
                 delete.setTid(shopTagRelId);
-                tagProductRelMapper.delete(delete);
+                tagProductRelService.delete(delete);
                 productAdditionalService.removeSpPrice(null, shopTagRelId);
             }
             result += shopTagRelMapper.delete(shopTagRelEntity);

@@ -41,6 +41,11 @@ public class TagProductRelServiceImpl implements ITagProductRelService {
     }
 
     @Override
+    public int delete(TagProductRelEntity tagProductRelEntity){
+        return tagProductRelMapper.delete(tagProductRelEntity);
+    }
+
+    @Override
     public Page<List<TagProductRelEntity>> listTagProductRelPage(TagProductRelEntity tagProductRelEntity, Integer pageNo, Integer pageSize) {
         if (pageNo == null) {
             pageNo = 1;

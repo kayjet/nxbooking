@@ -46,22 +46,14 @@
         <result column="is_on_sale" property="isOnSale"/>
     </resultMap>
 
-    <select id="selectProductByTag" parameterType="com.booking.common.entity.ShopTagRelEntity" resultMap="productResult">
+    <select id="selectProductByTag" parameterType="java.lang.String" resultMap="productResult">
         SELECT
-          prd.*
+        prd.*
         FROM
-        (
-            SELECT
-            tag_product_rel.pid AS productId,
-            shop_tag_rel.tag_id AS tagId
-            FROM
-            `booking`.`t_shop_tag_rel` shop_tag_rel
-            RIGHT JOIN `booking`.t_tag_product_rel tag_product_rel ON shop_tag_rel.id = tag_product_rel.tid
-        ) T
-        LEFT JOIN t_product prd ON prd.id = T.productId
-        <trim prefix="WHERE" prefixOverrides="AND |OR">
-            <if test="tagId != null and tagId != '' ">AND T.tagId = #{tagId}</if>
-        </trim>
+        `booking`.`t_shop_tag_rel` shop_tag_rel
+        RIGHT JOIN `booking`.t_tag_product_rel tag_product_rel ON shop_tag_rel.id = tag_product_rel.tid
+        LEFT JOIN t_product prd ON prd.id = tag_product_rel.pid
+        WHERE 	shop_tag_rel.tag_id  = #{tagId}  AND shop_tag_rel.id = #{shopTagRelId}
     </select>
 
 

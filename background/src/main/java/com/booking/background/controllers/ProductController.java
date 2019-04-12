@@ -93,18 +93,6 @@ public class ProductController {
     @Editor(ResultEditor.class)
     public int updateProduct(@JSON ProductEntity product) {
         int ret = productService.updateById(product, product.getId());
-        TagProductRelEntity query = new TagProductRelEntity();
-        query.setPid(product.getId());
-        List<TagProductRelEntity> result = tagProductRelService.listTagProductRel(query);
-        if (CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(product.getRequestAddTagList())) {
-            insertShopTagRel(product);
-        } else if (!CollectionUtils.isEmpty(result) && !CollectionUtils.isEmpty(product.getRequestAddTagList())) {
-            for (TagProductRelEntity tagProductRelEntity : result) {
-                tagProductRelService.removeTagProductRel(tagProductRelEntity.getId());
-            }
-            insertShopTagRel(product);
-        }
-
         ProductSpecRelEntity queryProductSpecRel = new ProductSpecRelEntity();
         queryProductSpecRel.setPid(product.getId());
         List<ProductSpecRelEntity> specRelEntities = productSpecRelService.listProductSpecRel(queryProductSpecRel);
@@ -117,17 +105,6 @@ public class ProductController {
             insertProductSpecRel(product);
         }
         return ret;
-    }
-
-    private void insertShopTagRel(@JSON ProductEntity product) {
-        for (ShopTagRelEntity tagEntity : product.getRequestAddTagList()) {
-            if (!StringUtils.isEmpty(tagEntity.getTagId())) {
-                TagProductRelEntity rel = new TagProductRelEntity();
-                rel.setPid(product.getId());
-                rel.setTid(tagEntity.getTagId());
-                tagProductRelService.addTagProductRel(rel);
-            }
-        }
     }
 
     private void insertProductSpecRel(@JSON ProductEntity product) {

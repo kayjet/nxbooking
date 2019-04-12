@@ -2,8 +2,6 @@ package com.booking.common.entity;
 
 import com.booking.common.mapper.ShopTagRelMapper;
 import com.booking.common.mapper.TagForWebMapper;
-import com.booking.common.mapper.TagMapper;
-import com.booking.common.mapper.TagProductRelMapper;
 import com.opdar.plugins.mybatis.annotations.*;
 
 import java.sql.Timestamp;
@@ -24,10 +22,8 @@ public class TagForWebEntity {
     private Timestamp createTime;
     private Timestamp updateTime;
 
-    @Field(insert = false, update = false, delete = false, select = true)
-    @Collection(mapper = ShopTagRelMapper.class, select = "selectProductByTag", values = {
-            @Value(key = "tagId", value = "id")
-    })
+    //查出该tag下的所有产品
+    @Field(insert = false, update = false, delete = false, select = false,resultmap = false)
     private List<ProductEntity> productList;
 
     public String getRemark() {

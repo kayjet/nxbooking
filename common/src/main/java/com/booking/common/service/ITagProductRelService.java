@@ -35,4 +35,6 @@ public interface ITagProductRelService {
     int updateById(TagProductRelEntity tagProductRelEntity, String id);
 
     int update(TagProductRelEntity tagProductRelEntity, TagProductRelEntity where);
+
+    int delete(TagProductRelEntity tagProductRelEntity);
 }

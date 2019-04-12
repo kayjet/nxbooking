@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 public class TagProductRelEntity {
     private String id;
     private String pid;
-    private String tid;
+    private String tid;//t_shop_tag_rel 的主键
     private Timestamp createTime;
     private Timestamp updateTime;
     private String pName;
@@ -145,7 +145,5 @@ public class TagProductRelEntity {
     public void setTid(String tid) {
         this.tid = tid;
     }
-
-
 
 }

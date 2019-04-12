@@ -2,12 +2,10 @@ package com.booking.common.service.impl;
 
 import com.booking.common.base.Constants;
 import com.booking.common.dto.ProductSpecDto;
-import com.booking.common.entity.ProductEntity;
-import com.booking.common.entity.ProductSpecEntity;
-import com.booking.common.entity.ShopEntity;
-import com.booking.common.entity.ShopTagRelForWebEntity;
+import com.booking.common.entity.*;
 import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.mapper.ShopMapper;
+import com.booking.common.mapper.ShopTagRelMapper;
 import com.booking.common.mapper.ShopTagRelWebMapper;
 import com.booking.common.service.IShopService;
 import com.booking.common.resp.Page;
@@ -138,6 +136,9 @@ public class ShopServiceImpl implements IShopService {
     @Autowired
     ProductAdditionalService productAdditionalService;
 
+    @Autowired
+    ShopTagRelMapper shopTagRelMapper;
+
     @Override
     public List<ShopTagRelForWebEntity> listProducts(String shopId, boolean isCleanEmpty) {
         ShopTagRelForWebEntity query = new ShopTagRelForWebEntity();
@@ -146,12 +147,14 @@ public class ShopServiceImpl implements IShopService {
         Iterator<ShopTagRelForWebEntity> shopTagRelResultIterator = shopTagRelResultList.iterator();
         while (shopTagRelResultIterator.hasNext()) {
             ShopTagRelForWebEntity shopTagRel = shopTagRelResultIterator.next();
-            if (CollectionUtils.isEmpty(shopTagRel.getTagList().get(0).getProductList())) {
+            TagForWebEntity tag = shopTagRel.getTagList().get(0);
+            tag.setProductList(shopTagRelMapper.selectProductByTag(tag.getId(),shopTagRel.getId()));
+            if (CollectionUtils.isEmpty(tag.getProductList())) {
                 if (isCleanEmpty) {
                     shopTagRelResultIterator.remove();
                 }
             } else {
-                Iterator<ProductEntity> productIterator = shopTagRel.getTagList().get(0).getProductList().iterator();
+                Iterator<ProductEntity> productIterator = tag.getProductList().iterator();
                 while (productIterator.hasNext()) {
                     ProductEntity product = productIterator.next();
                     product.setTagId(shopTagRel.getTagId());
