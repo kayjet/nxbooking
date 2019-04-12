@@ -81,7 +81,7 @@ public class ShopController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
-        Context.putAttribute("navList",new String[]{"门店管理","详情记录"});
+        Context.putAttribute("navList",new String[]{"门店管理","门店列表"});
         Context.putAttribute("proxyContext", proxyContext);
         return "shop/view";
     }

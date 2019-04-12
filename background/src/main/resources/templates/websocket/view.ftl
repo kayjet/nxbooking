@@ -48,7 +48,7 @@
                                             <el-form-item label="等待制作的商品：" style="margin-bottom: 0px;">
                                                 <span>{{ detail.productName }}</span>
                                             </el-form-item>
-                                            <el-form-item label="规格：" style="margin-bottom: 0px;">
+                                            <el-form-item label="产品规格：" style="margin-bottom: 0px;">
                                                 <span v-for="spec in detail.productSpecList"
                                                       style="margin-right: 12px;">{{ spec }}</span>
                                             </el-form-item>

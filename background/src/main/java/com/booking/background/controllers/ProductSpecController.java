@@ -89,7 +89,7 @@ public class ProductSpecController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
-        Context.putAttribute("navList", new String[]{"产品管理","规格"});
+        Context.putAttribute("navList", new String[]{"产品管理","产品规格"});
         Context.putAttribute("proxyContext", proxyContext);
         return "productSpec/view";
     }

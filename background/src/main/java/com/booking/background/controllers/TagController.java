@@ -119,7 +119,7 @@ public class TagController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
-        Context.putAttribute("navList",new String[]{"产品管理","标签"});
+        Context.putAttribute("navList",new String[]{"产品管理","产品分类"});
         Context.putAttribute("proxyContext", proxyContext);
         return "tag/view";
     }

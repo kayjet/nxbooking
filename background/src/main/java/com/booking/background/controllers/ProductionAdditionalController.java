@@ -200,7 +200,7 @@ public class ProductionAdditionalController {
         Context.putAttribute("context", Context.getRequest().getContextPath());
         Context.putAttribute("proxyContext", proxyContext);
         Context.putAttribute("shopList", shopService.listAll());
-        Context.putAttribute("navList", new String[]{"门店管理", "商品详情"});
+        Context.putAttribute("navList", new String[]{"门店管理", "产品详情"});
         return "productionAdditional/view";
     }
 }

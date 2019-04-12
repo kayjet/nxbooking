@@ -172,7 +172,7 @@ public class ProductController {
     public String view() {
         logger.info("访问view页");
         Context.putAttribute("context", Context.getRequest().getContextPath());
-        Context.putAttribute("navList", new String[]{"产品管理", "详情记录"});
+        Context.putAttribute("navList", new String[]{"产品管理", "产品列表"});
         Context.putAttribute("tagList", tagService.listAll());
         Context.putAttribute("proxyContext", proxyContext);
         return "product/view";

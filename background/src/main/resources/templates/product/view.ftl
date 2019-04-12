@@ -155,7 +155,7 @@
                                     <span style="margin-left: 10px">{{  scope.row.isOnSale | saleStatus}}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column label="规格" index="8" width="68">
+                            <el-table-column label="产品规格" index="8" width="68">
                                 <template slot-scope="scope">
                                     <el-popover trigger="hover" placement="top">
                                         <div>
@@ -248,7 +248,7 @@
                     </el-dropdown>
                 </el-form-item>
 
-                <el-form-item label="选择规格" v-if="allSpecParentList">
+                <el-form-item label="选择产品规格" v-if="allSpecParentList">
                     <template>
                     <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
                     <#--全选-->
@@ -324,7 +324,7 @@
                         </el-dropdown-menu>
                     </el-dropdown>
                 </el-form-item>
-                <el-form-item label="选择规格" v-if="allSpecParentList">
+                <el-form-item label="选择产品规格" v-if="allSpecParentList">
                     <template>
                     <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
                     <#--全选-->
