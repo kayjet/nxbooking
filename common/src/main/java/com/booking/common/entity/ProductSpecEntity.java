@@ -59,6 +59,13 @@ public class ProductSpecEntity {
     @Field(resultmap = false, insert = false, update = false, delete = false, select = false)
     private String updateTimeSearch;
 
+    public ProductSpecEntity() {
+    }
+
+    public ProductSpecEntity(String id) {
+        this.id = id;
+    }
+
     public Timestamp getCreateTimeStart() {
         return createTimeStart;
     }

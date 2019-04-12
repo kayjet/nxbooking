@@ -57,6 +57,9 @@ public class OrderServiceImpl implements IOrderService {
     @Value("${wechat.isdebug}")
     private boolean wechatIsDebug;
 
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
     @Override
     public List<OrderEntity> listAll() {
         return orderMapper.selectList(null);
@@ -148,52 +151,66 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ProductAdditionalService productAdditionalService;
 
+    @Autowired
+    private ProductSpecMapper productSpecMapper;
+
     @Override
     public OrderEntity makeOrder(String shopId, String userId, String concatPhone, String totalPrice, String orderType,
                                  String orderTime, List<List<ProductEntity>> products) {
         logger.info("创建订单 start");
-        OrderEntity orderEntity = new OrderEntity();
+        OrderEntity order = new OrderEntity();
         String orderId = UUID.randomUUID().toString();
         String orderNo = "WX" + System.currentTimeMillis();
-        orderEntity.setId(orderId);
-        orderEntity.setOrderNo(orderNo);
-        orderEntity.setOrderStatus(Constants.OrderStatus.WAITING_PAY);
-        orderEntity.setOrderType(orderType);
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        order.setId(orderId);
+        order.setOrderNo(orderNo);
+        order.setOrderStatus(Constants.OrderStatus.WAITING_PAY);
+        order.setOrderType(orderType);
         if (!StringUtils.isEmpty(orderType) && orderType.equals(Constants.OrderType.APPOINT) && !StringUtils.isEmpty(orderTime)) {
-            Date now = new Date(System.currentTimeMillis());
-            orderTime = dateFormat.format(now) + " " + orderTime + ":00";
-            orderEntity.setOrderTime(orderTime);
+            String handledTime = handleDate(orderTime);
+            order.setOrderTime(handledTime);
         }
-        orderEntity.setConcatPhone(concatPhone);
-        orderEntity.setTotalPriceFromWeb(Double.valueOf(totalPrice));
+        Double price = handlePrice(shopId, products, orderId);
+        order.setTotalPrice(price);
+        order.setConcatPhone(concatPhone);
+        order.setTotalPriceFromWeb(Double.valueOf(totalPrice));
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+        order.setCreateTime(ts);
+        order.setUpdateTime(ts);
+        orderMapper.insert(order);
+        insertOrderUserRel(userId, orderId);
+        insertOrderShopRel(shopId, orderId);
+        logger.info("创建订单 end");
+        return order;
+    }
+
+    private String handleDate(String orderTime) {
+        Date now = new Date(System.currentTimeMillis());
+        return simpleDateFormat.format(now) + " " + orderTime + ":00";
+    }
+
+    private Double handlePrice(String shopId, List<List<ProductEntity>> products, String orderId) {
         Double price = 0D;
-        for (int parentIdx = 0; parentIdx < products.size(); parentIdx++) {
-            List<ProductEntity> productEntities = products.get(parentIdx);
-            for (int index = 0; index < productEntities.size(); index++) {
-                ProductEntity formProduct = productEntities.get(index);
+        for (List<ProductEntity> productEntities : products) {
+            for (ProductEntity formProduct : productEntities) {
                 ProductEntity dbProduct = productMapper.selectOne(new ProductEntity(formProduct.getId()));
-                Double spPrice = productAdditionalService.findProductSpPrice(shopId, formProduct.getId(),formProduct.getTagId());
+                Double spPrice = productAdditionalService.findProductSpPrice(shopId, formProduct.getId(), formProduct.getTagId());
                 if (spPrice != null && !spPrice.equals(0D)) {
                     price += spPrice;
                 } else {
                     price += dbProduct.getPrice();
                 }
                 String orderProductRelId = insertOrderProductRel(dbProduct.getId(), orderId);
-                List<ProductSpecDto> productSpecDtoList = formProduct.getRequestSpecList();
-                if (!CollectionUtils.isEmpty(productSpecDtoList)) {
-                    for (ProductSpecDto specDto : productSpecDtoList) {
-                        List<ProductSpecEntity> productSpecList = specDto.getSpecList();
-                        if (!CollectionUtils.isEmpty(productSpecList)) {
-                            for (ProductSpecEntity specEntity : productSpecList) {
-                                if (specEntity.getPrice() != null) {
-                                    price += specEntity.getPrice();
+                if (!CollectionUtils.isEmpty(formProduct.getRequestSpecList())) {
+                    for (ProductSpecDto requestSpec : formProduct.getRequestSpecList()) {
+                        if (!CollectionUtils.isEmpty(requestSpec.getSpecList())) {
+                            for (ProductSpecEntity spec : requestSpec.getSpecList()) {
+                                String specId = spec.getId();
+                                ProductSpecEntity dbSpec = productSpecMapper.selectOne(new ProductSpecEntity(specId));
+                                if (dbSpec.getPrice() != null) {
+                                    price += dbSpec.getPrice();
                                 }
-                                String pid = dbProduct.getId();
-                                String specId = specEntity.getId();
-                                Timestamp ts = new Timestamp(System.currentTimeMillis());
                                 OrderProductSpecRelEntity specRelEntity = new OrderProductSpecRelEntity();
+                                Timestamp ts = new Timestamp(System.currentTimeMillis());
                                 specRelEntity.setCreateTime(ts);
                                 specRelEntity.setUpdateTime(ts);
                                 specRelEntity.setId(UUID.randomUUID().toString());
@@ -206,15 +223,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
             }
         }
-        orderEntity.setTotalPrice(price);
-        Timestamp ts = new Timestamp(System.currentTimeMillis());
-        orderEntity.setCreateTime(ts);
-        orderEntity.setUpdateTime(ts);
-        orderMapper.insert(orderEntity);
-        insertOrderUserRel(userId, orderId);
-        insertOrderShopRel(shopId, orderId);
-        logger.info("创建订单 end");
-        return orderEntity;
+        return price;
     }
 
     @Override
@@ -261,8 +270,6 @@ public class OrderServiceImpl implements IOrderService {
             orderMapper.updatePayStatusWithLock(ret);
         }
     }
-
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public Workbook exportExcel(OrderEntity orderEntity) {
