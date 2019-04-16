@@ -157,6 +157,10 @@ public class ShopServiceImpl implements IShopService {
                 Iterator<ProductEntity> productIterator = tag.getProductList().iterator();
                 while (productIterator.hasNext()) {
                     ProductEntity product = productIterator.next();
+                    if(product == null){
+                        productIterator.remove();
+                        continue;
+                    }
                     product.setTagId(shopTagRel.getTagId());
                     product.setShopId(shopTagRel.getShopId());
                     if (product.getIsOnSale() != null && product.getIsOnSale().equals(Constants.ProductSaleStatus.ON_SALE)) {
