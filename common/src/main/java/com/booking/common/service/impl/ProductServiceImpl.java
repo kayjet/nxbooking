@@ -7,10 +7,8 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.booking.common.base.Constants;
 import com.booking.common.dto.AddProductForShopQueryDto;
 import com.booking.common.dto.ImportExcelProductDto;
-import com.booking.common.entity.OrderEntity;
-import com.booking.common.entity.ProductEntity;
-import com.booking.common.entity.ProductSpecEntity;
-import com.booking.common.entity.ProductSpecRelEntity;
+import com.booking.common.entity.*;
+import com.booking.common.mapper.ProductDelMapper;
 import com.booking.common.mapper.ProductMapper;
 import com.booking.common.mapper.ProductSpecRelMapper;
 import com.booking.common.service.IProductService;
@@ -19,6 +17,7 @@ import com.booking.common.resp.PageInterceptor;
 import com.booking.common.utils.NetTool;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -45,6 +45,9 @@ public class ProductServiceImpl implements IProductService {
 
     @Autowired
     ProductMapper productMapper;
+
+    @Autowired
+    ProductDelMapper productDelMapper;
 
     @Autowired
     ProductSpecRelMapper productSpecRelMapper;
@@ -140,14 +143,20 @@ public class ProductServiceImpl implements IProductService {
         if (StringUtils.isEmpty(id)) {
             throw new RuntimeException("删除操作时，主键不能为空！");
         }
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setId(id);
+        ProductEntity productEntity = new ProductEntity(id);
         try {
             ProductSpecRelEntity relEntity = new ProductSpecRelEntity();
             relEntity.setPid(id);
             productSpecRelMapper.delete(relEntity);
         } catch (Exception e) {
         }
+
+        ProductEntity ret = productMapper.selectOne(productEntity);
+        ProductDelEntity delEntity = new ProductDelEntity(ret);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        delEntity.setDelTime(simpleDateFormat.format(DateTime.now().toDate()));
+        productDelMapper.insert(delEntity);
+
         return productMapper.delete(productEntity);
     }
 
@@ -155,12 +164,7 @@ public class ProductServiceImpl implements IProductService {
     public int removeProduct(List<String> ids) {
         int result = 0;
         for (String id : ids) {
-            if (StringUtils.isEmpty(id)) {
-                throw new RuntimeException("删除操作时，主键不能为空！");
-            }
-            ProductEntity productEntity = new ProductEntity();
-            productEntity.setId(id);
-            result += productMapper.delete(productEntity);
+            result += this.removeProduct(id);
         }
         return result;
     }
@@ -189,7 +193,7 @@ public class ProductServiceImpl implements IProductService {
                 ProductEntity productEntity = new ProductEntity();
                 productEntity.setTitle(excelProductDto.getTitle().trim());
                 productEntity = productMapper.selectOne(productEntity);
-                if(productEntity==null){
+                if (productEntity == null) {
                     productEntity = new ProductEntity();
                     productEntity.setTitle(excelProductDto.getTitle().trim());
                     productEntity.setDetail(excelProductDto.getDetail().trim());
