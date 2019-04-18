@@ -85,9 +85,9 @@
                     <el-col :span="24">
                         <div class="grid-content bg-purple-dark">
                             <el-button type="primary" icon="el-icon-plus" @click="onInsert">新增</el-button>
-                            <el-button type="primary" icon="el-icon-edit" @click="onUpdate">编辑</el-button>
+                            <#--<el-button type="primary" icon="el-icon-edit" @click="onUpdate">编辑</el-button>-->
                             <el-button type="primary" icon="el-icon-delete" @click="onDelete">删除</el-button>
-                            <el-button type="primary"  @click="exportExcel" style="margin-right: 8px;">导出Excel模板</el-button>
+                            <el-button type="primary"  @click="exportExcel" style="margin-right: 8px;">下载模板</el-button>
                             <el-upload
                                     style="display: inline-block;"
                                     :multiple="false"
@@ -101,16 +101,6 @@
                             </el-upload>
                         </div>
                     </el-col>
-                    <#--<el-col :span="24">
-                        <div style="margin-top: 20px">
-                            <span style="font-size:12px; ">标签：</span>
-                            <el-radio-group v-model="search.tagId" size="small" @change="changeTag">
-                            <#list tagList as tag>
-                                <el-radio-button label="${tag.id}">${tag.title}</el-radio-button>
-                            </#list>
-                            </el-radio-group>
-                        </div>
-                    </el-col>-->
                 </el-row>
                 <el-row style="margin-top: 14px;">
                     <el-col :span="24">
@@ -171,22 +161,6 @@
                                 </template>
                             </el-table-column>
 
-                           <#-- <el-table-column label="标签" index="6" width="68">
-                                <template slot-scope="scope">
-                                    <el-popover trigger="hover" placement="top">
-                                        <div>
-                                            <el-tag type="success" v-for="item in scope.row.tagProductRelList"
-                                                    style="margin-right: 14px;">{{ item.tName }}
-                                            </el-tag>
-                                        </div>
-                                        <div slot="reference" class="name-wrapper">
-                                            <el-tag size="medium" v-if="scope.row.tagProductRelList.length > 0">查看
-                                            </el-tag>
-                                        </div>
-                                    </el-popover>
-                                </template>
-                            </el-table-column>-->
-
                             <el-table-column label="创建时间" index="1">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.createTime |formatDate}}</span>
@@ -195,6 +169,15 @@
                             <el-table-column label="修改时间" index="0">
                                 <template slot-scope="scope">
                                     <span style="margin-left: 10px">{{  scope.row.updateTime |formatDate }}</span>
+                                </template>
+                            </el-table-column>
+
+                            <el-table-column
+                                    fixed="right"
+                                    label="操作"
+                                    width="100">
+                                <template slot-scope="scope">
+                                    <el-button type="text" size="small" @click="onUpdate(scope.row)">编辑</el-button>
                                 </template>
                             </el-table-column>
                         </el-table>
@@ -222,18 +205,18 @@
                 width="60%"
                 center>
             <el-form ref="form" :model="form" label-width="80px">
+                <el-form-item label="产品名">
+                    <el-input v-model="form.title">{{form.title}}</el-input>
+                </el-form-item>
+                <el-form-item label="介绍">
+                    <el-input v-model="form.detail">{{form.detail}}</el-input>
+                </el-form-item>
                 <el-form-item label="单价">
                     <el-input v-model="form.price">{{form.price}}</el-input>
                 </el-form-item>
                 <el-form-item label="图片">
                 <#-- <el-input v-model="form.pic">{{form.pic}}</el-input>-->
                    <#include  "../upload.ftl"/>
-                </el-form-item>
-                <el-form-item label="介绍">
-                    <el-input v-model="form.detail">{{form.detail}}</el-input>
-                </el-form-item>
-                <el-form-item label="产品名">
-                    <el-input v-model="form.title">{{form.title}}</el-input>
                 </el-form-item>
                 <el-form-item label="销售状态">
                 <#--     <el-input v-model="form.isOnSale">{{form.isOnSale | saleStatus}}</el-input>-->
@@ -248,12 +231,11 @@
                     </el-dropdown>
                 </el-form-item>
 
-                <el-form-item label="选择产品规格" v-if="allSpecParentList">
+                <el-form-item label="产品规格" v-if="allSpecParentList">
                     <template>
                     <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
                     <#--全选-->
                     <#--</el-checkbox>-->
-                        <div style="margin: 15px 0;"></div>
                         <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
                             <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}
                             </el-checkbox>
@@ -296,6 +278,12 @@
                 <el-form-item label="id">
                     <el-input v-model="form.id" disabled="true">{{form.id}}</el-input>
                 </el-form-item>
+                <el-form-item label="产品名">
+                    <el-input v-model="form.title">{{form.title}}</el-input>
+                </el-form-item>
+                <el-form-item label="介绍">
+                    <el-input v-model="form.detail">{{form.detail}}</el-input>
+                </el-form-item>
                 <el-form-item label="单价">
                     <el-input v-model="form.price">{{form.price}}</el-input>
                 </el-form-item>
@@ -306,12 +294,6 @@
                         <img :src="form.pic | avatar" width="400px" alt="">
                     </div>
                 <#include "../upload.ftl"/>
-                </el-form-item>
-                <el-form-item label="介绍">
-                    <el-input v-model="form.detail">{{form.detail}}</el-input>
-                </el-form-item>
-                <el-form-item label="产品名">
-                    <el-input v-model="form.title">{{form.title}}</el-input>
                 </el-form-item>
                 <el-form-item label="销售状态">
                     <el-dropdown @command="handleSaleStatusCommand">
@@ -324,37 +306,17 @@
                         </el-dropdown-menu>
                     </el-dropdown>
                 </el-form-item>
-                <el-form-item label="选择产品规格" v-if="allSpecParentList">
+                <el-form-item label="产品规格" v-if="allSpecParentList">
                     <template>
                     <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
                     <#--全选-->
                     <#--</el-checkbox>-->
-                        <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
+                        <el-checkbox-group v-model="checked Tag" @change="handleCheckedSpec">
                             <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}
                             </el-checkbox>
                         </el-checkbox-group>
                     </template>
                 </el-form-item>
-                <#--<el-form-item label="选择门店">
-                    <template>
-                        <el-radio-group v-model="selectedShop" @change="onSelectShop">
-                            <el-radio :label="item.id" v-for="item in shopList">{{item.name}}</el-radio>
-                        </el-radio-group>
-                    </template>
-                </el-form-item>
-
-                <el-form-item label="选择标签" v-if="selectedShop">
-                    <template>
-                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
-                            全选
-                        </el-checkbox>
-                        <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedTag">
-                            <el-checkbox v-for="tag in tags" :label="tag" :key="tag">{{tag.tagName}}</el-checkbox>
-                        </el-checkbox-group>
-                    </template>
-                </el-form-item>-->
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit('update')">立即修改</el-button>
                 </el-form-item>
@@ -498,13 +460,11 @@
                     that.selectedShop = undefined;
                     that.insertDialogVisible = true;
                 },
-                onUpdate() {
+                onUpdate(dataRow) {
                     var that = this;
-                    if (that.selectionChanges.length == 0) {
-                        return;
-                    }
+                    console.log("dataRow",dataRow);
                     that.selectedShop = undefined;
-                    that.form = that.selectionChanges[0];
+                    that.form = dataRow;
                     that.updateDialogVisible = true;
                 },
                 onClickMenu(model) {
@@ -514,11 +474,18 @@
                     this.selectionChanges = val;
                 },
                 onRefreshWindow(message) {
+                    let that = this;
                     this.$message({
                         type: 'success',
+                        duration:1000,
                         message: message,
                         onClose: function () {
-                            window.location.reload(true);
+                            that.currentPage = 1;
+                            that.search = {};
+                            that.loadPageData();
+                            window.service.listAllSpecParent().then(function (reponse) {
+                                that.allSpecParentList = reponse.data.data;
+                            });
                         }
                     });
                 },
