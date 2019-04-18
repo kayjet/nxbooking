@@ -183,28 +183,23 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public boolean importExcel(FileItem[] file) throws Exception {
-        if (file.length > 0) {
-            FileItem item = file[0];
-            InputStream inputStream = item.getInputStream();
-            ImportParams params = new ImportParams();
-            List<ImportExcelProductDto> list = ExcelImportUtil.importExcel(inputStream, ImportExcelProductDto.class, params);
-            for (ImportExcelProductDto excelProductDto : list) {
-                ProductEntity productEntity = new ProductEntity();
+    public boolean importExcel(InputStream inputStream) throws Exception {
+        ImportParams params = new ImportParams();
+        List<ImportExcelProductDto> list = ExcelImportUtil.importExcel(inputStream, ImportExcelProductDto.class, params);
+        for (ImportExcelProductDto excelProductDto : list) {
+            ProductEntity productEntity = new ProductEntity();
+            productEntity.setTitle(excelProductDto.getTitle().trim());
+            productEntity = productMapper.selectOne(productEntity);
+            if (productEntity == null) {
+                productEntity = new ProductEntity();
                 productEntity.setTitle(excelProductDto.getTitle().trim());
-                productEntity = productMapper.selectOne(productEntity);
-                if (productEntity == null) {
-                    productEntity = new ProductEntity();
-                    productEntity.setTitle(excelProductDto.getTitle().trim());
-                    productEntity.setDetail(excelProductDto.getDetail().trim());
-                    productEntity.setPrice(excelProductDto.getPrice());
-                    productEntity.setIsOnSale(Constants.ProductSaleStatus.ON_SALE);
-                    this.addProduct(productEntity);
-                }
+                productEntity.setDetail(excelProductDto.getDetail().trim());
+                productEntity.setPrice(excelProductDto.getPrice());
+                productEntity.setIsOnSale(Constants.ProductSaleStatus.ON_SALE);
+                this.addProduct(productEntity);
             }
-            return true;
         }
-        return false;
+        return true;
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -43,7 +44,7 @@ public interface IProductService {
 
     int update(ProductEntity productEntity, ProductEntity where);
 
-    boolean importExcel(FileItem[] file) throws Exception;
+    boolean importExcel(InputStream inputStream)  throws Exception;
 
     Workbook exportExcelTemplate() throws Exception;
 }

@@ -15,7 +15,6 @@ import java.util.List;
 */
 @Namespace(value= ProductMapper.class)
 public class ProductEntity {
-    @Sort
     private String id;
     private Double price;
     private String pic;
@@ -23,6 +22,7 @@ public class ProductEntity {
     private String title;
     private Integer isOnSale;
     private Timestamp updateTime;
+    @Sort(type = Sort.SortType.DESC)
     private Timestamp createTime;
 
     @Field(resultmap = false,insert = false,update = false,delete = false,select = false)

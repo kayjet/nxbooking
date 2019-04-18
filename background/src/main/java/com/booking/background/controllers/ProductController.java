@@ -159,7 +159,10 @@ public class ProductController {
     public Boolean importExcel(FileItem[] file) {
         Boolean result = false;
         try {
-            result = productService.importExcel(file);
+            if (file.length > 0) {
+                FileItem item = file[0];
+                result = productService.importExcel(item.getInputStream());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
