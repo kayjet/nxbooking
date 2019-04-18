@@ -1,18 +1,13 @@
 package com.booking.api.controllers;
 
-import com.alibaba.fastjson.JSON;
 import com.booking.api.AbstractTransactionalTestService;
 import com.booking.common.base.ICacheManager;
-import com.booking.common.dto.ProductSpecDto;
-import com.booking.common.entity.ProductEntity;
 import com.booking.common.service.IOrderService;
 import com.booking.common.service.IProductService;
 import com.booking.common.utils.NetTool;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class Sprint3ControllerTest extends AbstractTransactionalTestService {
 
