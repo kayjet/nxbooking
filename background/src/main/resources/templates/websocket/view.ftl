@@ -1,5 +1,7 @@
 <#include "../header.ftl"/>
-
+<script>
+    window.wsAddress = "${wsAddress}";
+</script>
 </head>
 
 <body>

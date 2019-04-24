@@ -44,6 +44,9 @@ public class WebSocketController {
     @Value("${proxy.context}")
     private String proxyContext;
 
+    @Value("${ws.address}")
+    private String wsAddress;
+
     @Request(value = "/websocket/view", format = Request.Format.VIEW)
     public String websocket() {
         logger.info("访问websocket页");
@@ -51,6 +54,7 @@ public class WebSocketController {
         Context.putAttribute("shopList", shopService.listAll());
         Context.putAttribute("navList", new String[]{"即时订单"});
         Context.putAttribute("proxyContext", proxyContext);
+        Context.putAttribute("wsAddress", wsAddress);
         return "websocket/view";
     }
 }

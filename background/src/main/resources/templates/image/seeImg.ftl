@@ -1,5 +1,14 @@
 <#include "../header.ftl"/>
-
+<style>
+    .card-image{
+        width: 100%;
+        height:300px;
+        display: block;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+</style>
 </head>
 
 <body>
@@ -18,9 +27,11 @@
                     <el-col :span="4" v-for="(o, index) in images" style="margin-bottom: 14px;margin-right: 14px;">
                         <el-card shadow="hover"
                                  :body-style="{ padding: '0px' }">
-                            <img :src="o|avatar" class="image">
-                            <div style="padding: 14px;">
-                                <span>{{o}}</span>
+                            <div   style="background-image:url(${proxyContext}${context}/image/getAvatar?avatarName={{o}})" class="card-image"></div>
+                            <div style="padding: 14px">
+                                <div style="height: 64px;overflow: hidden;word-break: break-all;text-overflow: ellipsis;">
+                                    <span>{{o}}</span>
+                                </div>
                                 <div class="bottom clearfix" style='text-align:left;'>
                                     <el-button type="text" class="button" style='padding: 0;' @click="removeImage(o)">删除
                                     </el-button>

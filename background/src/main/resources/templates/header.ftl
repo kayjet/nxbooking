@@ -89,7 +89,6 @@
             }
             return "";
         });
-        window.wsAddress = "ws://localhost:8080/background/springws/websocket.ws";
         var logout = Vue.extend({
             template: "<el-dropdown @command=\"handleLogout\">\n" +
             "            <i class=\"el-icon-setting\" style=\"margin-right: 15px;cursor: pointer;\"></i>\n" +

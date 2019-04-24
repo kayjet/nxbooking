@@ -311,7 +311,7 @@
                     <#--<el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">-->
                     <#--全选-->
                     <#--</el-checkbox>-->
-                        <el-checkbox-group v-model="checked Tag" @change="handleCheckedSpec">
+                        <el-checkbox-group v-model="checkedTag" @change="handleCheckedSpec">
                             <el-checkbox v-for="spec in allSpecParentList" :label="spec" :key="spec">{{spec.name}}
                             </el-checkbox>
                         </el-checkbox-group>

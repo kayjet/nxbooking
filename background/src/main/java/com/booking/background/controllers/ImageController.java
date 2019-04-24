@@ -51,6 +51,7 @@ public class ImageController {
         try {
             result = commonService.getAvatar(avatarName);
         } catch (IOException e) {
+            logger.info(e.getMessage());
         }
         return result;
     }
