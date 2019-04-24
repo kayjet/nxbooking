@@ -36,6 +36,7 @@ public class NotHandledOrderService {
     private JdbcTemplate jdbcTemplate;
 
     public void getAllShopNotHandledOrderList() {
+        logger.info("getAllShopNotHandledOrderList START");
         String selectAllShopSql = "SELECT * FROM booking.t_shop";
         List<ShopEntity> shops = jdbcTemplate.query(selectAllShopSql, new Object[]{}, new BeanPropertyRowMapper(ShopEntity.class));
         for (ShopEntity shop : shops) {
@@ -51,6 +52,7 @@ public class NotHandledOrderService {
             }
 
         }
+        logger.info("getAllShopNotHandledOrderList END");
     }
 
     private void setOrderDetail(OrderEntity order) {

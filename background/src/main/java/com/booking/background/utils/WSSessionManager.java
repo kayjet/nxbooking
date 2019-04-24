@@ -22,6 +22,7 @@ public class WSSessionManager {
 
 
     public static WebSocketSession getSession(String shopId) {
+        logger.info("getSession shopId = " + shopId);
         if (WEB_SOCKET_SESSION_SHOP_ID_REL_MAP.containsKey(shopId)) {
             String wsSessionId = WEB_SOCKET_SESSION_SHOP_ID_REL_MAP.get(shopId);
             return WEB_SOCKET_SESSION_CONCURRENT_MAP.get(wsSessionId);
@@ -42,7 +43,8 @@ public class WSSessionManager {
     public static void addSession(WebSocketSession webSocketSession) {
         WEB_SOCKET_SESSION_CONCURRENT_MAP.put(webSocketSession.getId(), webSocketSession);
     }
-   public static void removeSession(String sessionId) {
+
+    public static void removeSession(String sessionId) {
         WEB_SOCKET_SESSION_CONCURRENT_MAP.remove(sessionId);
     }
 
