@@ -23,7 +23,6 @@ public class WebsocketUtils {
 
 
     public static void sendHeartBeat(WebSocketSession webSocketSession, Integer code, Object o) throws IOException {
-        logger.info("sending hearbeat");
         WsHeartBeatDto fromEndPoint = new WsHeartBeatDto();
         fromEndPoint.setCode(code);
         if (o != null) {
