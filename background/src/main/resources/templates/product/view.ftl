@@ -520,11 +520,14 @@
                         window.service.update(this.form).then(function (response) {
                             that.updateDialogVisible = false;
                             that.onRefreshWindow('修改成功!');
+                            that.form = {};
+                            that.fileList2 = [];
                         });
                     } else if (type == 'insert') {
                         window.service.add(this.form).then(function (response) {
                             that.insertDialogVisible = false;
                             that.onRefreshWindow('创建成功!');
+                            that.form = {};
                         });
                     }
                 },
@@ -562,14 +565,14 @@
                     this.checkAll2 = checkedCount === this.allSpecParentList.length;
                     this.isIndeterminate2 = checkedCount > 0 && checkedCount < this.allSpecParentList.length;
                 },
-                uploadSuccess(response, file, fileList) {
-                    console.log(response, file, fileList);
-                    console.log(this.fileList2.length);
+                uploadSuccess(response, file ,fileList) {
+                    // console.log(response, file,fileList);
                     this.form.pic = response.data;
-                    this.disabledUpload = true;
+                    console.log("fileList2",this.fileList2);
                 },
                 handleRemove(file, fileList) {
-                    console.log(file, fileList);
+                    console.log(file);
+                    this.form.pic = "";
                 },
                 handlePreview(file) {
                     console.log(file);
